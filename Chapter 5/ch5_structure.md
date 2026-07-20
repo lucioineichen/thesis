@@ -27,7 +27,7 @@ Recap the arc of the thesis in a few paragraphs (not a full restatement of every
 
 Keep this section brief. Only the following two directions; no long research agenda.
 
-1. **General convex risk measures.** The thesis stays with OCEs. Extending the approximation theory (and the continuity arguments behind (F3) / Lemma~4.1) to general convex risk measures via robust representation, as indicated in Bühler et al.\ §4.5, remains open — especially on general $\Omega$, where the same limit passages reappear in sharper form.
+1. **General convex risk measures.** The thesis stays with OCEs. Extending the approximation theory (and the continuity arguments behind (F3) / Lemma~4.4) to general convex risk measures via robust representation, as indicated in Bühler et al.\ §4.5, remains open — especially on general $\Omega$, where the same limit passages reappear in sharper form.
 2. **Empirical validity of the assumptions.** Hypotheses such as (A1)–(A6) (bounded liabilities, gain-side admissibility, Fatou-type continuity, closedness of the gain cone, etc.) are mathematically sufficient. Whether they hold, approximately or after natural modelling constraints, in real markets is an empirical question left for future work: observe or test these structural assumptions on market data rather than take them as purely theoretical standing conditions.
 
 Optional one-line pointers (only if space/need; not separate subsections): unbounded liabilities (European call, §3.7); model risk of the scenario generator used for training.
