@@ -60,3 +60,7 @@ Note that when you have conditional expectations or conditional probabilities, t
 Other additions:
 
 20) Commas: Do NOT apply the oxford comma: When listing items, there is no comma before the and. An example of desired listing is: apples, oranges and pears.
+
+21) No titles for results: Do not give theorems, propositions, lemmas, corollaries, definitions, remarks or assumptions an optional title in the LaTeX environment (i.e. never write `\begin{proposition}[Some title]`). Use the bare environment `\begin{proposition}` (likewise for the others). Attributions and source pointers belong in the surrounding text, not in the result header, e.g. write "B\"uhler et al., Proposition~4.3, states that ..." in the prose before or after the statement, not as `\begin{proposition}[B\"uhler et al., Proposition~4.3]`.
+
+22) No en-dashes or em-dashes: Do not use LaTeX `--` (en-dash) or `---` (em-dash) in the text. Prefer commas, parentheses or a single hyphen `-` as appropriate. Examples: write "(F1) to (F3)" or "(F1)-(F3)", not "(F1)--(F3)"; write "(in particular, ...)" or ", in particular, ...", not "--- in particular ---"; write "convergence, harmless" or "convergence (harmless)", not "convergence --- harmless".

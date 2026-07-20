@@ -1,0 +1,143 @@
+% ----------------------------------------------------------------------
+% Proposition: failure of the neural-network approximation on a general
+% probability space. This file is an *artifact* cited in Section 4.2 of
+% the thesis. It gives the counterexample showing that Buehler et al.
+% (2019), Proposition 4.3, does NOT extend verbatim to general Omega in
+% the standing Buehler setup (no (A1)--(A6) assumed): a one-period market
+% with an integrable perfect hedge in which every network strategy has
+% infinite entropic risk. The failure is located in (F3), not in (F1).
+% When integrating into the final thesis, strip the standalone preamble
+% and include this under the same numbering as the surrounding document
+% (keep the "% draft: ..." comment to preserve the original label).
+% Cross-references below are faked (hardcoded) so this artifact compiles
+% without defining the targets; comments say what they should point to.
+% ----------------------------------------------------------------------
+\documentclass[11pt,a4paper]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+
+\numberwithin{equation}{chapter}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{theorem}[proposition]{Theorem}
+\newtheorem{corollary}[proposition]{Corollary}
+\theoremstyle{definition}
+\newtheorem{assumption}[proposition]{Assumption}
+\newtheorem{definition}[proposition]{Definition}
+\newtheorem{example}[proposition]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[proposition]{Remark}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\HH}{\mathcal{H}}
+\newcommand{\Hu}{\mathcal{H}^{\mathrm{u}}}
+\newcommand{\NNet}{\mathcal{N\!N}}
+\newcommand{\as}{\ \PP\text{-a.s.}}
+
+\begin{document}
+
+\setcounter{chapter}{3}
+
+\chapter{Artifact: failure on a general probability space}
+
+\subsection*{The approximation property fails on general $\Omega$}
+
+% FAKE REF: "Proposition~4.3" in the text below is the citation of the
+%   result of Buehler et al.; in the thesis it refers to the reproduced
+%   finite-space proposition (prop4_3_finite.tex, \ref{prop:finitespace}).
+We now show that Proposition~4.3 of B\"uhler et al.\ does not extend
+verbatim to a general probability space. The example is a one-period market with a perfect
+(hence optimal) hedge whose hedge ratio is integrable but has no
+exponential moments.
+
+% draft: Proposition 4.7 (failure without extra assumptions);
+% same construction as prop:counterexample in
+% extension_of_approximation_on_general.tex.
+\begin{proposition}\label{prop:counterexample}
+  There exist a one-period market on a general probability space,
+  without transaction costs and without trading constraints, an entropic
+  risk measure $\rho_\lambda$ with arbitrary risk aversion $\lambda>0$
+  and a position $X=-Z$ with $Z\in L^1$ such that
+  \[
+    \pi(X)\le0\qquad\text{and}\qquad\pi_M(X)=+\infty\quad\text{for every }M\in\N.
+  \]
+  Moreover, $\rho_\lambda(X+\delta_0(S_1-S_0))=+\infty$ for \emph{every}
+  strategy of the form $\delta_0=F(I_0)$ with $F:\R\to\R$ bounded on
+  $(0,1)$; this covers all networks with bounded activation and all
+  networks with continuous activation.
+\end{proposition}
+
+\begin{proof}
+  Let $\Omega:=(0,1)\times\{-1,+1\}$ with
+  $\PP:=\mathrm{Leb}\otimes(\frac{1}{2}\delta_{-1}+\frac{1}{2}\delta_{+1})$,
+  and write $U(\omega):=\omega_1$ and $\xi(\omega):=\omega_2$, so that
+  $U$ is uniform on $(0,1)$, $\PP[\xi=\pm1]=\frac{1}{2}$ and $U,\xi$ are
+  independent. Take one trading period ($n=1$), information $I_0:=U$,
+  $I_1:=\xi$, hence $\F_0=\sigma(U)$ and $\F_1=\sigma(U,\xi)$, one asset
+  ($d=1$) with
+  \[
+    S_0:=1,\qquad S_1:=1+\frac{\xi}{2},
+  \]
+  no costs ($c_k\equiv0$) and no constraints ($H_0(\delta_0):=\delta_0$).
+  Note that $S$ is a $\PP$-martingale and
+  $S_1>0$. Define
+  \[
+    h(u):=\frac{2}{\lambda}\log\frac{1}{u},\qquad u\in(0,1),\qquad
+    Z:=h(U)\frac{\xi}{2},\qquad X:=-Z.
+  \]
+  Then $\E[|Z|]=\frac{1}{2}\E[h(U)]=\frac{1}{\lambda}<\infty$, so
+  $Z\in L^1$.
+
+  \textit{The perfect hedge.}
+  The strategy $\delta_0:=h(U)$ is $\F_0$-measurable, and
+  \[
+    X+\delta_0(S_1-S_0)=-h(U)\frac{\xi}{2}+h(U)\frac{\xi}{2}=0,
+  \]
+  so $\pi(X)\le\rho_\lambda(0)=0$. Note that $\delta_0=h(U)\in L^1$; the
+  optimal strategy is integrable, so Hornik's theorem applies to it and
+  networks approximate it in $L^1(\PP)$ and, along a subsequence, almost
+  surely.
+
+  \textit{Every locally bounded strategy has infinite risk.}
+  Let $\delta_0=F(U)$ with $m:=\sup_{u\in(0,1)}|F(u)|<\infty$. Then
+  \[
+    \rho_\lambda\bigl(X+F(U)(S_1-S_0)\bigr)
+    =\frac{1}{\lambda}\log\E\Bigl[\exp\Bigl(\frac{\lambda}{2}\bigl(h(U)-F(U)\bigr)\xi\Bigr)\Bigr].
+  \]
+  The integrand is nonnegative, so the expectation is at least as large as
+  its restriction to the event $\{\xi=+1\}\cap\{h(U)>m\}$. On that event one
+  has $h(U)-F(U)\ge h(U)-m>0$, hence
+  \[
+    \exp\Bigl(\frac{\lambda}{2}\bigl(h(U)-F(U)\bigr)\xi\Bigr)
+    =\exp\Bigl(\frac{\lambda}{2}\bigl(h(U)-F(U)\bigr)\Bigr)
+    \ge\exp\Bigl(\frac{\lambda}{2}\bigl(h(U)-m\bigr)\Bigr)
+    =\frac{e^{-\lambda m/2}}{U}.
+  \]
+  Independence of $U$ and $\xi$ and $\PP[\xi=+1]=\frac{1}{2}$ therefore yield,
+  with $u_m:=e^{-\lambda m/2}$,
+  \[
+    \E\Bigl[\exp\Bigl(\frac{\lambda}{2}\bigl(h(U)-F(U)\bigr)\xi\Bigr)\Bigr]
+    \ge\frac{e^{-\lambda m/2}}{2}\int_0^{u_m}\frac{1}{u}\,du=\infty,
+  \]
+  so the entropic risk is $+\infty$.
+
+  \textit{Networks are locally bounded.}
+  If the activation $\sigma$ is bounded, every network
+  $F=W_L\circ F_{L-1}\circ\dots\circ F_1$ is bounded on all of $\R$,
+  because the output of the last hidden layer lies in a bounded set and
+  $W_L$ is affine. If $\sigma$ is continuousn, $F$ is continuous on $\R$ and therefore bounded on the
+  compact set $[0,1]\supseteq(0,1)$. In either case, every network
+  strategy $\delta_0=F(I_0)$ has $\sup_{(0,1)}|F|<\infty$, so
+  $\rho_\lambda(X+W(\delta))=+\infty$ and $\pi_M(X)=+\infty$ for every
+  $M$.
+\end{proof}
+
+\end{document}

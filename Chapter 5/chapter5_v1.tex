@@ -1,0 +1,69 @@
+% ----------------------------------------------------------------------
+% Chapter 5: Conclusion
+% Standalone compilable artifact (own preamble); when assembling the
+% thesis, strip the preamble and merge the body only.
+% Short: summary plus a brief outlook, per ch5_structure.md.
+% Own results are referred to by name ("the attainment theorem of
+% Chapter 3", "the approximation theorem of Chapter 4", ...) rather
+% than by draft numbers; FAKE REF comments mark where real \ref's
+% should be inserted on final merge.
+% ----------------------------------------------------------------------
+\documentclass[11pt,a4paper]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+
+\numberwithin{equation}{chapter}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\HH}{\mathcal{H}}
+
+\begin{document}
+
+\setcounter{chapter}{4}
+
+\chapter{Conclusion}
+
+\section{Summary}
+
+This thesis has given a rigorous development of the deep hedging framework of B\"uhler, Gonon, Teichmann and Wood \cite{buehler} in finite discrete time, formulated throughout on a general probability space rather than the finite one of the original paper. The guiding question was which parts of the framework survive this passage unchanged, and which require genuine analytical hypotheses.
+
+Chapters~1 and~2 set up the framework: a discrete-time market with finitely many trading dates, hedging instruments given by their mid-prices, trading constraints and transaction costs, with the terminal profit-and-loss as the central object. The optimality criterion is a convex risk measure, and throughout the thesis we work with the class of optimized certainty equivalents, containing the entropic risk measure and average value at risk as benchmark cases. Already at this stage the general probability space makes itself felt: the domain of the risk measure must be chosen (extended-real-valued on $L^0$), well-definedness of the OCE becomes a question of integrability rather than a triviality, and the feasibility argument of B\"uhler et al.\ for arbitrary liabilities breaks down for unbounded ones.
+
+Chapter~3 assembled market and risk measure into the hedging functional $\pi$ and proved the first main result of the thesis, the attainment theorem. On a finite probability space, existence of an optimal hedging strategy is immediate from the theorem of Weierstrass. On a general space it is not, and the thesis identified a package of six hypotheses (A1)--(A6) --- bounded liability, convex strategy set, half-bounded Fatou property of the risk measure, $L^0$-boundedness of the gain set, closedness of the dominated gain cone and nonnegative gains --- under which the infimum defining $\pi(-Z)$ is attained. The proof runs through a minimising sequence, the Koml\'os lemma in the form of Delbaen and Schachermayer \cite{delbaenschachermayer}, recovery of a strategy from the closed gain cone, convexity of the risk measure and a Fatou-type passage to the limit. Each hypothesis carries an economic reading: (A3) excludes risk measures blind to rare large outcomes, (A4) reflects risk and margin limits of real trading desks and (A6) encodes gain-side admissibility of the kind produced by position limits and margin requirements. The European call illustrated the boundary of the theorem: for unbounded liabilities, the hypotheses interact badly with the natural stock hedge, and the sufficient conditions that restore attainment are all restrictive.
+
+Chapter~4 turned to the second main question, neural network approximation. B\"uhler et al.\ prove on a finite probability space that the minimal risk $\pi_M$ over network strategies of size $M$ converges monotonically down to $\pi$; the thesis reproduced their proof and isolated the exactly three points (F1)--(F3) at which finiteness of $\Omega$ enters: automatic boundedness (hence integrability) of the hedge ratios, the upgrade from $L^1$-convergence to convergence in every scenario and automatic continuity of the risk measure as a convex function on $\R^N$. The passages involving trading constraints, gains and costs need no finiteness. A counterexample showed that on a general probability space the approximation result genuinely fails without further assumptions: there is a market, satisfying all remaining hypotheses, in which a perfect measurable hedge exists but every network strategy with continuous activation has infinite entropic risk. The repair is the second main result of the thesis: for OCE risk measures, the two hypotheses (A1) and (A6) alone --- a constant lower envelope from the bounded liability and nonnegative gains that survive truncation --- restore the value convergence $\pi_M(-Z)\to\pi(-Z)$, monotonically from above. Combined with the attainment theorem of Chapter~3, this gave the punchline of the thesis: under (A1)--(A6), neural network strategies are $\varepsilon$-optimal for an \emph{attained} optimum.
+
+Two qualifications frame this positive result. First, it concerns values, not strategies: near-optimal network strategies need not converge to an optimal strategy in any topology, as simple examples with redundant assets show, and the thesis made no claim of strategy convergence. Second, on the algorithmic side, the OCE structure turns the hedging problem into a finite-dimensional minimisation over the cash reserve and the network weights, solvable by stochastic gradient descent; for empirical evidence the thesis relied on the backtesting results of B\"uhler et al.\ \cite[Section~5]{buehler}, which show that the trained hedges perform well out of sample --- with the structural caveat that the networks are trained exclusively on historic or historically calibrated data, and past performance is not indicative of future results.
+
+The one-sentence conclusion of the thesis is this: the deep hedging framework does not break when the finite probability space is replaced by a general one, but everything that was automatic on a finite space --- existence of optimizers, integrability, continuity of the risk measure --- becomes a set of identifiable, economically interpretable hypotheses, namely (A1)--(A6) for attainment and (A1) with (A6) for neural network value approximation.
+
+\section{Outlook}
+
+Two directions appear most natural for further work.
+
+The first is the extension from optimized certainty equivalents to general convex risk measures. B\"uhler et al.\ \cite[Section~4.5]{buehler} indicate how their approximation result extends via the robust representation of convex risk measures, which turns the hedging problem into a minimax problem and suggests a second network for the adverse measure. On a general probability space, the same limit passages that this thesis handled for OCEs --- the upper-semicontinuity argument repairing (F3) in particular --- reappear in sharper form, since the supremum over a family of measures need not inherit the envelope-based continuity that the OCE structure provides. Whether an analogue of the approximation theorem of Chapter~4 holds for robustly represented risk measures, and under which hypotheses on the penalty function, is open.
+
+The second direction is empirical. The hypotheses (A1)--(A6) are mathematically sufficient, and each admits an economic reading --- bounded liabilities, position limits, margin requirements, tightness of attainable gains. Whether they hold in real markets, at least approximately or after natural modelling constraints, is an empirical question that this thesis has not addressed: one would like to test, on market data and realistic trading desks, how far gain-side admissibility and the boundedness and closedness properties of the attainable gain set are from being satisfied, and how sensitive the trained hedges are to their failure.
+
+Beyond these two directions we only mention that unbounded liabilities remain delicate even for the plain European call, as discussed in Chapter~3, and that the model risk of the scenario generator used for training --- the method is only as good as the paths it sees --- deserves a systematic treatment of its own.
+
+\begin{thebibliography}{9}
+
+    \bibitem{buehler}
+    H.~B\"uhler, L.~Gonon, J.~Teichmann, and B.~Wood.
+    Deep hedging.
+    \emph{Quantitative Finance} \textbf{19}(8), 1271--1291, 2019.
+
+    \bibitem{delbaenschachermayer}
+    F.~Delbaen and W.~Schachermayer.
+    A general version of the fundamental theorem of asset pricing.
+    \emph{Mathematische Annalen} \textbf{300}(1), 463--520, 1994.
+
+\end{thebibliography}
+
+\end{document}
