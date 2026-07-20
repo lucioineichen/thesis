@@ -108,14 +108,15 @@ One continuous section: lead-in $\to$ tools $\to$ theorem $\to$ punchline coroll
 
 ---
 
-## 4.4 From theory to algorithm (brief; ~½ page)
+## 4.4 From theory to algorithm (brief; ~1 page)
 
 - OCE objective $w+\mathbb{E}[\ell(-Y-w)]$ with $Y=-Z+W(H\circ\delta^\theta)$ makes the problem a finite-dimensional minimization over $(w,\theta)$.
 - Joint minimization; minibatch estimation of the expectation; backpropagation through the semi-recurrent network.
 - Entropic case: $w^*$ explicit, so one minimizes only over $\theta$.
-- No numerics, no implementation details beyond this sketch.
-- **Outlook (one sentence):** for general convex risk measures, the robust representation leads to a minimax over two networks (Bühler et al., §4.5); on general $\Omega$ the same continuity issues reappear in sharper form — not pursued.
-
+- No numerics of our own: this thesis does not re-run experiments.
+- **Cite Bühler et al., Section~5 (backtesting):** report their main empirical finding that the trained hedges work in out-of-sample / backtest evaluation (risk reduction vs.\ unhedged / classical benchmarks as they present it). Keep this to a short citation of their results, not a reproduction.
+- **Important caveat (state explicitly):** the networks are trained exclusively on historic (or historically calibrated simulated) data; past backtest performance is not indicative of future results. This is a structural limitation of the method, not a footnote afterthought.
+- Optional one-sentence outlook only: general convex risk measures via robust representation (Bühler et al., §4.5) lead to a minimax over two networks — not pursued.
 ---
 
 ## 4.5 Strategies need not converge (short)
@@ -138,7 +139,7 @@ No further sections. Chapter~5 (conclusion) picks up: summary of attainment + ap
 - [ ] Prop.~4.7 (counterexample / failure) present; **no** A1-sharpness proposition
 - [ ] §4.3 is one section: lead-in (use (A1),(A6) to repair) $\to$ Lemmas 4.1, 4.4, 4.6 $\to$ Thm~4.8 $\to$ Cor~4.10
 - [ ] Thm~4.8 under (A1),(A6); Cor~4.10 states the attained + $\varepsilon$-optimal punchline
-- [ ] Algorithm subsection ~½ page + one CRM outlook sentence
+- [ ] Algorithm subsection ~1 page: SGD sketch + cite Bühler §5 backtesting (hedges work) + historic-data / past≠future caveat; no own numerics
 - [ ] Strategy subsection = one example + one remark only
 - [ ] Cross-refs: (A1)–(A6) to Chapter~3; OCE to §2.6; market objects to Chapter~2
 - [ ] Follow `styling.md`; number only equations that are referred to

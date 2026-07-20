@@ -1,6 +1,6 @@
 # Thesis Structure
 
-**Working title:** Deep hedging in discrete-time markets with frictions
+**Title:** Some Aspects of Deep Hedging in Finite Discrete Time
 
 **Guiding idea.** The thesis gives a rigorous, self-contained development of the deep hedging framework of Bühler, Gonon, Teichmann and Wood (Quantitative Finance, 2019): pricing and hedging of derivative portfolios in a discrete-time market with frictions, using convex risk measures as the optimality criterion and neural networks as the strategy class. One main part of the analysis is that the whole discrete-time setting is formulated on a **general probability space** (the paper works on a finite one; the setup is otherwise the same as in Bühler et al.). This gives rise to two questions that are trivial on finite Ω but require real analytical work in general:
 
@@ -15,9 +15,9 @@ Throughout, the risk-measure framework is that of optimized certainty equivalent
 
 *Status: to be written. Short, non-technical.*
 
-- **Motivation.** Pricing and hedging of derivatives in realistic markets: incompleteness, transaction costs, liquidity constraints, risk limits. Classical complete-market theory (unique replication price, delta hedging) fails under frictions; superhedging is too expensive to be useful (in Black–Scholes with proportional costs, the superhedging price of a call is the spot itself, Soner–Shreve–Cvitanić).
+- **Motivation.** Pricing and hedging of derivatives in realistic markets: incompleteness, transaction costs, liquidity constraints, risk limits. Classical complete-market theory (unique replication price, delta hedging) fails under frictions
 - **The deep hedging approach.** Overview of Bühler et al. (2019): choose a convex risk measure as optimality criterion, define the price of a claim as an indifference price relative to the optimally hedged position, and parametrize hedging strategies by neural networks. The method is model-free in the sense that it only needs sample paths, handles frictions and scales in the number of hedging instruments.
-- **Contributions and scope of this thesis.** (i) A self-contained development of the discrete-time framework with frictions and of convex risk measures / OCEs. (ii) An attainment theorem for the optimal hedging strategy on general Ω (Chapter 3), which on finite Ω is immediate but in general requires a Komlós-type compactness argument and Fatou-type continuity of the risk measure. (iii) An analysis of the neural network approximation result of Bühler et al. on general Ω: which steps of the proof use finiteness of Ω, what breaks, and which additional assumptions restore the result (Chapter 4). Here the introduction states, as one point among these, that the thesis builds on Bühler et al. and extends their setting from a finite to a general probability space — this is mentioned as a point of the thesis, not framed as its whole reason.
+- **Contributions and scope of this thesis.** (i) A self-contained development of the discrete-time framework with frictions and of convex risk measures / OCEs. (ii) An attainment theorem for the optimal hedging strategy on general Ω (Chapter 3), which on finite Ω is immediate but in general requires a Komlós-type compactness argument and Fatou-type continuity of the risk measure. (iii) The extension of the neural network approximation result of Bühler et al. to general Ω (Chapter 4): a precise identification of where finiteness of Ω enters their proof ((F1)–(F3)), a counterexample showing the result fails without additional assumptions, and the headline theorem that value convergence π_M → π holds under (A1) and (A6) alone — combined with the attainment theorem of Chapter 3 into the punchline that neural network strategies are ε-optimal for an *attained* optimum. State this as a known, proved result, not as an open-ended analysis. Here the introduction states, as one point among these, that the thesis builds on Bühler et al. and extends their setting from a finite to a general probability space — this is mentioned as a point of the thesis, not framed as its whole reason.
 - **Outline of the thesis.** One paragraph for all chapters.
 
 ---
@@ -64,6 +64,7 @@ These failures motivate the axioms below.
 ### 2.6 Optimized certainty equivalents (OCE)
 
 - Construction: for a loss function ℓ (convex, non-decreasing, continuous), ρ(X) := inf_w { w + E[ℓ(−X − w)] }. Lemma: this defines a convex risk measure (proof as in Bühler et al., Lemma 3.5, but on general Ω). Connection to the optimized certainty equivalents of Ben-Tal and Teboulle.
+- **Normalization convention on ℓ (standing assumption).** Normalize ℓ as in Ben-Tal–Teboulle: ℓ(0) = 0 and 1 ∈ ∂ℓ(0) (slope 1 in the subdifferential at 0). Without some slope ≥ 1, the infimum over w is −∞ for every X and the OCE degenerates to ρ ≡ −∞. Stating the convention once here keeps every finiteness discussion in Chapters 3 and 4 clean; the entropic and CVaR losses below satisfy it.
 - **Remark on well-definedness on general Ω.** When is E[ℓ(−X − w)] ∈ R? Decomposition into positive and negative parts; the affine minorant of the convex ℓ controls the negative part, so the OCE is well defined (possibly +∞) for X ∈ L^1. On finite Ω all of this is automatic — second appearance of the finite-vs-general theme.
 - **Example (entropic risk measure).** ℓ(x) = e^{λx} − (1 + log λ)/λ gives ρ(X) = (1/λ) log E[e^{−λX}]; the explicit minimizer w*; connection to exponential utility indifference pricing (Lemma 3.4 of Bühler et al.).
 - **Example (CVaR / expected shortfall).** ℓ(x) = max(x, 0)/(1 − α) gives average value at risk at level 1 − α; the limiting cases α → 0 (risk-neutral, ρ = −E[X]) and α → 1 (worst case, ρ = −ess inf X) as the risk-aversion dial.
@@ -88,28 +89,45 @@ Assembles the market of Chapter 2 and the risk measure into the hedging function
 
 ## Chapter 4: Approximating hedging strategies by neural networks
 
-*Status: to be written. Counterpart of Section 4 of Bühler et al.; second mathematical contribution of the thesis. Central question: the paper proves (on finite Ω) that neural network strategies approximate the optimal hedge — do these approximation results survive on a general probability space? Ambition level: prove everything that is feasible and document precisely what breaks (this is essential); invest serious effort into the density/approximation result on general Ω and into identifying the additional assumptions it needs — but this is a bachelor's thesis, so where a full extension is out of reach, a clean partial result plus an honest analysis of the gap is the deliverable.*
+*Status: structure fixed in `Chapter 4/ch4_structure.md` (the authoritative outline for this chapter); to be written from the drafts `extension_of_approximation_on_general.tex` and `extension_with_A1_to_A6.tex`. Counterpart of Section 4 of Bühler et al.; second mathematical contribution of the thesis. Central question: the paper proves (on finite Ω) that neural network strategies approximate the optimal hedge — does this survive on a general probability space, and under which of the Chapter 3 hypotheses? Scope decisions: OCE risk measures only; repair via (A1) and (A6); no sharpness counterexample for dropping (A1); no numerical experiments; strategy non-convergence kept to one example plus one remark.*
 
-- **4.1 Neural networks and universal approximation.** Feed-forward networks, notation NN_{M,d0,d1} for the growing families of networks (bounded number of non-zero weights or fixed growing architecture); Hornik's universal approximation theorem: density in L^p(μ) for every finite measure μ and, for continuous activations, uniform density on compacts. Remark: this theorem is *already* a general-measure statement — the finiteness of Ω in Bühler et al. is used elsewhere.
-- **4.2 Neural network hedging strategies.** The semi-recurrent parametrization δ_k = F_{θ_k}(I_0, ..., I_k, δ_{k−1}); rewriting the constrained problem over H as an unconstrained one over H_u via the projection maps (Lemma 4.2 of Bühler et al.); the approximate problem π_M(X) := inf over network strategies. The infinite-dimensional optimisation becomes a finite-dimensional one over network parameters.
-- **4.3 The approximation theorem on finite Ω.** Statement and full proof of Proposition 4.3 of Bühler et al.: π_M(X) ↓ π(X) as M → ∞. The proof is dissected with an eye on where finiteness of Ω enters:
-  1. boundedness of δ_k (hence integrability of the representing functions f_k) is automatic;
-  2. L^1-convergence of the network approximations upgrades to convergence at *every* ω because every atom has positive mass;
-  3. ρ is a convex function on R^N and therefore continuous — the passage to the limit in the objective is free;
-  4. the lim sup argument for the u.s.c. cost functions uses pointwise convergence on all of Ω.
-- **4.4 What breaks on general Ω.** *(Very important section.)* Point-by-point analysis of the failures: strategies need not be bounded, so integrability of f_k must be assumed; L^1-convergence only gives a.s. convergence along subsequences; a convex risk measure on an infinite-dimensional space need not be continuous along the relevant convergence (connect to the Fatou discussion of Chapter 3, Section 3.4, and to the counterexample for ρ = −E[·]); the cost and constraint maps require dominated- or monotone-convergence arguments. Each failure is documented with the precise step of the proof it invalidates and, where possible, a counterexample or a concrete gap.
-- **4.5 The approximation theorem on general Ω.** The positive results, proved under additional assumptions identified in 4.4. Candidate sufficient framework (to be finalized during writing): OCE risk measure with loss function of controlled growth, strategies and prices in suitable L^p spaces, integrable bounds permitting dominated convergence, continuity of ρ along dominated a.s. convergent sequences (a relative of the half-bounded Fatou property (A3)). Statement: under these hypotheses π_M(X) → π(X); discussion of how sharp the assumptions are and which parts remain open — stated openly as such, since no breakthrough mathematics is expected at bachelor's level. Combined with Chapter 3: under (A1)–(A6) plus the approximation hypotheses, neural network strategies are ε-optimal for an *attained* optimum.
-- **4.6 From theory to algorithm (brief).** How the OCE structure makes the problem amenable to stochastic gradient descent: joint minimisation over (w, θ), minibatch estimation of the expectation, backpropagation; the entropic special case where the w-minimisation is explicit (Sections 4.3–4.4 of Bühler et al.). Kept short and descriptive — no numerical experiments in this thesis.
-- **4.7 Outlook: general convex risk measures (remark only).** One-paragraph pointer to Section 4.5 of Bühler et al.: robust representation ρ(X) = max_Q (E_Q[−X] − α(Q)) turns the problem into a minimax over two networks; on general Ω this raises the same continuity questions in yet sharper form. Not pursued.
+- **4.1 Neural networks, market setup and π_M.** Feed-forward networks, families NN_{M,d0,d1} with exhaustion / zero network / zero-weight embedding; Hornik's universal approximation theorem (density in L^p(μ) for every finite measure μ) with the remark that Hornik is already a general-measure statement — finiteness of Ω is used elsewhere. Semi-recurrent parametrization δ_k = F_{θ_k}(I_0, ..., I_k, δ_{k−1}); unconstrained rewriting via H∘δ (Lemma 4.2 of Bühler et al.); the approximate problem π_M(X).
+- **4.2 The finite-Ω approximation theorem and what breaks.** Statement and full proof of Proposition 4.3 of Bühler et al. (π_M(X) ↓ π(X)), followed by a visible discussion of where finiteness enters — exactly three failure points:
+  - (F1) boundedness of δ_k (hence integrability of the representing functions f_k) is automatic on finite Ω;
+  - (F2) L^1-convergence upgrades to convergence at every ω (atoms of positive mass);
+  - (F3) ρ is a convex function on R^N, hence continuous — the passage to the limit in the objective is free.
+  Explicitly *not* an F: the convergence of gains (H∘δ^m)·S → (H∘δ)·S and lim sup C_T(H∘δ^m) ≤ C_T(H∘δ) follow from continuity of H, the stochastic integral and u.s.c. of the cost functions — no finiteness needed. Then "what breaks on general Ω", point-by-point along (F1)–(F3) ((F2) harmless), connecting (F3) to the Fatou discussion of Chapter 3; and Proposition 4.7: the counterexample showing failure without extra assumptions, motivating the repair.
+- **4.3 Repair under the Chapter 3 hypotheses.** One continuous section: lead-in (the gaps are (F1) and (F3); Chapter 3 already supplies (A1) and (A6), which give a constant envelope and survive truncation; (A2)–(A5) return only for attainment) → tools (Lemma 4.1 constant-envelope upper semicontinuity of OCEs, repairing (F3); Lemma 4.4 monotone sandwich for π_M; Lemma 4.6 truncation / value-density of bounded strategies, repairing (F1)) → Theorem 4.8: under the standing setting, OCE, (A1) and (A6) alone, π_M(−Z) → π(−Z) monotonically from above → Corollary 4.10, the thesis in one line: under (A1)–(A6), neural network strategies are ε-optimal for an *attained* optimum. Optional remark on the weakening (A1′); no sharpness counterexample.
+- **4.4 From theory to algorithm (brief, ~1 page).** Joint minimisation over (w, θ), minibatch estimation, backpropagation; the entropic special case where w* is explicit. No own numerics; cite the backtesting results of Section 5 of Bühler et al. (the trained hedges work out of sample), with the explicit caveat that the networks are trained exclusively on historic data and past performance is not indicative of future results. One outlook sentence only on general convex risk measures (robust representation → minimax over two networks; not pursued).
+- **4.5 Strategies need not converge (short).** One example (constant S or two identical assets, zero costs: near-minimizers need not converge) and one remark (Theorem 4.8 / Corollary 4.10 concern values and ε-optimality, not convergence of δ^M). No Komlós recovery, no entropic uniqueness, no identification theory.
 
 ---
 
 ## Chapter 5: Conclusion
 
-*Status: to be written. Short.*
+*Status: structure fixed in `Chapter 5/ch5_structure.md` (the authoritative outline for this chapter); to be written. Short: summary plus a brief outlook only.*
 
-- Summary of results: the deep hedging framework carries over from finite to general probability spaces at the price of genuine analytical hypotheses — Fatou-type continuity of the risk measure, boundedness/closedness of the gain set for attainment; integrability and continuity assumptions for the neural network approximation. What is automatic on finite Ω becomes a set of identifiable, economically interpretable assumptions in general.
-- Open problems: attainment for unbounded liabilities (the European call, cf. Section 3.7); sharpness of the assumptions in Chapter 4; extension of the approximation theory to general convex risk measures; model risk of the scenario generator.
+- **5.1 Summary.** The deep hedging framework carries over from finite to general probability spaces at the price of genuine analytical hypotheses: (A1)–(A6) for attainment (Chapter 3); (A1) and (A6) for the neural network value approximation π_M → π, combined into the punchline that networks are ε-optimal for an attained optimum (Corollary 4.10). What is automatic on finite Ω becomes a set of identifiable, economically interpretable assumptions in general. Strategies themselves need not converge; backtests in Bühler et al. show the method works empirically, trained on historic data only.
+- **5.2 Outlook (short, one section).** Two directions only: (i) extension of the approximation theory to general convex risk measures via robust representations; (ii) empirical examination of whether the structural assumptions (A1)–(A6) actually hold, at least approximately, in real markets. Optional one-line pointers: unbounded liabilities (European call, Section 3.7); model risk of the scenario generator.
+
+---
+
+## Front and back matter
+
+Not to be forgotten; details collected in `Front Matter/to_figure_out.md`:
+
+- Title page, abstract (check whether the university wants German and English), table of contents, mandatory declaration of originality / Eigenständigkeitserklärung.
+- **Notation table** (one page, after the ToC): the thesis carries heavy notation — 𝓗, 𝓗^u, W(δ), C_T, π, π_M, ρ_ℓ, (A1)–(A6), (F1)–(F3), etc. Working version in `Front Matter/notation_table.md`.
+- Appendix: contains only the proof of the Komlós lemma (see `Appendix/`); everything else standard is cited, not proved.
+
+---
+
+## Repository structure and assembly
+
+- **Folders:** `Chapter 1` … `Chapter 5`, `Front Matter`, `Appendix`, `Bibliography`.
+- **Each folder contains multiple artifacts:** drafts, structure files, files containing math / lemmas / experiments (e.g. `extension_of_approximation_on_general.tex`), plus a `bib.md` listing all sources needed for that part.
+- **Bibliography folder:** for every work cited anywhere, a PDF of it is found and stored in `Bibliography/`; the folder also holds the bibliography-management notes (`Bibliography/bibliography_management.md`).
+- **Assembly principle:** there is *no* single complete thesis file until the very end. Each folder converges to **one file that covers its part**; only in the very last step, when everything is finished, are the documents merged into the thesis.
 
 ---
 
@@ -117,6 +135,10 @@ Assembles the market of Chapter 2 and the risk measure into the hedging function
 
 - Follow `styling.md` (numbering of results within sections, \eqref, bracket conventions, no oxford comma, etc.).
 - Number only equations that are referred to; the P&L equation in Section 2.2 and the definition of π in Section 3.1 are the two most-referenced displays.
-- Cross-references to fix when assembling: Chapter 3 currently cites "Chapter 1 (market)" → now Chapter 2, "Chapter 2, Definition ??" (OCE) → now Section 2.6.
+- **Result numbering / citation convention.** Do not hard-code the draft result numbers (Lemma 4.1, Prop. 4.3, Thm 4.8, Cor. 4.10, …) — they mimic Bühler's numbering and the thesis's own numbering (results within sections, per `styling.md`) will produce different numbers. Cite Bühler's results always as "Bühler et al., Proposition 4.3" etc., never by bare number, to avoid collision with own results. **In the LaTeX, put the old draft numbering as a comment next to each renumbered result** (e.g. `% draft: Thm 4.8`) so it stays findable with Ctrl+F without knowing the new number.
+- Cross-references to fix when assembling:
+  - Chapter 3 currently cites "Chapter 1 (market)" → now Chapter 2, "Chapter 2, Definition ??" (OCE) → now Section 2.6.
+  - Chapter 4 is assembled from the two drafts `extension_of_approximation_on_general.tex` and `extension_with_A1_to_A6.tex`, which have their own preambles, numbering and bibliographies — all to be stripped when merging.
+  - The labels (F1)–(F3) must be used consistently between §4.2 (diagnosis) and §4.3 (repair).
 - Main references: Bühler–Gonon–Teichmann–Wood (2019) for the framework; Föllmer–Schied, *Stochastic Finance*, for convex risk measures and the martingale-transform theorem; Delbaen–Schachermayer (1994) for the Komlós lemma; Hornik (1991) for universal approximation; Ben-Tal–Teboulle (2007) for OCE.
 
