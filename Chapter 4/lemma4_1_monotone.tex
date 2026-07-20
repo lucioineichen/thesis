@@ -1,0 +1,90 @@
+% ----------------------------------------------------------------------
+% Tool lemma: monotone sandwich for the network values pi_M.
+% This file is an *artifact* for Section 4.3 of the thesis (tools for the
+% repair). It records that the network values pi_M decrease in M and
+% always dominate pi, so that pi_M -> pi holds if and only if for every
+% epsilon > 0 some network class gets within epsilon of pi.
+% When integrating into the final thesis, strip the standalone preamble
+% and include this under the same numbering as the surrounding document
+% (keep the "% draft: ..." comment to preserve the original label).
+% Cross-references below are faked (hardcoded) so this artifact compiles
+% without defining the targets; comments say what they should point to.
+% ----------------------------------------------------------------------
+\documentclass[11pt,a4paper]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+
+\numberwithin{equation}{chapter}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{theorem}[proposition]{Theorem}
+\newtheorem{corollary}[proposition]{Corollary}
+\theoremstyle{definition}
+\newtheorem{assumption}[proposition]{Assumption}
+\newtheorem{definition}[proposition]{Definition}
+\newtheorem{example}[proposition]{Example}
+% Upright body, bold head (not the italic amsthm "remark" style).
+\newtheorem{remark}[proposition]{Remark}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\HH}{\mathcal{H}}
+\newcommand{\Hu}{\mathcal{H}^{\mathrm{u}}}
+\newcommand{\NNet}{\mathcal{N\!N}}
+\newcommand{\as}{\ \PP\text{-a.s.}}
+
+\begin{document}
+
+\setcounter{chapter}{3}
+
+\chapter{Artifact: monotone sandwich for the network values}
+
+\subsection*{The network values decrease to a limit dominating $\pi$}
+
+% FAKE REF: the definitions of pi and pi_M referred to in prose below
+%   live in Section 4.1 of the thesis (unconstrained rewriting via
+%   H o delta and the approximate problem over the network classes H_M).
+Recall the hedging functional and its network approximation,
+\[
+  \pi(X)=\inf_{\delta\in\Hu}\rho\bigl(X+W(H\circ\delta)\bigr),
+  \qquad
+  \pi_M(X)=\inf_{\delta\in\HH_M}\rho\bigl(X+W(H\circ\delta)\bigr),
+\]
+where $\HH_M\subseteq\HH_{M+1}$ are the nested network strategy classes.
+The following elementary observation reduces the approximation question
+to a one-sided estimate.
+
+% draft: Lemma 4.1 (monotone sandwich for pi_M);
+% same statement as lem:monotone in extension_of_approximation_on_general.tex.
+\begin{lemma}\label{lem:monotone}
+  For every $X$ and every $M\in\N$, one has
+  \[
+    \pi_M(X)\ge\pi_{M+1}(X)\ge\pi(X).
+  \]
+  In particular, $\lim_{M\to\infty}\pi_M(X)$ exists in $[-\infty,\infty]$
+  and dominates $\pi(X)$.
+\end{lemma}
+
+\begin{proof}
+  By definition, strategies in $\HH_M$ are processes
+  $\delta=(\delta_k)_{k=0,\dots,n-1}$ with
+  \[
+    \delta_k=F_k(I_0,\dots,I_k),\qquad k=0,\dots,n-1,
+  \]
+  for network maps $F_k$, hence each $\delta_k$ is $\F_k$-measurable and
+  $\delta$ is adapted. With the nested exhaustion of the network classes
+  one has $\HH_M\subseteq\HH_{M+1}\subseteq\Hu$, so the infima defining
+  $\pi_M$, $\pi_{M+1}$ and $\pi$ are taken over increasing sets, which
+  gives both inequalities. The limit exists because the sequence
+  $(\pi_M(X))_{M\in\N}$ is non-increasing and bounded below by $\pi(X)$
+  in $[-\infty,\infty]$.
+\end{proof}
+
+\end{document}

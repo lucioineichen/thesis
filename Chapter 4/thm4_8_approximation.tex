@@ -1,0 +1,149 @@
+% ----------------------------------------------------------------------
+% Main theorem: neural-network approximation on a general probability
+% space under (A1) and (A6). This file is an *artifact* for Section 4.3
+% of the thesis. Under the standing Buehler market/network setting, an
+% OCE risk measure and hypotheses (A1) and (A6) alone, one has
+% pi_M(-Z) -> pi(-Z) monotonically from above.
+% When integrating into the final thesis, strip the standalone preamble
+% and include this under the same numbering as the surrounding document
+% (keep the "% draft: ..." comment to preserve the original label).
+% Cross-references below are faked (hardcoded) so this artifact compiles
+% without defining the targets; comments say what they should point to.
+% ----------------------------------------------------------------------
+\documentclass[11pt,a4paper]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+
+\numberwithin{equation}{chapter}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{theorem}[proposition]{Theorem}
+\newtheorem{corollary}[proposition]{Corollary}
+\theoremstyle{definition}
+\newtheorem{assumption}[proposition]{Assumption}
+\newtheorem{definition}[proposition]{Definition}
+\newtheorem{example}[proposition]{Example}
+% Upright body, bold head (not the italic amsthm "remark" style).
+\newtheorem{remark}[proposition]{Remark}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\HH}{\mathcal{H}}
+\newcommand{\Hu}{\mathcal{H}^{\mathrm{u}}}
+\newcommand{\NNet}{\mathcal{N\!N}}
+\newcommand{\as}{\ \PP\text{-a.s.}}
+
+\begin{document}
+
+\setcounter{chapter}{3}
+
+\chapter{Artifact: approximation under (A1) and (A6)}
+
+\subsection*{Neural network values converge to $\pi$}
+
+% FAKE REF: "(A1)", "(A6)" -> Chapter 3, Section 3.4.
+% FAKE REF: "(F1)", "(F3)" -> Section 4.2 (prop4_3_finite.tex).
+% FAKE REF: "Lemma~4.1" -> lem:monotone (lemma4_1_monotone.tex).
+% FAKE REF: "Lemma~4.4" -> lem:usc (lemma4_4_usc.tex).
+% FAKE REF: "Lemma~4.6" -> lem:truncation (lemma4_6_truncation.tex).
+The finite-space result of B\"uhler et al.\ fails on a general
+probability space at (F1) and (F3). The tools of this section repair
+both under the Chapter~3 hypotheses (A1) ($Z\in L^\infty$) and (A6)
+($W(\delta)\ge0$ a.s.\ for every $\delta\in\HH$): Lemma~4.6 restores a
+bounded near-optimal target, and Lemma~4.4 restores the limit passage
+inside the OCE. The following theorem combines them.
+
+% draft: Theorem 4.8 (approximation under (A1) and (A6));
+% same statement as thm:main-A in extension_with_A1_to_A6.tex.
+\begin{theorem}\label{thm:approximation}
+  Assume the standing market and network setting of B\"uhler et al., let
+  $\rho=\rho_\ell$ be an OCE risk measure, and assume (A1) and (A6). Then
+  \[
+    \lim_{M\to\infty}\pi_M(-Z)=\pi(-Z)
+  \]
+  in $[-\infty,\infty]$, the convergence being monotone from above.
+\end{theorem}
+
+\begin{proof}
+  Write $X:=-Z$. We distinguish the three cases
+  $\pi(X)=+\infty$, $\pi(X)\in\R$ and $\pi(X)=-\infty$.
+
+  \textit{Case $\pi(X)=+\infty$.}
+  By Lemma~4.1, $\pi_M(X)\ge\pi(X)=+\infty$ for every $M$, so
+  $\pi_M(X)=+\infty$ for all $M$ and the claim is trivial.
+
+  \textit{Case $\pi(X)\in\R$.}
+  By Lemma~4.1 it is enough to show that for every $\varepsilon>0$
+  there exists $M$ with $\pi_M(X)\le\pi(X)+\varepsilon$.
+
+  \textit{Step 1: a bounded near-optimal target.}
+  By Lemma~4.6 there exists a bounded strategy $\delta\in\Hu$, say
+  $|\delta_k|\le j$ a.s.\ for all $k$, such that
+  \[
+    \rho_\ell\bigl(X+W(H\circ\delta)\bigr)\le\pi(X)+\frac{\varepsilon}{2}.
+  \]
+  Write $\eta:=H\circ\delta$ and $Y:=X+W(\eta)$.
+
+  \textit{Step 2: representing maps and integrability.}
+  Each $\delta_k$ is $\F_k$-measurable with
+  $\F_k=\sigma(I_0,\dots,I_k)$, so there exist Borel maps
+  $f_k:\R^{r(k+1)}\to\R^d$ with $\delta_k=f_k(I_0,\dots,I_k)$. Truncating
+  each component of $f_k$ to the interval $[-j,j]$ changes nothing
+  $\PP$-a.s.\ and makes $f_k$ bounded everywhere. In particular every
+  component of $f_k$ lies
+  in $L^1(\mu_k)$, where $\mu_k$ is the law of $(I_0,\dots,I_k)$. This
+  settles (F1).
+
+  \textit{Step 3: network approximation.}
+  By Hornik's theorem applied componentwise, there exist networks
+  $F_{k,m}\in\NNet_{\infty,r(k+1),d}$ with $F_{k,m}\to f_k$ in
+  $L^1(\mu_k)$ as $m\to\infty$. Set
+  \[
+    \delta^m:=\bigl(F_{k,m}(I_0,\dots,I_k)\bigr)_{k=0,\dots,n-1}.
+  \]
+  Then $\delta^m_k\to\delta_k$ in $L^1(\PP)$ for every $k$. Passing to a
+  subsequence (not relabelled) we may assume
+  \[
+    \delta^m_k\longrightarrow\delta_k\as\qquad\text{for all }k=0,\dots,n-1
+  \]
+  simultaneously. Since each $F_{k,m}$ belongs to $\NNet_{\infty,r(k+1),d}$
+  and these families are nested with
+  $\bigcup_M\NNet_{M,r(k+1),d}=\NNet_{\infty,r(k+1),d}$, there exist
+  $M_m\uparrow\infty$ such that $\delta^m\in\HH_{M_m}$.
+
+  \textit{Step 4: constrained strategies and objectives.}
+  Set $\eta^m:=H\circ\delta^m$. Continuity of each $H_k(\omega,\cdot)$
+  and induction over $k$ give $\eta^m_k\to\eta_k$ $\PP$-a.s.\ for every
+  $k$. Gains converge: $(\eta^m\cdot S)_T\to(\eta\cdot S)_T$ a.s.\ Upper
+  semicontinuity of the $c_k(\omega,\cdot)$ yields
+  \[
+    \limsup_{m\to\infty}C_T(\eta^m)\le C_T(\eta)\as,
+  \]
+  and therefore, writing $Y_m:=X+W(\eta^m)$,
+  \[
+    \liminf_{m\to\infty}Y_m\ge Y\as.
+  \]
+  Furthermore, by (A6) and (A1), $Y_m\ge-\|Z\|_\infty$ a.s.\ for every $m$.
+
+  \textit{Step 5: conclusion.}
+  Now we fullfill all the conditions to use Lemma~4.4, which gives $\limsup_m\rho_\ell(Y_m)\le\rho_\ell(Y)\le\pi(X)+\varepsilon/2$.
+  Finally, choose $m_0$ with $\rho_\ell(Y_{m_0})\le\pi(X)+\varepsilon$. Since
+  $\delta^{m_0}\in\HH_{M_{m_0}}$, one has $\pi_M(X)\le\pi(X)+\varepsilon$
+  for all $M\ge M_{m_0}$.
+
+  \textit{Case $\pi(X)=-\infty$.}
+  Let $L\in\R$ be arbitrary. Choose $\delta\in\Hu$ with
+  $\rho_\ell(X+W(H\circ\delta))\le L-1$. Then, steps 1 to 5 above go through
+  with the threshold $L$ in place of $\pi(X)+\varepsilon$, yielding $M$ with
+  $\pi_M(X)\le L$. By choosing $L$ lower and lower, and being
+  $(\pi_M(X))_{M\in\N}$ non-increasing, $\pi_M(X)\to-\infty=\pi(X)$.
+\end{proof}
+
+\end{document}

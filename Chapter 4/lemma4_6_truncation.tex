@@ -1,0 +1,126 @@
+% ----------------------------------------------------------------------
+% Tool lemma: value-density of bounded strategies (truncation).
+% This file is an *artifact* for Section 4.3 of the thesis (tools for the
+% repair). Under (A1) and (A6), the hedging functional pi equals the
+% infimum of the OCE objective over bounded unconstrained strategies.
+% This repairs failure point (F1): one may always choose a near-optimal
+% target that is bounded (hence integrable) before invoking Hornik.
+% When integrating into the final thesis, strip the standalone preamble
+% and include this under the same numbering as the surrounding document
+% (keep the "% draft: ..." comment to preserve the original label).
+% Cross-references below are faked (hardcoded) so this artifact compiles
+% without defining the targets; comments say what they should point to.
+% ----------------------------------------------------------------------
+\documentclass[11pt,a4paper]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+
+\numberwithin{equation}{chapter}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{theorem}[proposition]{Theorem}
+\newtheorem{corollary}[proposition]{Corollary}
+\theoremstyle{definition}
+\newtheorem{assumption}[proposition]{Assumption}
+\newtheorem{definition}[proposition]{Definition}
+\newtheorem{example}[proposition]{Example}
+% Upright body, bold head (not the italic amsthm "remark" style).
+\newtheorem{remark}[proposition]{Remark}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\HH}{\mathcal{H}}
+\newcommand{\Hu}{\mathcal{H}^{\mathrm{u}}}
+\newcommand{\NNet}{\mathcal{N\!N}}
+\newcommand{\as}{\ \PP\text{-a.s.}}
+
+\begin{document}
+
+\setcounter{chapter}{3}
+
+\chapter{Artifact: value-density of bounded strategies}
+
+\subsection*{Bounded strategies are value-dense under (A1) and (A6)}
+
+% FAKE REF: "(F1)" -> the failure-point label of Section 4.2
+%   (prop4_3_finite.tex): integrability of the representing maps f_k.
+% FAKE REF: "(A1)", "(A6)" -> Chapter 3, Section 3.4 (full statements).
+% FAKE REF: "Lemma~4.4" -> replace by \ref{lem:usc}
+%   (lemma4_4_usc.tex): constant-envelope upper semicontinuity of OCEs.
+On a general probability space, near-optimal strategies need not have
+integrable hedge ratios, so Hornik's theorem cannot be applied
+directly. This is failure point (F1). We repair it under two hypotheses
+from Chapter~3: (A1) requires that the liability $Z$ is essentially
+bounded, i.e.\ $Z\in L^\infty$, and (A6) requires that every admissible
+gain is nonnegative, i.e.\ $W(\delta)\ge0$ a.s.\ for all $\delta\in\HH$.
+Together they give $X+W(\eta)=-Z+W(\eta)\ge-\|Z\|_\infty$ for every
+admissible $\eta$, which is the deterministic lower bound needed for
+Lemma~4.4. The next lemma shows that, under (A1) and (A6), bounded
+strategies are value-dense: every strategy can be replaced by a bounded
+one without worsening the OCE objective by more than an arbitrary
+$\varepsilon>0$. In particular, $\pi$ equals the infimum of the
+objective over bounded strategies alone.
+
+% draft: Lemma 4.6 (truncation / value-density of bounded strategies);
+% same statement as lem:truncation-A in extension_with_A1_to_A6.tex.
+\begin{lemma}\label{lem:truncation}
+  Assume (A1) and (A6), and let $X=-Z$. Then for every $\delta\in\Hu$ and
+  every $\varepsilon>0$ there exists a bounded $\delta'\in\Hu$ with
+  \[
+    \rho_\ell\bigl(X+W(H\circ\delta')\bigr)
+    \le\rho_\ell\bigl(X+W(H\circ\delta)\bigr)+\varepsilon.
+  \]
+  In particular,
+  \[
+    \pi(X)=\inf\bigl\{\rho_\ell\bigl(X+W(H\circ\delta)\bigr):
+    \delta\in\Hu,\ \delta\text{ bounded}\bigr\}.
+  \]
+\end{lemma}
+
+\begin{proof}
+  Fix $\delta\in\Hu$ and write $\eta:=H\circ\delta$, $Y:=X+W(\eta)$.
+  Define the componentwise truncations $\delta^{(j)}=(\delta^{(j)}_k)_{k=0,\dots,n-1}$
+  for $j\in\N$ by
+  \[
+    \delta^{(j)}_k:=
+    \begin{cases}
+      \delta_k & \text{if }\delta_k\in[-j,j], \\
+      -j       & \text{if }\delta_k<-j,       \\
+      j        & \text{if }\delta_k>j,
+    \end{cases}
+    \qquad k=0,\dots,n-1
+  \]
+  (applied componentwise if $d>1$). Then each $\delta^{(j)}$ is adapted
+  (hence in $\Hu$) and bounded by $j$. Set
+  $\eta^{(j)}:=H\circ\delta^{(j)}$ and $Y_j:=X+W(\eta^{(j)})$.
+
+  Since there are finitely many time steps, there exists a (random) index
+  $j_0<\infty$, namely
+  \[
+    j_0
+    :=
+    \max_{\substack{0\le k\le n-1\\ 1\le i\le d}}
+    \bigl\lceil\bigl|\delta_k^i\bigr|\bigr\rceil,
+  \]
+  such that $\delta^{(j)}_k=\delta_k$ for all $k$ and all $j\ge j_0$. In
+  particular $\delta^{(j)}_k\to\delta_k$ pointwise for every $k$. The
+  recursive definition of $H\circ{}$ then yields $\eta^{(j)}\to\eta$
+  pointwise, and therefore $Y_j\to Y$ pointwise.
+
+  By (A6), $W(\eta^{(j)})\ge0$ a.s., so $Y_j\ge-\|Z\|_\infty$ a.s.\ by
+  (A1). Lemma~4.4 with $B=\|Z\|_\infty$ gives
+  \[
+    \limsup_{j\to\infty}\rho_\ell(Y_j)\le\rho_\ell(Y).
+  \]
+  Choose $j$ large enough that $\rho_\ell(Y_j)\le\rho_\ell(Y)+\varepsilon$,
+  and set $\delta':=\delta^{(j)}$.
+\end{proof}
+
+\end{document}

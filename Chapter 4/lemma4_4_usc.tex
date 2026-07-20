@@ -1,0 +1,107 @@
+% ----------------------------------------------------------------------
+% Tool lemma: constant-envelope upper semicontinuity of OCE risk measures.
+% This file is an *artifact* for Section 4.3 of the thesis (tools for the
+% repair). It repairs failure point (F3): the limit passage inside the
+% risk measure along almost surely convergent sequences, provided a
+% deterministic lower envelope is available.
+% When integrating into the final thesis, strip the standalone preamble
+% and include this under the same numbering as the surrounding document
+% (keep the "% draft: ..." comment to preserve the original label).
+% Cross-references below are faked (hardcoded) so this artifact compiles
+% without defining the targets; comments say what they should point to.
+% ----------------------------------------------------------------------
+\documentclass[11pt,a4paper]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+
+\numberwithin{equation}{chapter}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{theorem}[proposition]{Theorem}
+\newtheorem{corollary}[proposition]{Corollary}
+\theoremstyle{definition}
+\newtheorem{assumption}[proposition]{Assumption}
+\newtheorem{definition}[proposition]{Definition}
+\newtheorem{example}[proposition]{Example}
+% Upright body, bold head (not the italic amsthm "remark" style).
+\newtheorem{remark}[proposition]{Remark}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\HH}{\mathcal{H}}
+\newcommand{\Hu}{\mathcal{H}^{\mathrm{u}}}
+\newcommand{\NNet}{\mathcal{N\!N}}
+\newcommand{\as}{\ \PP\text{-a.s.}}
+
+\begin{document}
+
+\setcounter{chapter}{3}
+
+\chapter{Artifact: constant-envelope upper semicontinuity}
+
+\subsection*{A tool for the limit passage inside the risk measure}
+
+% FAKE REF: "(F3)" -> the failure-point label of Section 4.2 of the
+%   thesis (see prop4_3_finite.tex): continuity of rho along a.s.
+%   convergence fails on general Omega.
+The failure point (F3) is the passage to the limit inside the risk
+measure: on a general probability space, a convex risk measure need not
+be upper semicontinuous along almost surely convergent sequences. The
+next lemma restores exactly this passage for OCE risk measures, provided
+all objectives share a deterministic lower envelope. It is the tool used
+in the proof of the approximation theorem.
+
+% draft: Lemma 4.4 (constant-envelope upper semicontinuity of OCEs);
+% same statement as lem:usc-A in extension_with_A1_to_A6.tex.
+\begin{lemma}\label{lem:usc}
+  Let $\ell:\R\to\R$ be convex and non-decreasing and let $\rho_\ell$ be
+  the associated OCE. Let $(Y_m)_{m\in\N}$ and $Y$ be random variables
+  with
+  \[
+    Y_m\ge-B\as\text{ for all }m,
+  \]
+  for some deterministic $B\ge0$. If $\liminf_{m\to\infty}Y_m\ge Y$
+  $\PP$-a.s., then
+  \[
+    \limsup_{m\to\infty}\rho_\ell(Y_m)\le\rho_\ell(Y).
+  \]
+\end{lemma}
+
+\begin{proof}
+  Fix $w\in\R$. Since $-(Y_m+w)\le B+|w|$ and $\ell$ is non-decreasing,
+  \[
+    g_w:=\ell(B+|w|)\ge\ell\bigl(-(Y_m+w)\bigr),
+  \]
+  so $g_w$ is a deterministic (hence integrable) constant dominating
+  $\ell\bigl(-(Y_m+w)\bigr)$. Extend $\ell$ to
+  $[-\infty,\infty)$ by $\ell(-\infty):=\lim_{t\to-\infty}\ell(t)$; the
+  extension is continuous and non-decreasing. For any real sequence
+  $(a_m)$ with $\sup_m a_m<\infty$ one has
+  $\limsup_m\ell(a_m)\le\ell(\limsup_m a_m)$. Applying this with
+  $a_m=-(Y_m+w)$ and using
+  $\limsup_m\bigl(-(Y_m+w)\bigr)=-\liminf_m(Y_m+w)\le-(Y+w)$ a.s.\ yields
+  \[
+    \limsup_{m\to\infty}\ell\bigl(-(Y_m+w)\bigr)\le\ell\bigl(-(Y+w)\bigr)\as.
+  \]
+  Reverse Fatou applied to the sequence
+  \[
+    g_w\ge\ell\bigl(-(Y_m+w)\bigr)
+  \]
+  gives
+  \[
+    \limsup_{m\to\infty}\E\bigl[\ell\bigl(-(Y_m+w)\bigr)\bigr]
+    \le\E\bigl[\ell\bigl(-(Y+w)\bigr)\bigr].
+  \]
+  Since $\rho_\ell(Y_m)\le w+\E[\ell(-(Y_m+w))]$, one obtains
+  $\limsup_m\rho_\ell(Y_m)\le w+\E[\ell(-(Y+w))]$ for every $w$, and
+  taking the infimum over $w$ completes the proof.
+\end{proof}
+
+\end{document}

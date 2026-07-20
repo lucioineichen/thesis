@@ -262,19 +262,21 @@ The next lemma is the general-$\Omega$ version of B\"uhler et al.\ \cite[Lemma~3
     Taking the infimum over $w$ on both sides yields $\rho_\ell(X_1)\ge\rho_\ell(X_2)$.
 
     \emph{Cash-invariance.} For $c\in\R$, the substitution $w'=w+c$ gives
-    \[
-        \rho_\ell(X+c)=\inf_{w\in\R}\Bigl(w+\E\bigl[\ell(-X-c-w)\bigr]\Bigr)
-        =\inf_{w'\in\R}\Bigl(w'-c+\E\bigl[\ell(-X-w')\bigr]\Bigr)=\rho_\ell(X)-c.
-    \]
+    \begin{align*}
+        \rho_\ell(X+c) & =\inf_{w\in\R}\Bigl(w+\E\bigl[\ell(-X-c-w)\bigr]\Bigr)                       \\
+                       & =\inf_{w'\in\R}\Bigl(w'-c+\E\bigl[\ell(-X-w')\bigr]\Bigr)=\rho_\ell(X)-c.
+    \end{align*}
 
     \emph{Convexity.} Fix $\alpha\in[0,1]$, positions $X_1,X_2$ and reserves $w_1,w_2\in\R$, and set $w_\alpha:=\alpha w_1+(1-\alpha)w_2$. Convexity of $\ell$ applied $\omega$-wise gives
     \[
         \ell\bigl(-\alpha X_1-(1-\alpha)X_2-w_\alpha\bigr)\le\alpha\ell(-X_1-w_1)+(1-\alpha)\ell(-X_2-w_2)\as
     \]
     Adding $w_\alpha$, taking expectations and estimating the left-hand side from below by the infimum over $w$,
-    \[
-        \rho_\ell\bigl(\alpha X_1+(1-\alpha)X_2\bigr)\le\alpha\Bigl(w_1+\E\bigl[\ell(-X_1-w_1)\bigr]\Bigr)+(1-\alpha)\Bigl(w_2+\E\bigl[\ell(-X_2-w_2)\bigr]\Bigr).
-    \]
+    \begin{align*}
+        \rho_\ell\bigl(\alpha X_1+(1-\alpha)X_2\bigr)
+         & \le\alpha\Bigl(w_1+\E\bigl[\ell(-X_1-w_1)\bigr]\Bigr)          \\
+         & \qquad+(1-\alpha)\Bigl(w_2+\E\bigl[\ell(-X_2-w_2)\bigr]\Bigr).
+    \end{align*}
     Taking the infimum over $w_1$ and $w_2$ separately yields convexity. All expectations used are well defined by Remark~\ref{rem:oce-welldef}, and the extended-real conventions cause no harm since only the value $+\infty$ can occur.
 \end{proof}
 
@@ -307,7 +309,7 @@ We close the chapter with the two families of OCEs that serve as running example
     \[
         \ell_\alpha(x):=\frac{\max(x,0)}{1-\alpha},
     \]
-    which is convex, non-decreasing and satisfies $\ell_\alpha(0)=0$ and $\partial\ell_\alpha(0)=[0,1/(1-\alpha)]\ni1$, so Assumption~\ref{ass:normalization} holds. The resulting OCE is the \emph{average value at risk} (also called conditional value at risk or expected shortfall) at level $1-\alpha$,
+    which is convex and non-decreasing with $\ell_\alpha(0)=0$ and $\partial\ell_\alpha(0)=[0,1/(1-\alpha)]\ni1$, so Assumption~\ref{ass:normalization} holds. The resulting OCE is the \emph{average value at risk} (also called conditional value at risk or expected shortfall) at level $1-\alpha$,
     \[
         \rho_{\ell_\alpha}(X)=\inf_{w\in\R}\Bigl(w+\frac{1}{1-\alpha}\E\bigl[(-X-w)^+\bigr]\Bigr)=\mathrm{AV@R}_{1-\alpha}(X),
     \]
