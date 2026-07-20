@@ -1,0 +1,747 @@
+% ----------------------------------------------------------------------
+% Chapter 4: Approximating hedging strategies by neural networks.
+% Assembled from the artifacts
+%   lemma4_1_monotone.tex   (monotone sandwich, end of Section 4.1)
+%   prop4_3_finite.tex      (finite-space proposition + what breaks, Section 4.2)
+%   prop4_7_counterexample.tex (failure on general Omega, Section 4.2)
+%   lemma4_4_usc.tex        (usc of OCEs, Section 4.3)
+%   lemma4_6_truncation.tex (truncation, Section 4.3)
+%   thm4_8_approximation.tex (main theorem, Section 4.3)
+% following ch4_structure.md. Old draft labels are preserved in
+% "% draft: ..." comments next to each result.
+% Remaining external references (Chapters 2 and 3, (A1) to (A6)) are
+% hardcoded in the text and marked with "% FAKE REF:" comments; replace
+% them by real \ref's at the final merge.
+% ----------------------------------------------------------------------
+\documentclass[11pt,a4paper]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+
+% Equation numbers: plain arabic integers, reset each chapter.
+% (styling.md item 1 asks for consecutive numbering within each section;
+%  with few numbered displays we use chapter-local (1), (2), ... .)
+\numberwithin{equation}{chapter}
+\renewcommand{\theequation}{\arabic{equation}}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{theorem}[proposition]{Theorem}
+\newtheorem{corollary}[proposition]{Corollary}
+\theoremstyle{definition}
+\newtheorem{assumption}[proposition]{Assumption}
+\newtheorem{definition}[proposition]{Definition}
+\newtheorem{example}[proposition]{Example}
+% Upright body, bold head (not the italic amsthm "remark" style).
+\newtheorem{remark}[proposition]{Remark}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\HH}{\mathcal{H}}
+\newcommand{\Hu}{\mathcal{H}^{\mathrm{u}}}
+\newcommand{\NNet}{\mathcal{N\!N}}
+\newcommand{\as}{\ \PP\text{-a.s.}}
+
+\begin{document}
+
+\setcounter{chapter}{3}
+
+\chapter{Approximating hedging strategies by neural networks}
+\label{ch:approximation}
+
+% FAKE REF: "(A1)" to "(A6)" throughout this chapter -> Chapter 3,
+%   Section 3.4 (full statements of the standing hypotheses).
+The previous chapter established that, under the hypotheses (A1) to
+(A6), the hedging functional $\pi$ admits an optimal strategy on a
+general probability space. This chapter turns to the second question:
+can the optimal hedge be approximated on a general $\Omega$ by neural
+network strategies? On a finite probability space, B\"uhler et al.\
+\cite[Proposition~4.3]{buehler} prove that the network values
+$\pi_M(X)$ decrease to $\pi(X)$ as the network capacity $M$ grows.
+We identify where that argument uses finiteness of $\Omega$, show by
+counterexample that the result fails in general.
+We then restore
+$\pi_M\to\pi$ under (A1) and (A6), the essential hypotheses of Chapter~3 to prove attainment. Combined with the attainment
+theorem of Chapter~3, this yields $\varepsilon$-optimal network
+strategies for an attained optimum.
+
+\section{Neural networks, market setup and the approximate problem}
+\label{sec:setup}
+
+\subsection*{The market and the hedging functional}
+
+% FAKE REF: market objects (I, S, Hu, H o delta, C_T, W, rho_ell)
+%   -> Chapter 2; pi -> Chapter 3; (A1)--(A6) -> Chapter 3, Section 3.4.
+We continue in the market setting of Chapter~2 (information process
+$I$, mid-price $S$, unconstrained strategies $\Hu$, constraints via
+$H\circ\delta$, costs $C_T$ and gains $W$) and write
+\begin{equation}\label{eq:pi}
+  \pi(X):=\inf_{\delta\in\Hu}\rho\bigl(X+W(H\circ\delta)\bigr)
+\end{equation}
+for the hedging functional of Chapter~3. Until the repair we do not
+impose (A1) to (A6); those hypotheses enter only when we restore
+$\pi_M\to\pi$ on general $\Omega$.
+
+\subsection*{Neural networks}
+
+A feed forward neural network with activation function
+$\sigma\colon\R\to\R$ is a map
+$F=W_L\circ F_{L-1}\circ\dots\circ F_1\colon\R^{d_0}\to\R^{d_1}$ with
+$F_j=\sigma\circ W_j$ for affine maps $W_j$, where $\sigma$ acts
+componentwise; see B\"uhler et al.\ \cite[Definition~2]{buehler}. We
+denote by $\NNet_{\infty,d_0,d_1}$ the set of all such networks and
+fix, as in \cite[Section~4.1]{buehler}, an increasing exhaustion
+$\NNet_{M,d_0,d_1}\subseteq\NNet_{M+1,d_0,d_1}$ with
+$\bigcup_{M\in\N}\NNet_{M,d_0,d_1}=\NNet_{\infty,d_0,d_1}$, each
+$\NNet_{M,d_0,d_1}$ parametrized by finitely many weights and
+containing the zero network, and such that networks with fewer inputs
+embed by zero weight connections. Throughout, the activation function
+$\sigma$ is measurable, bounded and nonconstant. The analytical basis
+of the approximation theory is the following universal approximation
+theorem of Hornik \cite[Theorem~1]{hornik}.
+
+% draft: Hornik's theorem (stated for later reference as thm:hornik).
+\begin{theorem}\label{thm:hornik}
+  Let $\sigma\colon\R\to\R$ be measurable, bounded and nonconstant, and
+  let $d_0\in\N$. Then for every finite measure $\mu$ on $\R^{d_0}$ and
+  every $p\in[1,\infty)$, the set $\NNet_{\infty,d_0,1}$ is dense in
+  $L^p(\R^{d_0},\mu)$. In particular, applying the result
+  componentwise, $\NNet_{\infty,d_0,d}$ is dense in
+  $L^p(\R^{d_0},\mu;\R^d)$ for every $d\in\N$.
+\end{theorem}
+
+\noindent
+The deep hedging approach replaces the infinite-dimensional strategy
+class $\Hu$ by finite-dimensional subclasses of network strategies. For
+each capacity $M\in\N$, following B\"uhler et al.\
+\cite[proof of Proposition~4.3]{buehler}, we set
+\[
+  \HH_M:=\bigl\{\delta\in\Hu:\delta_k=F_k(I_0,\dots,I_k)
+  \text{ with }F_k\in\NNet_{M,r(k+1),d}\bigr\}.
+\]
+Thus a strategy belongs to $\HH_M$ if and only if each hedge ratio
+$\delta_k$ is given by a network of complexity at most $M$ applied to
+the information $(I_0,\dots,I_k)$ available at time $t_k$. We do not
+include the previous position $\delta_{k-1}$ as an additional network
+input. Indeed, each $\delta_k$ is $\F_k$-measurable with
+$\F_k=\sigma(I_0,\dots,I_k)$, and $\delta_{k-1}$ is a function of
+$(I_0,\dots,I_{k-1},\delta_{k-2})$; recursively, every $\delta_k$ is
+already a function of $(I_0,\dots,I_k)$ alone, so feeding
+$\delta_{k-1}$ back would not enlarge the class of adapted strategies.
+The associated approximate hedging problem is
+\begin{equation}\label{eq:piM}
+  \pi_M(X):=\inf_{\delta\in\HH_M}\rho\bigl(X+W(H\circ\delta)\bigr).
+\end{equation}
+The question of this chapter is whether $\pi_M(X)$ approaches $\pi(X)$
+as $M\to\infty$. The following elementary observation reduces that
+question to a one-sided estimate.
+
+% draft: Lemma 4.1 (monotone sandwich for pi_M);
+% same statement as lem:monotone in extension_of_approximation_on_general.tex
+% and in the artifact lemma4_1_monotone.tex.
+\begin{lemma}\label{lem:monotone}
+  For every $X$ and every $M\in\N$, one has
+  \[
+    \pi_M(X)\ge\pi_{M+1}(X)\ge\pi(X).
+  \]
+  In particular, $\lim_{M\to\infty}\pi_M(X)$ exists in
+  $[-\infty,\infty]$ and dominates $\pi(X)$.
+\end{lemma}
+
+\begin{proof}
+  By definition, strategies in $\HH_M$ are processes
+  $\delta=(\delta_k)_{k=0,\dots,n-1}$ with
+  \[
+    \delta_k=F_k(I_0,\dots,I_k),\qquad k=0,\dots,n-1,
+  \]
+  for network maps $F_k$.  Therefore, each $\delta_k$ is $\F_k$-measurable
+  and $\delta$ is adapted. With the nested exhaustion of the network
+  classes one has $\HH_M\subseteq\HH_{M+1}\subseteq\Hu$, so the infima
+  defining $\pi_M$, $\pi_{M+1}$ and $\pi$ in \eqref{eq:pi} and
+  \eqref{eq:piM} are taken over increasing sets, which gives both
+  inequalities. The limit exists because the sequence
+  $(\pi_M(X))_{M\in\N}$ is nonincreasing and bounded below by $\pi(X)$
+  in $[-\infty,\infty]$.
+\end{proof}
+
+It remains to decide whether the limit equals $\pi(X)$.
+
+\section{The finite-space theorem and what breaks}
+\label{sec:finite}
+
+B\"uhler et al., Proposition~4.3, prove the following on a finite
+probability space. In the proof we flag each use of finiteness of
+$\Omega$ as (F1) to (F3); these are exactly the points that need
+attention on a general probability space.
+
+% draft: Proposition 4.3 (Buehler et al.);
+% reproduced from the artifact prop4_3_finite.tex.
+\begin{proposition}\label{prop:finitespace}
+  Suppose the probability space $\Omega=\{\omega_1,\dots,\omega_N\}$ is
+  finite with $\PP[\{\omega_i\}]>0$ for all $i$, and $\rho$ is a
+  convex risk measure. Then for every claim $X$ one has
+  $\displaystyle\lim_{M\to\infty}\pi_M(X)=\pi(X)$.
+\end{proposition}
+
+\begin{proof}
+  By monotonicity of $(\pi_M)_{M\in\N}$ (Lemma~\ref{lem:monotone}) it
+  suffices to show that for every $\varepsilon>0$ some $M$ satisfies
+  $\pi_M(X)\le\pi(X)+\varepsilon$.
+
+  Choose $\delta\in\Hu$ with
+  \begin{equation}\label{eq:nearopt}
+    \rho\bigl(X+W(H\circ\delta)\bigr)\le\pi(X)+\frac{\varepsilon}{2}.
+  \end{equation}
+  Write $\delta_k=f_k(I_0,\dots,I_k)$ for Borel maps
+  $f_k:\R^{r(k+1)}\to\R^d$.
+
+  % Run-in italic labels (not \paragraph): ordinary paragraphs => indent, no extra skip.
+  % \indent: amsthm proof often suppresses the first-line indent.
+  \indent\textit{(F1) Integrability of the hedge ratios.}
+  Because $\Omega$ is finite, each $\delta_k$ takes finitely many values
+  and every component of $f_k$ lies in $L^1(\mu_k)$ where $\mu_k$ is the
+  law of $(I_0,\dots,I_k)$. Finally, Theorem~\ref{thm:hornik} yields
+  networks $F_{k,m}\to f_k$ in $L^1(\mu_k)$.
+
+  \indent\textit{(F2) From $L^1$ to pointwise convergence.}
+  On a finite $\Omega$, $L^1$ convergence implies pointwise convergence:
+  $\delta^m_k:=F_{k,m}(I_0,\dots,I_k)\to\delta_k$ for every
+  $\omega\in\Omega$.
+
+  \indent Set $G_m:=((H\circ\delta^m)\cdot S)_T$ and
+  $C_m:=C_T(H\circ\delta^m)$. Since $H$ and the stochastic integral are
+  continuous, $G_m\to G$ pointwise. Furthermore, using upper
+  semicontinuity of the $c_k$ and continuity of $H$ again, one has
+  $\limsup_m C_m=\overline C\le C:=C_T(H\circ\delta)$ pointwise.
+
+  \indent\textit{(F3) Continuity of the risk measure.}
+  On the finite space $\Omega$, every random variable may be identified
+  with a vector in $\R^N$, so $\rho$ may be viewed as a convex map
+  $\R^N\to\R$ and is therefore continuous. Continuity and
+  monotonicity of $\rho$ give
+  \[
+    \lim_{m\to\infty}\rho(X+G_m-C_m)=\rho(X+G-\overline C)
+    \le\rho(X+G-C)\le\pi(X)+\frac{\varepsilon}{2}
+  \]
+  by~\eqref{eq:nearopt}. Pick $m$ large enough so that the
+  left-hand side is $\le\pi(X)+\varepsilon$. Since the network families
+  are nested with
+  $\bigcup_{M\in\N}\NNet_{M,r(k+1),d}=\NNet_{\infty,r(k+1),d}$, there
+  exists $M_m$ such that $\delta^m\in\HH_M$ for all $M\ge M_m$, and
+  therefore $\pi_M(X)\le\pi(X)+\varepsilon$ for all such $M$.
+\end{proof}
+
+\subsection*{What breaks on a general probability space}
+
+\begin{remark}\label{rem:F1}
+  \textbf{(F1): hedge ratios need not be integrable.}
+  On general $\Omega$, the representing functions $f_k$ need not lie in
+  $L^1(\mu_k)$, and then Theorem~\ref{thm:hornik} cannot even be
+  invoked: $f_k$ is not an element of the space in which networks are
+  dense.
+\end{remark}
+
+\begin{example}\label{ex:integrability}
+  Let $I_0$ have a standard Cauchy law $\mu_0$ and $\F_0=\sigma(I_0)$.
+  The strategy $\delta_0=f(I_0)$ with $f(x)=|x|$ is perfectly admissible
+  as a measurable adapted process, but $f\notin L^1(\mu_0)$, so no
+  sequence of $\mu_0$-integrable functions (in particular no sequence
+  of networks with bounded activation, which are bounded functions)
+  converges to $f$ in $L^1(\mu_0)$.
+\end{example}
+
+\begin{remark}\label{rem:F2}
+  \textbf{(F2): only subsequential almost sure convergence (harmless).}
+  On general $\Omega$, $L^1(\PP)$-convergence yields almost sure
+  convergence only along a subsequence. This is harmless for the
+  argument: the proof only requires \emph{one} good approximating
+  strategy, so we may freely pass to subsequences.
+\end{remark}
+
+\begin{remark}\label{rem:F3}
+  \textbf{(F3): the risk measure is not continuous along almost sure
+    convergence.}
+  This is the decisive failure. On $\R^N$, convexity of $\rho$ implies
+  continuity. On an infinite-dimensional domain, a convex risk measure
+  need not be continuous along almost sure convergence. The direction
+  needed in the final step of the proof is an \emph{upper}
+  semicontinuity:
+  \[
+    \limsup_{m\to\infty}\rho(Y_m)\le\rho(Y)\qquad\text{whenever }Y_m\to Y\as
+  \]
+  % FAKE REF: "(A3)" -> the half-bounded Fatou property of Chapter 3,
+  %   Section 3.4; lower semicontinuity, i.e. the opposite direction.
+  This fails even for the entropic risk measure, which satisfies the
+  half-bounded \emph{lower} semicontinuity (A3) of Chapter~3.
+\end{remark}
+
+\begin{example}\label{ex:explosion}
+  Work on $\Omega=(0,1)$ with the Borel $\sigma$-field and Lebesgue
+  measure, let $\lambda>0$ and let
+  $\rho_\lambda(Y)=\frac{1}{\lambda}\log\E[e^{-\lambda Y}]$ be the
+  entropic risk measure. Set $A_m:=(0,e^{-m})$ and
+  \[
+    Y_m:=-\frac{2m}{\lambda}\mathbf{1}_{A_m}.
+  \]
+  For every $\omega\in(0,1)$ one has $\omega\notin A_m$ for all
+  $m>\log(1/\omega)$, so $Y_m\to0$ everywhere. But
+  \[
+    \E\bigl[e^{-\lambda Y_m}\bigr]=1-e^{-m}+e^{-m}e^{2m}
+    =1-e^{-m}+e^{m}\longrightarrow\infty,
+  \]
+  so $\rho_\lambda(Y_m)\to\infty$ while $\rho_\lambda(0)=0$. Small
+  events carrying large losses make the risk explode along an almost
+  surely vanishing sequence.
+\end{example}
+
+\subsection*{Failure on a general probability space}
+
+We now show that Proposition~\ref{prop:finitespace} does not extend to a general probability space. The example is a one-period
+market with a perfect hedge whose hedge ratio is
+integrable but has no exponential moments.
+
+% draft: Proposition 4.7 (failure without extra assumptions);
+% same construction as prop:counterexample in
+% extension_of_approximation_on_general.tex and in the artifact
+% prop4_7_counterexample.tex.
+\begin{proposition}\label{prop:counterexample}
+  There exist a one-period market on a general probability space,
+  without transaction costs and without trading constraints, an entropic
+  risk measure $\rho_\lambda$ with arbitrary risk aversion $\lambda>0$
+  and a position $X=-Z$ with $Z\in L^1$ such that
+  \[
+    \pi(X)\le0\qquad\text{and}\qquad\pi_M(X)=+\infty\quad\text{for every }M\in\N.
+  \]
+  Moreover, $\rho_\lambda(X+\delta_0(S_1-S_0))=+\infty$ for \emph{every}
+  strategy of the form $\delta_0=F(I_0)$ with $F:\R\to\R$ bounded on
+  $(0,1)$; this covers all networks with bounded activation and all
+  networks with continuous activation.
+\end{proposition}
+
+\begin{proof}
+  Let $\Omega:=(0,1)\times\{-1,+1\}$ with
+  $\PP:=\mathrm{Leb}\otimes(\frac{1}{2}\delta_{-1}+\frac{1}{2}\delta_{+1})$,
+  and write $U(\omega):=\omega_1$ and $\xi(\omega):=\omega_2$, so that
+  $U$ is uniform on $(0,1)$, $\PP[\xi=\pm1]=\frac{1}{2}$ and $U,\xi$ are
+  independent. Take one trading period ($n=1$), information $I_0:=U$,
+  $I_1:=\xi$, hence $\F_0=\sigma(U)$ and $\F_1=\sigma(U,\xi)$, one asset
+  ($d=1$) with
+  \[
+    S_0:=1,\qquad S_1:=1+\frac{\xi}{2},
+  \]
+  no costs ($c_k\equiv0$) and no constraints ($H_0(\delta_0):=\delta_0$).
+  Note that $S$ is a $\PP$-martingale and $S_1>0$. Define
+  \[
+    h(u):=\frac{2}{\lambda}\log\frac{1}{u},\qquad u\in(0,1),\qquad
+    Z:=h(U)\frac{\xi}{2},\qquad X:=-Z.
+  \]
+  Then $\E[|Z|]=\frac{1}{2}\E[h(U)]=\frac{1}{\lambda}<\infty$, so
+  $Z\in L^1$.
+
+  \textit{The perfect hedge.}
+  The strategy $\delta_0:=h(U)$ is $\F_0$-measurable, and
+  \[
+    X+\delta_0(S_1-S_0)=-h(U)\frac{\xi}{2}+h(U)\frac{\xi}{2}=0,
+  \]
+  so $\pi(X)\le\rho_\lambda(0)=0$. Note that $\delta_0=h(U)\in L^1$; the
+  optimal strategy is integrable, so Theorem~\ref{thm:hornik} applies to
+  it and networks approximate it in $L^1(\PP)$ and, along a subsequence,
+  almost surely.
+
+  \textit{Every locally bounded strategy has infinite risk.}
+  Let $\delta_0=F(U)$ with $m:=\sup_{u\in(0,1)}|F(u)|<\infty$. Then
+  \[
+    \rho_\lambda\bigl(X+F(U)(S_1-S_0)\bigr)
+    =\frac{1}{\lambda}\log\E\Bigl[\exp\Bigl(\frac{\lambda}{2}\bigl(h(U)-F(U)\bigr)\xi\Bigr)\Bigr].
+  \]
+  The integrand is nonnegative, so the expectation is at least as large
+  as its restriction to the event $\{\xi=+1\}\cap\{h(U)>m\}$. On that
+  event one has $h(U)-F(U)\ge h(U)-m>0$, hence
+  \begin{align*}
+    \exp\Bigl(\frac{\lambda}{2}\bigl(h(U)-F(U)\bigr)\xi\Bigr)
+     & =\exp\Bigl(\frac{\lambda}{2}\bigl(h(U)-F(U)\bigr)\Bigr) \\
+     & \ge\exp\Bigl(\frac{\lambda}{2}\bigl(h(U)-m\bigr)\Bigr)
+    =\frac{e^{-\lambda m/2}}{U}.
+  \end{align*}
+  Independence of $U$ and $\xi$ and $\PP[\xi=+1]=\frac{1}{2}$ therefore
+  yield, with $u_m:=e^{-\lambda m/2}$,
+  \[
+    \E\Bigl[\exp\Bigl(\frac{\lambda}{2}\bigl(h(U)-F(U)\bigr)\xi\Bigr)\Bigr]
+    \ge\frac{e^{-\lambda m/2}}{2}\int_0^{u_m}\frac{1}{u}\,du=\infty,
+  \]
+  so the entropic risk is $+\infty$.
+
+  \textit{Networks are locally bounded.}
+  If the activation $\sigma$ is bounded, every network
+  $F=W_L\circ F_{L-1}\circ\dots\circ F_1$ is bounded on all of $\R$,
+  because the output of the last hidden layer lies in a bounded set and
+  $W_L$ is affine. If $\sigma$ is continuous, $F$ is continuous on $\R$
+  and therefore bounded on the compact set $[0,1]\supseteq(0,1)$. In
+  either case, every network strategy $\delta_0=F(I_0)$ has
+  $\sup_{(0,1)}|F|<\infty$, so $\rho_\lambda(X+W(\delta))=+\infty$ and
+  $\pi_M(X)=+\infty$ for every $M$.
+\end{proof}
+
+\section{Repair under the Chapter 3 hypotheses}
+\label{sec:repair}
+
+The finite-space approximation fails on general $\Omega$ at (F1) and
+(F3). We restore it under two hypotheses from Chapter~3: (A1), that the
+liability is essentially bounded ($Z\in L^\infty$), and (A6), that every
+admissible gain is nonnegative ($W(\delta)\ge0$ a.s.\ for all
+$\delta\in\HH$).
+
+% draft: Lemma 4.4 (constant-envelope upper semicontinuity of OCEs);
+% same statement as lem:usc-A in extension_with_A1_to_A6.tex and in the
+% artifact lemma4_4_usc.tex.
+\begin{lemma}\label{lem:usc}
+  Let $\ell:\R\to\R$ be convex and nondecreasing and let $\rho_\ell$ be
+  the associated OCE. Let $(Y_m)_{m\in\N}$ and $Y$ be random variables
+  with
+  \[
+    Y_m\ge-B\as\text{ for all }m,
+  \]
+  for some deterministic $B\ge0$. If $\liminf_{m\to\infty}Y_m\ge Y$
+  $\PP$-a.s., then
+  \[
+    \limsup_{m\to\infty}\rho_\ell(Y_m)\le\rho_\ell(Y).
+  \]
+\end{lemma}
+
+\begin{proof}
+  Fix $w\in\R$. Since $-(Y_m+w)\le B+|w|$ and $\ell$ is nondecreasing,
+  \[
+    g_w:=\ell(B+|w|)\ge\ell\bigl(-(Y_m+w)\bigr),
+  \]
+  so $g_w$ is a deterministic (hence integrable) constant dominating
+  $\ell\bigl(-(Y_m+w)\bigr)$. Extend $\ell$ to
+  $[-\infty,\infty)$ by $\ell(-\infty):=\lim_{t\to-\infty}\ell(t)$; the
+  extension is continuous and nondecreasing. For any real sequence
+  $(a_m)_{m\in\N}$ with $\sup_m a_m<\infty$ one has
+  $\limsup_m\ell(a_m)\le\ell(\limsup_m a_m)$. Applying this with
+  $a_m=-(Y_m+w)$ and using
+  $\limsup_m\bigl(-(Y_m+w)\bigr)=-\liminf_m(Y_m+w)\le-(Y+w)$ a.s.\ yields
+  \[
+    \limsup_{m\to\infty}\ell\bigl(-(Y_m+w)\bigr)\le\ell\bigl(-(Y+w)\bigr)\as.
+  \]
+  Reverse Fatou applied to the sequence
+  \[
+    g_w\ge\ell\bigl(-(Y_m+w)\bigr)
+  \]
+  gives
+  \[
+    \limsup_{m\to\infty}\E\bigl[\ell\bigl(-(Y_m+w)\bigr)\bigr]
+    \le\E\bigl[\ell\bigl(-(Y+w)\bigr)\bigr].
+  \]
+  Since $\rho_\ell(Y_m)\le w+\E[\ell(-(Y_m+w))]$, one obtains
+  $\limsup_m\rho_\ell(Y_m)\le w+\E[\ell(-(Y+w))]$ for every $w$, and
+  taking the infimum over $w$ completes the proof.
+\end{proof}
+
+The failure point (F1) is the integrability of the hedge ratios: on a
+general probability space, near-optimal strategies need not have
+integrable hedge ratios, so Theorem~\ref{thm:hornik} cannot be applied
+directly (Example~\ref{ex:integrability}). Under (A1) and (A6), every
+admissible objective satisfies
+$X+W(\eta)=-Z+W(\eta)\ge-\|Z\|_\infty$, which is the deterministic
+lower bound needed for Lemma~\ref{lem:usc}. The next lemma exploits
+this to show that bounded strategies are value-dense: every strategy
+can be replaced by a bounded one without worsening the OCE objective by
+more than an arbitrary $\varepsilon>0$. In particular, $\pi$ equals the
+infimum of the objective over bounded strategies alone.
+
+% draft: Lemma 4.6 (truncation / value-density of bounded strategies);
+% same statement as lem:truncation-A in extension_with_A1_to_A6.tex and
+% in the artifact lemma4_6_truncation.tex.
+\begin{lemma}\label{lem:truncation}
+  Assume (A1) and (A6), and let $X=-Z$. Then for every $\delta\in\Hu$ and
+  every $\varepsilon>0$ there exists a bounded $\delta'\in\Hu$ with
+  \[
+    \rho_\ell\bigl(X+W(H\circ\delta')\bigr)
+    \le\rho_\ell\bigl(X+W(H\circ\delta)\bigr)+\varepsilon.
+  \]
+  In particular,
+  \[
+    \pi(X)=\inf\bigl\{\rho_\ell\bigl(X+W(H\circ\delta)\bigr):
+    \delta\in\Hu,\ \delta\text{ bounded}\bigr\}.
+  \]
+\end{lemma}
+
+\begin{proof}
+  Fix $\delta\in\Hu$ and write $\eta:=H\circ\delta$, $Y:=X+W(\eta)$.
+  Define the componentwise truncations
+  $\delta^{(j)}=(\delta^{(j)}_k)_{k=0,\dots,n-1}$ for $j\in\N$ by
+  \[
+    \delta^{(j)}_k:=
+    \begin{cases}
+      \delta_k & \text{if }\delta_k\in[-j,j], \\
+      -j       & \text{if }\delta_k<-j,       \\
+      j        & \text{if }\delta_k>j,
+    \end{cases}
+    \qquad k=0,\dots,n-1
+  \]
+  (applied componentwise if $d>1$). Then each $\delta^{(j)}$ is adapted
+  (hence in $\Hu$) and bounded by $j$. Set
+  $\eta^{(j)}:=H\circ\delta^{(j)}$ and $Y_j:=X+W(\eta^{(j)})$.
+
+  Since there are finitely many time steps, there exists a (random)
+  index $j_0<\infty$, namely
+  \[
+    j_0
+    :=
+    \max_{\substack{0\le k\le n-1\\ 1\le i\le d}}
+    \bigl\lceil\bigl|\delta_k^i\bigr|\bigr\rceil,
+  \]
+  such that $\delta^{(j)}_k=\delta_k$ for all $k$ and all $j\ge j_0$. In
+  particular $\delta^{(j)}_k\to\delta_k$ pointwise for every $k$. The
+  recursive definition of $H\circ{}$ then yields $\eta^{(j)}\to\eta$
+  pointwise, and therefore $Y_j\to Y$ pointwise.
+
+  By (A6), $W(\eta^{(j)})\ge0$ a.s., so $Y_j\ge-\|Z\|_\infty$ a.s.\ by
+  (A1). Lemma~\ref{lem:usc} with $B=\|Z\|_\infty$ gives
+  \[
+    \limsup_{j\to\infty}\rho_\ell(Y_j)\le\rho_\ell(Y).
+  \]
+  Choose $j$ large enough that
+  $\rho_\ell(Y_j)\le\rho_\ell(Y)+\varepsilon$, and set
+  $\delta':=\delta^{(j)}$.
+\end{proof}
+
+The following theorem combines the two repairs with the monotone
+sandwich of Lemma~\ref{lem:monotone}. It is the main result of this
+chapter.
+
+% draft: Theorem 4.8 (approximation under (A1) and (A6));
+% same statement as thm:main-A in extension_with_A1_to_A6.tex and in the
+% artifact thm4_8_approximation.tex.
+\begin{theorem}\label{thm:approximation}
+  Assume the standing market and network setting of B\"uhler et al., let
+  $\rho=\rho_\ell$ be an OCE risk measure, and assume (A1) and (A6). Then
+  \[
+    \lim_{M\to\infty}\pi_M(-Z)=\pi(-Z)
+  \]
+  in $[-\infty,\infty]$, the convergence being monotone from above.
+\end{theorem}
+
+\begin{proof}
+  Write $X:=-Z$. We distinguish the three cases
+  $\pi(X)=+\infty$, $\pi(X)\in\R$ and $\pi(X)=-\infty$.
+
+  \textit{Case $\pi(X)=+\infty$.}
+  By Lemma~\ref{lem:monotone}, $\pi_M(X)\ge\pi(X)=+\infty$ for every
+  $M$, so $\pi_M(X)=+\infty$ for all $M$ and the claim is trivial.
+
+  \textit{Case $\pi(X)\in\R$.}
+  By Lemma~\ref{lem:monotone} it is enough to show that for every
+  $\varepsilon>0$ there exists $M$ with
+  $\pi_M(X)\le\pi(X)+\varepsilon$.
+
+  \textit{Step 1: a bounded near-optimal target.}
+  By Lemma~\ref{lem:truncation} there exists a bounded strategy
+  $\delta\in\Hu$, say $|\delta_k|\le j$ a.s.\ for all $k$, such that
+  \[
+    \rho_\ell\bigl(X+W(H\circ\delta)\bigr)\le\pi(X)+\frac{\varepsilon}{2}.
+  \]
+  Write $\eta:=H\circ\delta$ and $Y:=X+W(\eta)$.
+
+  \textit{Step 2: representing maps and integrability.}
+  Each $\delta_k$ is $\F_k$-measurable with
+  $\F_k=\sigma(I_0,\dots,I_k)$, so there exist Borel maps
+  $f_k:\R^{r(k+1)}\to\R^d$ with $\delta_k=f_k(I_0,\dots,I_k)$.
+  Truncating each component of $f_k$ to the interval $[-j,j]$ changes
+  nothing $\PP$-a.s.\ and makes $f_k$ bounded everywhere. In particular
+  every component of $f_k$ lies in $L^1(\mu_k)$, where $\mu_k$ is the
+  law of $(I_0,\dots,I_k)$. This settles (F1).
+
+  \textit{Step 3: network approximation.}
+  By Theorem~\ref{thm:hornik} applied componentwise, there exist
+  networks $F_{k,m}\in\NNet_{\infty,r(k+1),d}$ with $F_{k,m}\to f_k$
+  in $L^1(\mu_k)$ as $m\to\infty$. Set
+  \[
+    \delta^m:=\bigl(F_{k,m}(I_0,\dots,I_k)\bigr)_{k=0,\dots,n-1}.
+  \]
+  Then $\delta^m_k\to\delta_k$ in $L^1(\PP)$ for every $k$. Passing to a
+  subsequence (not relabelled) we may assume
+  \[
+    \delta^m_k\longrightarrow\delta_k\as\qquad\text{for all }k=0,\dots,n-1
+  \]
+  simultaneously. Since each $F_{k,m}$ belongs to
+  $\NNet_{\infty,r(k+1),d}$ and these families are nested with
+  $\bigcup_M\NNet_{M,r(k+1),d}=\NNet_{\infty,r(k+1),d}$, there exist
+  $M_m\uparrow\infty$ such that $\delta^m\in\HH_{M_m}$.
+
+  \textit{Step 4: constrained strategies and objectives.}
+  Set $\eta^m:=H\circ\delta^m$. Continuity of each $H_k(\omega,\cdot)$
+  and induction over $k$ give $\eta^m_k\to\eta_k$ $\PP$-a.s.\ for every
+  $k$. Gains converge: $(\eta^m\cdot S)_T\to(\eta\cdot S)_T$ a.s.\ Upper
+  semicontinuity of the $c_k(\omega,\cdot)$ yields
+  \[
+    \limsup_{m\to\infty}C_T(\eta^m)\le C_T(\eta)\as,
+  \]
+  and therefore, writing $Y_m:=X+W(\eta^m)$,
+  \[
+    \liminf_{m\to\infty}Y_m\ge Y\as.
+  \]
+  Furthermore, by (A6) and (A1), $Y_m\ge-\|Z\|_\infty$ a.s.\ for every
+  $m$.
+
+  \textit{Step 5: conclusion.}
+  All conditions of Lemma~\ref{lem:usc} are now satisfied with
+  $B=\|Z\|_\infty$, and it gives
+  $\limsup_m\rho_\ell(Y_m)\le\rho_\ell(Y)\le\pi(X)+\varepsilon/2$.
+  Finally, choose $m_0$ with $\rho_\ell(Y_{m_0})\le\pi(X)+\varepsilon$.
+  Since $\delta^{m_0}\in\HH_{M_{m_0}}$, one has
+  $\pi_M(X)\le\pi(X)+\varepsilon$ for all $M\ge M_{m_0}$.
+
+  \textit{Case $\pi(X)=-\infty$.}
+  Let $L\in\R$ be arbitrary. Choose $\delta\in\Hu$ with
+  $\rho_\ell(X+W(H\circ\delta))\le L-1$. Then, steps 1 to 5 above go
+  through with the threshold $L$ in place of $\pi(X)+\varepsilon$,
+  yielding $M$ with $\pi_M(X)\le L$. By choosing $L$ lower and lower,
+  and being $(\pi_M(X))_{M\in\N}$ nonincreasing,
+  $\pi_M(X)\to-\infty=\pi(X)$.
+\end{proof}
+
+% draft: Remark after Theorem 4.8 (what is not used; weakening (A1));
+% condensed from rem:unused and rem:A1prime in extension_with_A1_to_A6.tex.
+\begin{remark}\label{rem:unused}
+  The proof uses (A1) and (A6), the standing continuity structure of
+  the maps $H_k$ and cost functions $c_k$, the OCE representation of
+  $\rho$ and Theorem~\ref{thm:hornik}. It does not use (A2) to (A5)
+  (convexity of $\HH$, the half-bounded Fatou property,
+  $L^0$-boundedness of the gain set and closedness of the dominated
+  gain cone). Those hypotheses
+  remain needed for attainment in Chapter~3; they are not needed for
+  value convergence. The full strength of (A1) is also not needed: the
+  same proof works if $Z$ is merely bounded from below with
+  $\E[\ell(Z+c)]<\infty$ for every $c\ge0$, the deterministic envelope
+  in Lemma~\ref{lem:usc} being replaced by a random $\ell$-integrable
+  one. We do not pursue this weakening.
+\end{remark}
+
+Combining Theorem~\ref{thm:approximation} with the attainment theorem
+of Chapter~3 gives the punchline of this thesis.
+
+% draft: Corollary 4.10 (approximation of an attained optimum);
+% same statement as cor:attained-A in extension_with_A1_to_A6.tex.
+\begin{corollary}\label{cor:attained}
+  Assume in addition \textup{(A2)} to \textup{(A5)}, so that the
+  attainment theorem of Chapter~3 applies. Then there exists
+  $\delta^*\in\HH$ with $\rho_\ell(-Z+W(\delta^*))=\pi(-Z)$, and for
+  every $\varepsilon>0$ there exist $M\in\N$ and
+  $\delta^\varepsilon\in\HH_M$ with
+  \[
+    \rho_\ell\bigl(-Z+W(H\circ\delta^\varepsilon)\bigr)
+    \le\rho_\ell\bigl(-Z+W(\delta^*)\bigr)+\varepsilon.
+  \]
+\end{corollary}
+
+\begin{proof}
+  The existence of $\delta^*$ follows from the attainment theorem of
+  Chapter~3, and the $\varepsilon$-statement is
+  Theorem~\ref{thm:approximation}.
+\end{proof}
+
+In one sentence: under (A1) to (A6), neural network strategies are
+$\varepsilon$-optimal for an \emph{attained} optimum.
+
+\section{From theory to algorithm}
+\label{sec:algorithm}
+
+Theorem~\ref{thm:approximation} justifies replacing the strategy class
+$\Hu$ by the network classes $\HH_M$; this section records why that
+replacement makes the hedging problem computable. For an OCE one has
+$\rho_\ell(Y)=\inf_{w\in\R}\{w+\E[\ell(-Y-w)]\}$, so with
+$Y=-Z+W(H\circ\delta^\theta)$, where $\delta^\theta\in\HH_M$ is
+determined by the finitely many network weights $\theta$ of the maps
+$F_{\theta_k}$, the approximate problem \eqref{eq:piM} becomes
+\[
+  \pi_M(-Z)
+  =\inf_{(w,\theta)}
+  \Bigl\{w+\E\bigl[\ell\bigl(Z-W(H\circ\delta^\theta)-w\bigr)\bigr]\Bigr\}.
+\]
+This is a finite-dimensional minimization over the pair $(w,\theta)$,
+jointly and without any inner optimization. In practice the expectation
+is estimated by minibatches of simulated (or historically calibrated)
+sample paths of the information process $I$, the gradient in
+$(w,\theta)$ is computed by backpropagation through the semi-recurrent
+parametrization $\delta_k=F_{\theta_k}(I_0,\dots,I_k,\delta_{k-1})$,
+and the minimization is carried out by stochastic gradient descent. For
+the entropic risk measure the inner minimizer is explicit,
+\[
+  w^*=\frac{1}{\lambda}\log\E\bigl[e^{\lambda(Z-W(H\circ\delta^\theta))}\bigr],
+\]
+so one minimizes over $\theta$ alone; cf.\ B\"uhler et al.\
+\cite[Section~3.2]{buehler}.
+
+This thesis contains no numerical experiments of its own. B\"uhler et
+al.\ \cite[Section~5]{buehler} train these networks and backtest the
+resulting hedges: in their experiments the learned strategies achieve a
+substantial reduction of the hedging risk relative to the unhedged
+position and remain competitive with classical model-based benchmarks
+in the presence of transaction costs, where the classical strategies
+are no longer optimal. One structural caveat must be stated explicitly:
+the networks are trained exclusively on historic data or on simulated
+data calibrated to historic observations. A backtest evaluates the
+hedge on the same statistical regime it was trained on, and past
+performance is not indicative of future results; this limitation is
+inherent to the method and not an implementation detail. Finally, for
+general convex risk measures beyond OCEs, the robust representation
+leads to a minimax problem over two networks
+(B\"uhler et al.\ \cite[Section~4.5]{buehler}); this extension is not
+pursued in this thesis.
+
+\section{Strategies need not converge}
+\label{sec:strategies}
+
+Theorem~\ref{thm:approximation} and Corollary~\ref{cor:attained} are
+statements about \emph{values}: the network values converge to
+$\pi(-Z)$, and near-minimizers are $\varepsilon$-optimal. We close the
+chapter by observing that nothing of this kind holds for the strategies
+themselves.
+
+% draft: Example (nonuniqueness blocks strategy convergence);
+% same as ex:nonunique in extension_with_A1_to_A6.tex.
+\begin{example}\label{ex:nonunique}
+  Let $S\equiv s_0$ be constant, $C_T\equiv0$ and $\HH=\Hu$ (no
+  constraints). Then $W(\delta)=0$ for every $\delta$, so every
+  strategy is optimal for every $Z$ and $\pi(-Z)=\rho_\ell(-Z)$.
+  Network near-minimizers may oscillate indefinitely between distinct
+  elements of $\HH_M$ without converging in any topology. The same
+  phenomenon occurs with two identical assets and zero costs: the
+  strategies $(\delta,0)$ and $(0,\delta)$ produce the same gain, and
+  minimizers may alternate between them.
+\end{example}
+
+\begin{remark}\label{rem:values-not-strategies}
+  Theorem~\ref{thm:approximation} and Corollary~\ref{cor:attained}
+  should therefore be read as value statements only. Without strict
+  convexity of the loss function $\ell$ and a nonredundancy condition
+  on $S$, optimal strategies need not be unique, and a sequence of
+  network near-minimizers $\delta^M\in\HH_M$ need not converge to an
+  optimal strategy $\delta^*$ in any reasonable topology. What the
+  theory guarantees is that the \emph{risk} of $\delta^M$ approaches
+  the optimal risk; which minimizer the training procedure selects is
+  not determined by the value convergence.
+\end{remark}
+
+\begin{thebibliography}{9}
+
+  \bibitem{buehler}
+  H. B\"uhler, L. Gonon, J. Teichmann and B. Wood,
+  Deep hedging,
+  \emph{Quantitative Finance} 19(8), 1271-1291, 2019.
+
+  \bibitem{hornik}
+  K. Hornik,
+  Approximation capabilities of multilayer feedforward networks,
+  \emph{Neural Networks} 4(2), 251-257, 1991.
+
+\end{thebibliography}
+
+\end{document}

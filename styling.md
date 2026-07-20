@@ -66,3 +66,5 @@ Other additions:
 22) No en-dashes or em-dashes: Do not use LaTeX `--` (en-dash) or `---` (em-dash) in the text. Prefer commas, parentheses or a single hyphen `-` as appropriate. Examples: write "(F1) to (F3)" or "(F1)-(F3)", not "(F1)--(F3)"; write "(in particular, ...)" or ", in particular, ...", not "--- in particular ---"; write "convergence, harmless" or "convergence (harmless)", not "convergence --- harmless".
 
 23) Sequences indexed by natural numbers: Always write sequences with the index ranging over \(\mathbb{N}\) (or \(\N\)) explicitly. Write \((\pi_M(X))_{M\in\N}\), \((a_n)_{n\in\N}\), \((\delta^m)_{m\in\N}\), not \((\pi_M(X))_M\), \((a_n)_n\) or \((\delta^m)_m\). The same applies to subsequences and double-indexed families when the free index runs over \(\N\).
+
+24) Closed compounds with "non": Write prefixes of the form "non-..." as a single word, without a hyphen. Examples: nonincreasing, nondecreasing, nonconstant, nonnegative, nonredundant, nonuniqueness; not non-increasing, non-decreasing, non-constant, etc.
