@@ -1,0 +1,498 @@
+\documentclass[11pt,a4paper]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+
+\numberwithin{equation}{chapter}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{theorem}[proposition]{Theorem}
+\theoremstyle{definition}
+\newtheorem{assumption}[proposition]{Assumption}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\HH}{\mathcal{H}}
+\newcommand{\CC}{\mathcal{C}}
+\newcommand{\as}{\ \PP\text{-a.s.}}
+
+\begin{document}
+
+\setcounter{chapter}{2}
+
+\chapter{The hedging optimisation problem}
+
+In this chapter, we assemble the ingredients of Chapter~1 (the market) and Chapter~2 (the convex risk measure) into the hedging functional $\pi$. After deriving its basic properties, we turn to the central mathematical contribution of the thesis: an attainment theorem for the infimum defining $\pi$ on a general probability space.
+
+\section{Definition of the hedging functional}
+
+Let $\rho\colon L^0(\Omega,\F_T,\PP)\to\overline{\R}$ be an extended-real-valued convex risk measure. Thus $\rho$ is monotone, cash-invariant and convex, with values allowed to be $\pm\infty$. For $X\in L^0(\Omega,\F_T,\PP)$, define
+\begin{equation}\label{eq:def-pi}
+    \pi(X):=\inf_{\delta\in\HH}\rho\bigl(X+(\delta\cdot S)_T-C_T(\delta)\bigr).
+\end{equation}
+A minimiser $\delta^*$ of \eqref{eq:def-pi}, if one exists, is called an \emph{optimal hedging strategy} for $X$. The interpretation is the standard one from Chapter~1: the trader holds the position $X$ (typically $X=-Z+p_0$, where $Z$ is the liability and $p_0$ is a premium), trades according to $\delta$ and pays the transaction costs $C_T(\delta)$.
+
+\section{Basic properties of $\pi$}
+
+\begin{proposition}\label{prop:convex}
+    Suppose $\rho$ is a convex risk measure on $L^0$, $\HH$ is convex and the cost functional $\delta\mapsto C_T(\delta)$ is convex. Then $\pi$ is a convex risk measure on $L^0$.
+\end{proposition}
+
+\begin{proof}
+    The argument is the discrete-time analogue of B\"uhler et al.\ \cite[Proposition~3.1]{buehler}, with convex combinations now taken $\PP$-a.s.\ rather than pointwise on a finite $\Omega$.
+
+    \emph{(M) Monotonicity.} If $X_1\le X_2$ $\PP$-a.s., then for every $\delta\in\HH$, one has
+    \[
+        X_1+(\delta\cdot S)_T-C_T(\delta)\le X_2+(\delta\cdot S)_T-C_T(\delta)\qquad\PP\text{-a.s.}
+    \]
+    Monotonicity of $\rho$ reverses the inequality and taking the infimum over $\delta$ preserves it, giving $\pi(X_1)\ge\pi(X_2)$.
+
+    \emph{(C) Cash-invariance.} For $c\in\R$ and $\delta\in\HH$, cash-invariance of $\rho$ gives
+    \[
+        \rho\bigl(X+c+(\delta\cdot S)_T-C_T(\delta)\bigr)=\rho\bigl(X+(\delta\cdot S)_T-C_T(\delta)\bigr)-c.
+    \]
+    Taking the infimum over $\delta$ on both sides yields $\pi(X+c)=\pi(X)-c$.
+
+    \emph{(V) Convexity.} Fix $\alpha\in[0,1]$, $X_1,X_2\in L^0$ and $\delta_1,\delta_2\in\HH$. Convexity of $\HH$ gives
+    \[
+        \delta_\alpha:=\alpha\delta_1+(1-\alpha)\delta_2\in\HH.
+    \]
+    Linearity of the stochastic integral, convexity of $C_T$ and monotonicity of $\rho$ imply
+    \begin{align*}
+         & \rho\Big(\alpha X_1+(1-\alpha)X_2+(\delta_\alpha\cdot S)_T-C_T(\delta_\alpha)\Big)                                                          \\
+         & \qquad\le\rho\Big(\alpha\bigl(X_1+(\delta_1\cdot S)_T-C_T(\delta_1)\bigr)+(1-\alpha)\bigl(X_2+(\delta_2\cdot S)_T-C_T(\delta_2)\bigr)\Big).
+    \end{align*}
+    Applying convexity of $\rho$ to the right-hand side and taking the infimum over $\delta_1$ and $\delta_2$ separately gives
+    \[
+        \pi\bigl(\alpha X_1+(1-\alpha)X_2\bigr)\le\alpha\pi(X_1)+(1-\alpha)\pi(X_2).\qedhere
+    \]
+\end{proof}
+
+\section{Indifference price}
+
+The \emph{indifference price} after B\"uhler et al.\ \cite{buehler} of a liability $Z\in L^0(\Omega,\F_T,\PP)$ is
+\[
+    p(Z):=\pi(-Z)-\pi(0).
+\]
+Cash-invariance of $\pi$, established in Proposition~\ref{prop:convex}, gives $\pi(-Z+p(Z))=\pi(0)$, so $p(Z)$ is the unique cash amount that makes the trader indifferent (in the $\rho$-sense) between selling $Z$ and not doing business at all. The next result is the basic consistency property of $p$; it is the discrete-time analogue of the martingale-case statement of B\"uhler et al.\ \cite{buehler}. It operates under the assumption of an efficient market, but under otherwise lighter hypotheses than those required for attainment.
+
+\begin{proposition}\label{prop:martingale}
+    Suppose $S$ is a $\PP$-martingale with respect to the filtration $\mathbb{F}=(\F_k)_{k=0,\dots,n}$, $\rho=\rho_\ell$ is an OCE risk measure with loss function $\ell$ and $C_T(\delta)\ge0$ for every $\delta\in\HH$. Assume in addition that every $\delta\in\HH$ is admissible in the sense that the gain process $(\delta\cdot S)_k$, $k=0,\dots,n$, is uniformly bounded from below. Then
+    \begin{enumerate}[leftmargin=*]
+        \item[\textup{(i)}] $\pi(0)=\rho_\ell(0)$;
+        \item[\textup{(ii)}] $p(Z)\ge\E[Z]$ for every bounded $Z$.
+    \end{enumerate}
+\end{proposition}
+
+The uniform lower bound on the gain process is a mild admissibility requirement in the same spirit as the gain-side hypothesis (A6) imposed from Section~\ref{sec:gain-side} onwards; it excludes doubling-type strategies and is exactly what makes the martingale argument in the proof below work.
+
+\begin{proof}
+    The inequality $\pi(0)\le\rho_\ell(0)$ in (i) is immediate from $\delta\equiv0\in\HH$ and $C_T(0)=0$. For the converse, we expand $\pi(-Z)$ using the OCE representation
+    \[
+        \rho_\ell(X)=\inf_{w\in\R}\Big(w+\E\bigl[\ell(-X-w)\bigr]\Big)
+    \]
+    (cf.\ Chapter~2, Definition~??) and apply Jensen's inequality to the inner expectation. Starting from the definition and using Jensen's inequality for the convex function $\ell$,
+    \begin{align*}
+        \pi(-Z) & =\inf_{\delta\in\HH}\inf_{w\in\R}\Big(w+\E\bigl[\ell\bigl(Z-(\delta\cdot S)_T+C_T(\delta)-w\bigr)\bigr]\Big) \\
+                & \ge\inf_{\delta\in\HH}\inf_{w\in\R}\Big(w+\ell\bigl(\E[Z-(\delta\cdot S)_T+C_T(\delta)-w]\bigr)\Big).
+    \end{align*}
+
+    We claim that
+    \[
+        \E\bigl[(\delta\cdot S)_T\bigr]=0\qquad\text{for every }\delta\in\HH.
+    \]
+    One cannot argue this a priori via the tower property, because the increments $\delta_k\cdot(S_{k+1}-S_k)$ need not be known to lie in $L^1$. Therefore, we use the admissibility assumption. In discrete time, the martingale transform of a martingale by a process $(\delta_k)$ such that $\delta_k$ is $\F_k$-measurable for every $k$ is itself a martingale whenever it is uniformly bounded from below; see F\"ollmer and Schied \cite{foellmerschied}. The admissibility assumption supplies precisely this lower bound---it excludes doubling-type strategies---so $\delta\cdot S$ is a martingale. In particular each increment is integrable, and therefore we can apply the tower property:
+    \[
+        \E\bigl[\delta_k\cdot(S_{k+1}-S_k)\bigr]
+        =\E\Bigl[\E\bigl[\delta_k\cdot(S_{k+1}-S_k)\bigm|\F_k\bigr]\Bigr]
+        =\E[0]=0
+    \]
+    for every $k$. Summing over $k$ yields the claim
+    \[
+        \E\bigl[(\delta\cdot S)_T\bigr]
+        =\sum_k\E\bigl[\delta_k\cdot(S_{k+1}-S_k)\bigr]
+        =0.
+    \]
+
+    By this identity, the inner expectation above equals $\E[Z]+\E[C_T(\delta)]-w$. Nonnegativity of $C_T(\delta)$ gives $\E[C_T(\delta)]\ge0$. Combined with monotonicity of $\ell$, we get
+    \[
+        \ell\bigl(\E[Z]+\E[C_T(\delta)]-w\bigr)\ge\ell\bigl(\E[Z]-w\bigr),
+    \]
+    so
+    \[
+        \pi(-Z)\ge\inf_{w\in\R}\Big(w+\ell\bigl(\E[Z]-w\bigr)\Big)=\rho_\ell\bigl(-\E[Z]\bigr)=\rho_\ell(0)+\E[Z],
+    \]
+    where the last equality uses cash-invariance of $\rho_\ell$. Setting $Z=0$ gives $\pi(0)\ge\rho_\ell(0)$, which together with the trivial direction yields (i). For general $Z$, statement (ii) follows from
+    \[
+        p(Z)=\pi(-Z)-\pi(0)\ge\rho_\ell(0)+\E[Z]-\rho_\ell(0)=\E[Z].\qedhere
+    \]
+\end{proof}
+
+\section{Towards attainment: gain-side hypotheses}\label{sec:gain-side}
+
+We now turn to the central question of this chapter: when is the infimum in \eqref{eq:def-pi} attained? On a finite $\Omega$, this is always the case and follows automatically from the theorem of Weierstrass because the strategy space is finite-dimensional. On a general probability space, neither the strategy space nor the objective is automatically well-behaved enough for Weierstrass to apply and one needs additional analytical input.
+
+We formulate this input as hypotheses on the \emph{gain process}
+\[
+    W(\delta):=(\delta\cdot S)_T-C_T(\delta),\qquad\delta\in\HH.
+\]
+The gain set is
+\[
+    \HH_W:=\{W(\delta):\delta\in\HH\}\subseteq L^0(\Omega,\F_T,\PP),
+\]
+and the \emph{dominated gain cone} is
+\[
+    \CC:=\HH_W-L^0_+=\{W(\delta)-L:\delta\in\HH,\ L\in L^0_+\},
+\]
+where $L^0_+=\{L\in L^0:L\ge0\ \PP\text{-a.s.}\}$. The set $\CC$ is the downward extension of $\HH_W$: $Y\in\CC$ means that there exists $\delta\in\HH$ with $Y\le W(\delta)$ $\PP$-a.s.
+
+\begin{assumption}\label{ass:main}
+    \textbf{Throughout the rest of this chapter, we assume}
+    \begin{enumerate}[leftmargin=*,label=\textup{(A\arabic*)}]
+        \item $Z\in L^\infty(\Omega,\F_T,\PP)$;
+        \item $\HH$ is convex;
+        \item $\rho$ has the \emph{half-bounded Fatou property}: for every sequence $(Y_n)_{n\in\N}\subseteq L^0$ with $\inf_{n\in\N}Y_n\ge-B$ $\PP$-a.s.\ for some $B\ge0$ and $Y_n\to Y$ $\PP$-a.s., one has
+              \[
+                  \rho(Y)\le\liminf_{n\to\infty}\rho(Y_n);
+              \]
+        \item $\HH_W$ is bounded in $L^0$: for every $\varepsilon>0$, there exists $K\ge0$ such that
+              \[
+                  \sup_{\delta\in\HH}\PP[|W(\delta)|>K]<\varepsilon;
+              \]
+        \item the dominated gain cone $\CC$ is closed in $L^0$ under convergence in probability;
+        \item $W(\delta)\in L^0_+$ for every $\delta\in\HH$.
+    \end{enumerate}
+\end{assumption}
+
+We comment on each hypothesis in turn before stating the main theorem.
+
+\paragraph{On (A1)--(A2).}
+These are structural hypotheses. The boundedness of $Z$ keeps the liability side controlled in the main theorem, while convexity of $\HH$ ensures that convex combinations of admissible strategies remain admissible; recall from Chapter~1 that $\HH$ denotes the set of admissible trading strategies, so that admissibility simply means membership in $\HH$. In Section~\ref{sec:call} we will discuss consequences of $Z$ being an unbounded call option.
+
+\paragraph{On (A3): why a Fatou-type assumption is needed.}
+In the attainment proof below, we construct convex-combination gains $\widetilde W_n$ which converge almost surely to a limiting gain $\widetilde W_\infty$. To conclude attainment, the essential analytical step is to show
+\[
+    \rho\bigl(-Z+\widetilde W_\infty\bigr)\le\liminf_{n\to\infty}\rho\bigl(-Z+\widetilde W_n\bigr).
+\]
+This is exactly the role of the half-bounded Fatou property. It applies because the random variables $-Z+\widetilde W_n$ are bounded from below by $-\|Z\|_\infty$, since $Z\in L^\infty$ and $\widetilde W_n\ge0$.
+
+Assumption (A3) is not a consequence of convexity, monotonicity and cash-invariance alone. For example, the risk measure $\rho(X)=-\E[X]$ does not satisfy the half-bounded Fatou property on $L^0$. To see this, work on an atomless probability space and choose events $(A_n)_{n\in\N}$ with
+\[
+    \PP[A_n]=\frac{1}{n^2}.
+\]
+By choosing the events decreasing, one may ensure that $\mathbf{1}_{A_n}\to0$ $\PP$-a.s. Set
+\[
+    X_n=n^2\mathbf{1}_{A_n}.
+\]
+Then $X_n\ge0$ and $X_n\to0$ $\PP$-a.s., but
+\[
+    \E[X_n]=1.
+\]
+Hence
+\[
+    \rho(X_n)=-\E[X_n]=-1,\qquad\rho(0)=0,
+\]
+and therefore
+\[
+    \rho(0)=0>\liminf_{n\to\infty}\rho(X_n)=-1.
+\]
+Thus (A3) fails. Economically, (A3) excludes risk measures that reward rare but increasingly large upside merely through their expectation.
+
+On the other hand, many risk measures do satisfy the half-bounded Fatou property, the entropic OCE among them. Indeed, if
+\[
+    \rho(X)=\frac{1}{\lambda}\log\E[\exp(-\lambda X)]
+\]
+and $Y_n\ge-B$, then $\exp(-\lambda Y_n)\le\exp(\lambda B)$, so dominated convergence gives the desired Fatou continuity along almost surely convergent half-bounded sequences. Shortfall-type risk measures also satisfy analogous Fatou properties under the usual lower semicontinuity and integrability assumptions on the loss function. Since this point is conceptually important, we state it as a separate modelling hypothesis rather than hiding it as a minor technical remark.
+
+\paragraph{On (A4): $L^0$-boundedness of the gain set.}
+Assumption (A4) is economically natural. It says that the family of attainable gains is uniformly tight: the probability that the terminal P\&L exceeds an arbitrarily large threshold is uniformly small across all admissible strategies. Real trading desks operate under risk, capital and margin constraints, and these limits naturally prevent admissible strategies from generating arbitrarily extreme P\&L outcomes with non-vanishing probability. Fast-growing transaction costs can also help enforce this type of tightness by making very large positions prohibitively expensive.
+
+\paragraph{On (A5): $L^0$-closedness of the dominated gain cone.}
+Concretely, (A5) says: if $(Y_n)_{n\in\N}\subseteq\CC$ converges in probability to some $Y$, then there exists $\delta\in\HH$ with $W(\delta)\ge Y$ $\PP$-a.s. The crucial consequence for us is that we are allowed to recover a strategy from a limit of admissible \emph{payoffs}, without insisting that the underlying strategies converge.
+
+A simple example illustrates the financial meaning of this closedness assumption. Suppose $C_T\equiv0$ and consider two call-option payoffs
+\[
+    A=(S_T-K)^+,\qquad B_n=\bigl(S_T-(K+1/n)\bigr)^+.
+\]
+The strategy
+\[
+    \delta_n=nA-nB_n
+\]
+has terminal payoff
+\[
+    n(S_T-K)^+-n\bigl(S_T-(K+1/n)\bigr)^+.
+\]
+For each fixed $S_T$, this payoff converges to
+\[
+    \mathbf{1}_{\{S_T>K\}},
+\]
+the payoff of a digital option. Assumption (A5) states that this digital option must be in our investment universe and available to the trader.
+
+\paragraph{On (A6): gain-side admissibility.}
+The hypothesis $W(\delta)\in L^0_+$ encodes admissibility on the gain side: the gain process is essentially nonnegative for every admissible strategy. Equivalently, one may impose a uniform lower bound $W(\delta)\ge-m$ for a fixed constant $m\ge0$ and absorb $m$ into $Z$ by cash-invariance of $\rho$. This is also economically sensible: margin requirements prevent traders from maintaining strategies with uncontrolled downside and many traded assets themselves cannot fall below zero.
+
+\section{The Koml\'os lemma}
+
+The proof of attainment rests on the classical lemma of Koml\'os, recalled in the form used by Delbaen and Schachermayer \cite[Lemma~A1.1]{delbaenschachermayer}.
+
+\begin{lemma}\label{lem:komlos}
+    Let $(Y_n)_{n\in\N}$ be a sequence of nonnegative random variables on $(\Omega,\F,\PP)$, bounded in $L^0$. Then there exist forward convex combinations
+    \[
+        \widetilde Y_n\in\operatorname{conv}\{Y_n,Y_{n+1},\dots\},\qquad n\in\N,
+    \]
+    and a nonnegative random variable $\widetilde Y\in L^0$ such that $\widetilde Y_n\to\widetilde Y$ $\PP$-a.s.\ as $n\to\infty$.
+\end{lemma}
+
+The version above is the one stated and proved in \cite[Lemma~A1.1]{delbaenschachermayer}; the original formulation imposes the $L^0$-boundedness condition on the forward convex combinations $(\widetilde Y_n)$ rather than on the original sequence $(Y_n)$, but the two formulations are equivalent because convex combinations of an $L^0$-bounded family are themselves $L^0$-bounded, and conversely.
+
+\section{Attainment of the optimal hedging strategy}\label{sec:attainment}
+
+We now state and prove the central theorem of this chapter, the attainment theorem.
+
+\begin{theorem}\label{thm:attainment}
+    Assume \textup{(A1)}--\textup{(A6)}. Then there exists $\delta^*\in\HH$ with
+    \[
+        \rho\bigl(-Z+(\delta^*\cdot S)_T-C_T(\delta^*)\bigr)=\pi(-Z).
+    \]
+\end{theorem}
+
+\begin{proof}
+    We follow a five-step proof strategy:
+    \begin{enumerate}[leftmargin=*,itemsep=0pt,parsep=0pt]
+        \item Choose a minimising sequence $(\delta_n)_{n\in\N}$ for $\pi(-Z)$.
+        \item Use Koml\'os' lemma to obtain forward convex combinations
+              \[
+                  \widetilde W_n:=\sum_{m\ge n}\lambda_{n,m}W(\delta_m)\longrightarrow\widetilde W_\infty\qquad\PP\text{-a.s.}
+              \]
+        \item Show, using convexity of $C_T$, that $\widetilde W_n\in\CC$. By closedness, $\widetilde W_\infty\in\CC$; so there exists $\delta^*\in\HH$ with
+              \[
+                  \widetilde W_\infty\le W(\delta^*).
+              \]
+        \item Use convexity of $\rho$ to obtain
+              \[
+                  \rho(-Z+\widetilde W_n)\le\sum_{m\ge n}\lambda_{n,m}\rho\bigl(-Z+W(\delta_m)\bigr)\le\rho\bigl(-Z+W(\delta_n)\bigr)\longrightarrow\pi(-Z).
+              \]
+        \item Use the half-bounded Fatou property of $\rho$ to conclude
+              \[
+                  \rho\bigl(-Z+W(\delta^*)\bigr)\le\rho(-Z+\widetilde W_\infty)\le\liminf_{n\to\infty}\rho(-Z+\widetilde W_n)\le\pi(-Z).
+              \]
+    \end{enumerate}
+
+    \emph{Step 1: minimising sequence.}
+    By definition of the infimum, there exists a sequence $(\delta_n)_{n\in\N}\subseteq\HH$ such that
+    \[
+        F(\delta_n):=\rho\bigl(-Z+W(\delta_n)\bigr)\longrightarrow F_\infty:=\pi(-Z).
+    \]
+    We may choose the minimising sequence so that $(F(\delta_n))_{n\in\N}$ is decreasing. The same convention applies when $F_\infty=-\infty$: one then chooses the sequence with $F(\delta_n)\downarrow-\infty$.
+
+    \emph{Step 2: Koml\'os on the gain process.}
+    Define
+    \[
+        W_n:=W(\delta_n).
+    \]
+    By (A6), $W_n\in L^0_+$ for every $n$. By (A4), the sequence $(W_n)_{n\in\N}$ is bounded in $L^0$. Hence Lemma~\ref{lem:komlos} yields forward convex combinations
+    \[
+        \widetilde W_n:=\sum_{m\ge n}\lambda_{n,m}W_m,\qquad\lambda_{n,m}\ge0 \quad\text{and}\quad\sum_{m\ge n}\lambda_{n,m}=1,
+    \]
+    where only finitely many $\lambda_{n,m}$ are nonzero for each fixed $n$, and a random variable $\widetilde W_\infty\in L^0_+$ such that
+    \begin{equation}\label{eq:komlos-limit}
+        \widetilde W_n\to\widetilde W_\infty\qquad\PP\text{-a.s.}
+    \end{equation}
+
+    \emph{Step 3: domination and recovery of a limiting strategy.}
+    Define the corresponding forward convex combinations of strategies by
+    \[
+        \widetilde\delta_n:=\sum_{m\ge n}\lambda_{n,m}\delta_m.
+    \]
+    By convexity of $\HH$, $\widetilde\delta_n\in\HH$ for every $n$. Linearity of the discrete stochastic integral and convexity of $C_T$ give
+    \begin{equation}\label{eq:domination}
+        \begin{aligned}
+            W(\widetilde\delta_n) & =(\widetilde\delta_n\cdot S)_T-C_T(\widetilde\delta_n)                                                 \\
+                                  & =\Big(\sum_{m\ge n}\lambda_{n,m}\delta_m\cdot S\Big)_T-C_T\Big(\sum_{m\ge n}\lambda_{n,m}\delta_m\Big) \\
+                                  & \ge\sum_{m\ge n}\lambda_{n,m}(\delta_m\cdot S)_T-\sum_{m\ge n}\lambda_{n,m}C_T(\delta_m)               \\
+                                  & =\sum_{m\ge n}\lambda_{n,m}W(\delta_m)=\widetilde W_n.
+        \end{aligned}
+    \end{equation}
+    Thus $\widetilde W_n$ is dominated by the admissible gain $W(\widetilde\delta_n)$. Equivalently,
+    \[
+        \widetilde W_n=W(\widetilde\delta_n)-L_n
+    \]
+    for some $L_n\in L^0_+$. Hence $\widetilde W_n\in\CC$ for every $n$.
+
+    Since $\widetilde W_n\to\widetilde W_\infty$ almost surely, it also converges in probability. By the $L^0$-closedness of $\CC$ in (A5), we obtain $\widetilde W_\infty\in\CC$. Therefore there exist $\delta^*\in\HH$ and $L^*\in L^0_+$ such that
+    \[
+        \widetilde W_\infty=W(\delta^*)-L^*.
+    \]
+    Consequently,
+    \begin{equation}\label{eq:dominating-strategy}
+        W(\delta^*)\ge\widetilde W_\infty\qquad\PP\text{-a.s.}
+    \end{equation}
+    By monotonicity of $\rho$,
+    \begin{equation}\label{eq:monotone-step}
+        \rho\bigl(-Z+W(\delta^*)\bigr)\le\rho(-Z+\widetilde W_\infty).
+    \end{equation}
+
+    \emph{Step 4: convexity on the payoff level.}
+    Since
+    \[
+        \widetilde W_n=\sum_{m\ge n}\lambda_{n,m}W(\delta_m),
+    \]
+    we also have
+    \[
+        -Z+\widetilde W_n=\sum_{m\ge n}\lambda_{n,m}\bigl(-Z+W(\delta_m)\bigr).
+    \]
+    Convexity of $\rho$ therefore gives
+    \begin{equation}\label{eq:convexity-step}
+        \begin{aligned}
+            \rho(-Z+\widetilde W_n) & \le\sum_{m\ge n}\lambda_{n,m}\rho\bigl(-Z+W(\delta_m)\bigr) \\
+                                    & =\sum_{m\ge n}\lambda_{n,m}F(\delta_m)                      \\
+                                    & \le F(\delta_n),
+        \end{aligned}
+    \end{equation}
+    because $(F(\delta_n))_{n\in\N}$ is decreasing and $m\ge n$ implies $F(\delta_m)\le F(\delta_n)$. Taking the $\liminf$ yields
+    \begin{equation}\label{eq:liminf-step}
+        \liminf_{n\to\infty}\rho(-Z+\widetilde W_n)\le F_\infty.
+    \end{equation}
+
+    \emph{Step 5: Fatou passage to the limit.}
+    Since $Z\in L^\infty$ and $\widetilde W_n\in L^0_+$, the sequence $(-Z+\widetilde W_n)_{n\in\N}$ is bounded below by $-\|Z\|_\infty$. Moreover, by \eqref{eq:komlos-limit},
+    \[
+        -Z+\widetilde W_n\to-Z+\widetilde W_\infty\qquad\PP\text{-a.s.}
+    \]
+    The half-bounded Fatou property (A3) therefore gives
+    \begin{equation}\label{eq:fatou-step}
+        \rho(-Z+\widetilde W_\infty)\le\liminf_{n\to\infty}\rho(-Z+\widetilde W_n).
+    \end{equation}
+    Combining \eqref{eq:monotone-step}, \eqref{eq:liminf-step} and \eqref{eq:fatou-step}, we obtain
+    \[
+        \rho\bigl(-Z+W(\delta^*)\bigr)\le\rho(-Z+\widetilde W_\infty)\le F_\infty=\pi(-Z).
+    \]
+    The converse inequality follows from the definition of $\pi(-Z)$ as the infimum over all $\delta\in\HH$. Hence
+    \[
+        \rho\bigl(-Z+W(\delta^*)\bigr)=\pi(-Z).
+    \]
+    Since $W(\delta^*)=(\delta^*\cdot S)_T-C_T(\delta^*)$, this is exactly
+    \[
+        \rho\bigl(-Z+(\delta^*\cdot S)_T-C_T(\delta^*)\bigr)=\pi(-Z).\qedhere
+    \]
+\end{proof}
+
+\section{Unbounded liabilities: the European call}\label{sec:call}
+
+The European call
+\[
+    Z=(S_T^1-K)^+
+\]
+is the natural first example of an unbounded liability. In this case, the half-bounded Fatou property can no longer be applied, since $-Z$ is unbounded below. An attempt to recover boundedness is to assume that $S^1$ is tradeable and to make the position bounded by trading the buy-and-hold strategy $\eta$. Then we get
+\[
+    -Z+W(\eta)=-(S_T^1-K)^++\bigl(S_T^1-S_0^1-C_T(\eta)\bigr)=-S_0^1-C_T(\eta)+\min(S_T^1,K)\in L^\infty.
+\]
+
+This reduction does not, however, place the problem inside the framework of Section~\ref{sec:attainment}. Writing
+\[
+    \widehat Z:=Z-W(\eta)\in L^\infty,\qquad\widehat\HH:=\HH-\eta,\qquad\widehat W(\theta):=W(\eta+\theta)-W(\eta)\quad(\theta\in\widehat\HH),
+\]
+we have $-Z+W(\eta+\theta)=-\widehat Z+\widehat W(\theta)$, so the call problem is equivalent to the shifted bounded-liability problem
+\[
+    \inf_{\theta\in\widehat\HH}\rho\bigl(-\widehat Z+\widehat W(\theta)\bigr).
+\]
+This simply shifts the problem to the gain process. The Koml\'os lemma requires a minimising sequence whose terminal wealths are uniformly bounded below, i.e.\ $\widehat W(\theta_n)\ge-B$. By gain-side admissibility, we only have $W(\delta)\ge0$ for every $\delta\in\HH$; then for $\delta=\eta+\theta$,
+\[
+    \widehat W(\theta)=W(\delta)-W(\eta)\ge-W(\eta),
+\]
+and since $W(\eta)=S_T^1-S_0^1-C_T(\eta)$ is unbounded, the bound $\widehat W(\theta)\ge-W(\eta)$ is not deterministic. Gain-side admissibility (A6) is therefore not stable under the shift by the stock hedge, from $\HH$ to $\HH-\eta$. The rest of this section records why attempts to repair this fail, and then discusses three sufficient conditions that restore attainment but are too strong to serve as a general solution.
+
+\paragraph{The stock hedge is not optimal.}
+For risk measures that do not sufficiently penalise tail losses, a near-optimal strategy need not contain the stock hedge. Consider
+\[
+    \rho(X)=\E[-X].
+\]
+Then covering the unbounded tail of the liability does not reduce risk beyond its effect on the expected payoff. The optimisation therefore selects the strategy with the highest expected terminal payoff, not the one bounding the loss.
+
+\paragraph{Tail explosion is not enough either.}
+One might instead use an OCE
+\[
+    \rho_\ell(X)=\inf_{m\in\R}\bigl(m+\E[\ell(-X-m)]\bigr)
+\]
+whose loss function $\ell$ is increasing, convex, bounded below and superlinear at $+\infty$, and assume $S_T^1$ is $\ell$-tail explosive in the sense that
+\[
+    \E\bigl[\ell(aS_T^1-r)\bigr]=+\infty\qquad\text{for every }a>0,\ r\in\R.
+\]
+For the entropic risk measure $\rho(X)=\log\E[e^{-X}]$, this holds when $S_T^1$ has no positive exponential moments, as in the lognormal case. The assumption does exclude an unhedged linear short tail: if $X\le-aS_T^1+r$ for some $a>0$, then $-X-m\ge aS_T^1-r-m$ for every $m$, and tail explosion gives $\rho_\ell(X)=+\infty$. But it does not yield a deterministic lower bound, since it permits slower unbounded losses such as $\log S_T^1$.
+
+\paragraph{Sufficient conditions are too strong.}
+Three natural conditions restore attainment, but each is too restrictive.
+\begin{enumerate}[leftmargin=*,itemsep=1ex,parsep=0pt]
+    \item The shifted lower bound imposed directly: if there is $B<\infty$ with $\widehat W(\theta)\ge-B$ for all $\theta\in\widehat\HH$, then
+          \[
+              -Z+W(\eta+\theta)=-\widehat Z+\widehat W(\theta)\ge-\|\widehat Z\|_\infty-B,
+          \]
+          and the Koml\'os--Fatou argument applies (by shifting of a constant amount and cash-invariance of $\rho$). This is merely the desired Fatou bound imposed by hand, and it has unrealistic consequences. Indeed, if $0\in\HH$, then
+          \[
+              -\eta=0-\eta\in\widehat\HH.
+          \]
+          Therefore
+          \[
+              \widehat W(-\eta)=W(0)-W(\eta)\ge-B.
+          \]
+          Since $W(0)=0$, this implies
+          \[
+              W(\eta)\le B,
+          \]
+          leading to a contradiction, since $W(\eta)$ is unbounded above. Therefore the condition can only hold if $0\notin\HH$, excluding the no-trade strategy, which would contradict any reasonable model.
+
+    \item The traded stock as the only source of unbounded risk: for every $\theta\in\widehat\HH$,
+          \[
+              \widehat W(\theta)=q(\theta)(S_T^1-S_0^1)+\widehat R(\theta),\qquad|\widehat R(\theta)|\le r_{\widehat W},
+          \]
+          with $q(\theta)\in\R$ and $r_{\widehat W}<\infty$ deterministic. Together with a superlinear, tail-explosive OCE and a suitable down-state condition, any negative unhedged exposure to $S_T^1$ is penalised infinitely, so that finite-risk competitors must eliminate the linear tail; the residual is then uniformly bounded and the bounded-liability argument applies. This forces the correct stock hedge by assumption rather than through the optimisation.
+
+    \item Cash-invariance with respect to the traded stock. Cash-invariance states that $\rho(c+X)=-c+\rho(X)$. Since the num\'eraire $S^0\equiv1$ is tradeable, this can be rewritten as
+          \[
+              \rho\bigl(cS_T^0+X\bigr)=-cS_0^0+\rho(X),
+          \]
+          and the economic logic behind the axiom is precisely the tradeability of $S^0$: a position in a tradeable riskless asset has an unambiguous price and $\rho$ prices it linearly. If $S^1$ is assumed tradeable as well, the same logic makes it plausible to require of $\rho$ that also
+          \begin{equation}\label{eq:stock-invariance}
+              \rho\bigl(cS_T^1+X\bigr)=-cS_0^1+\rho(X)\qquad\text{for all }c\in\R,\ X\in L^0.
+          \end{equation}
+          With this additional assumption, the Koml\'os--Fatou argument extends to the call. Writing
+          \[
+              -Z=-(S_T^1-K)^+=\min(S_T^1,K)-S_T^1
+          \]
+          and applying \eqref{eq:stock-invariance} with $c=-1$, we get, for every $\delta\in\HH$,
+          \[
+              \rho\bigl(-Z+W(\delta)\bigr)=S_0^1+\rho\bigl(-\widetilde Z+W(\delta)\bigr),\qquad\widetilde Z:=-\min(S_T^1,K).
+          \]
+          Taking the infimum over $\delta\in\HH$ yields
+          \[
+              \pi(-Z)=S_0^1+\pi(-\widetilde Z).
+          \]
+          Since $S_T^1\ge0$, the modified liability satisfies $\widetilde Z\in L^\infty$, so (A1) holds for $\widetilde Z$; the strategy set is unchanged, so (A2)--(A6) are untouched. Theorem~\ref{thm:attainment} therefore yields a $\delta^*\in\HH$ attaining $\pi(-\widetilde Z)$, and the same $\delta^*$ attains $\pi(-Z)$. In contrast to the reduction at the beginning of this section, no shift of $\HH$ is needed: the unbounded part of the call is absorbed by the invariance \eqref{eq:stock-invariance} rather than by an explicit hedge, so gain-side admissibility is preserved. The caveat is that \eqref{eq:stock-invariance} is a strong requirement: it forces $\rho$ to price every position in $S^1$ linearly, and few convex risk measures satisfy it --- essentially linear ones such as $\rho(X)=\E_Q[-X]$ under a measure $Q$ with $\E_Q[S_T^1]=S_0^1$, whereas the entropic risk measure, for instance, does not. We therefore record \eqref{eq:stock-invariance} as a structural condition under which the call problem is attainable, rather than as a general solution.
+\end{enumerate}
+
+\begin{thebibliography}{9}
+
+    \bibitem{buehler}
+    H.~B\"uhler, L.~Gonon, J.~Teichmann, and B.~Wood.
+    Deep hedging.
+    \emph{Quantitative Finance} \textbf{19}(8), 1271--1291, 2019.
+
+    \bibitem{delbaenschachermayer}
+    F.~Delbaen and W.~Schachermayer.
+    A general version of the fundamental theorem of asset pricing.
+    \emph{Mathematische Annalen} \textbf{300}(1), 463--520, 1994.
+
+    \bibitem{foellmerschied}
+    H.~F\"ollmer and A.~Schied.
+    \emph{Stochastic Finance: An Introduction in Discrete Time}.
+    4th edition, De Gruyter, Berlin, 2016.
+
+\end{thebibliography}
+
+\end{document}

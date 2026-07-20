@@ -1,0 +1,608 @@
+% ---------------------------------------------------------------------------
+% Working draft (companion to extension_of_approximation_on_general.tex):
+% does the neural-network approximation of B\"uhler et al.\ (2019),
+% Proposition 4.3, extend from finite to general Omega when one assumes, in
+% addition to the standing market structure of B\"uhler et al., the
+% attainment hypotheses (A1)--(A6) of Chapter 3?
+%
+% Scope: OCE risk measures only.
+%
+% Structure of the argument:
+%   1. Recap of the standing market / network setting and of (A1)--(A6).
+%   2. Diagnosis: which of (A1)--(A6) speak to the two approximation
+%      failures (F1) and (F3)/(F4) identified in the companion draft.
+%   3. Analytic tools: constant-envelope upper semicontinuity of OCEs;
+%      truncation lemma (bounded strategies are value-dense under (A1),(A6)).
+%   4. Main theorem: under the standing setting, OCE and (A1),(A6) alone,
+%      one has pi_M -> pi. In particular (A2)--(A5) are unused, and the
+%      compact-position-limit / ell-integrability package (B1)--(B5) of the
+%      companion draft is not needed when (A1),(A6) are available.
+%   5. Sharpness: dropping (A1) while keeping (A2)--(A6) admits a
+%      counterexample (continuous activations) with pi <= 0 but
+%      pi_M = +infty for every M.
+%   6. Strategy convergence: values always; strategies not in general;
+%      Komlos recovery of an optimal payoff; uniqueness of the optimal
+%      P&L and in-probability convergence for the entropic risk measure;
+%      identification of positions under zero costs and conditional
+%      non-degeneracy.
+% ---------------------------------------------------------------------------
+\documentclass[11pt,a4paper]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+
+\numberwithin{equation}{chapter}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{theorem}[proposition]{Theorem}
+\newtheorem{corollary}[proposition]{Corollary}
+\theoremstyle{definition}
+\newtheorem{assumption}[proposition]{Assumption}
+\newtheorem{definition}[proposition]{Definition}
+\newtheorem{example}[proposition]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[proposition]{Remark}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\HH}{\mathcal{H}}
+\newcommand{\Hu}{\mathcal{H}^{\mathrm{u}}}
+\newcommand{\CC}{\mathcal{C}}
+\newcommand{\NNet}{\mathcal{N\!N}}
+\newcommand{\as}{\ \PP\text{-a.s.}}
+
+\begin{document}
+
+\setcounter{chapter}{3}
+
+\chapter{Approximation under the attainment hypotheses}
+
+The companion draft \texttt{extension\_of\_approximation\_on\_general.tex} showed that B\"uhler et al.\ \cite[Proposition~4.3]{buehler} fails verbatim on a general probability space, and repaired the failure by compact position limits and an $\ell$-integrability condition (Assumptions~(B1)--(B5) of that draft). Chapter~3 of the thesis already supplies a different package of hypotheses, (A1)--(A6), under which the hedging functional $\pi$ attains its infimum. The natural question for the present draft is whether that package, together with the standing market structure of B\"uhler et al.\ and the restriction to optimized certainty equivalents, already restores neural-network approximation --- and if not, what additional assumptions on top of (A1)--(A6) are needed, distinct from (B1)--(B5).
+
+The answer is positive and sharper than expected. Under the standing setting of B\"uhler et al., an OCE risk measure, and the two hypotheses (A1) and (A6) alone, one has
+\[
+    \lim_{M\to\infty}\pi_M(-Z)=\pi(-Z)
+\]
+on a general probability space. The remaining hypotheses (A2)--(A5) play no role in the value convergence, and the compact-constraint / $\ell$-integrability package of the companion draft is not required: gain-side admissibility (A6) supplies a deterministic lower envelope for every admissible objective, which is exactly what the upper-semicontinuity lemma for OCEs needs. We prove this as Theorem~\ref{thm:main-A}. A sharpness construction (Proposition~\ref{prop:sharp-A1}) shows that (A1) cannot simply be dropped: there is a market satisfying (A2)--(A6) and the standing B\"uhler hypotheses in which every continuous-activation network strategy has infinite entropic risk, while $\pi(-Z)\le0$. The chapter closes with a precise account of what can and cannot be said about convergence of the strategies themselves.
+
+Throughout, $\rho=\rho_\ell$ is an OCE. We never leave that class.
+
+\section{Standing setting and the attainment hypotheses}\label{sec:setting-A}
+
+\subsection*{Market, costs and strategies}
+
+We work in the discrete-time market of B\"uhler et al.\ \cite{buehler}, formulated on a general probability space $(\Omega,\F,\PP)$. Trading dates $0=t_0<\dots<t_n=T$, information process $I=(I_k)_{k=0,\dots,n}$ with values in $\R^r$, filtration
+\[
+    \F_k:=\sigma(I_0,\dots,I_k),\qquad k=0,\dots,n,
+\]
+with $\F=\F_n$, and mid-price process $S=(S_k)$ adapted with values in $\R^d$. Write $\Hu$ for the set of adapted $\R^d$-valued processes $\delta=(\delta_k)_{k=0,\dots,n-1}$ with the convention $\delta_{-1}=\delta_n:=0$. Trading constraints are encoded by Carath\'eodory maps $H_k\colon\Omega\times\R^{d(k+1)}\to\R^d$ with $H_k(\cdot,0)=0$; the constrained projection is
+\[
+    (H\circ\delta)_k:=H_k\bigl((H\circ\delta)_0,\dots,(H\circ\delta)_{k-1},\delta_k\bigr),
+\]
+and $\HH:=\{H\circ\delta:\delta\in\Hu\}$. Costs are given by $\F_k\otimes\mathcal B(\R^d)$-measurable functions $c_k\colon\Omega\times\R^d\to[0,\infty)$, upper semicontinuous in the spatial variable, with $c_k(\cdot,0)=0$, and
+\[
+    C_T(\delta):=\sum_{k=0}^n c_k(\delta_k-\delta_{k-1}),\qquad
+    W(\delta):=(\delta\cdot S)_T-C_T(\delta).
+\]
+As in B\"uhler et al.\ \cite[Lemma~4.2]{buehler}, the hedging functional admits the unconstrained rewriting
+\begin{equation}\label{eq:pi-A}
+    \pi(X):=\inf_{\delta\in\Hu}\rho\bigl(X+W(H\circ\delta)\bigr).
+\end{equation}
+
+\subsection*{Neural networks}
+
+A feed-forward neural network with activation $\sigma\colon\R\to\R$ is a map $F=W_L\circ F_{L-1}\circ\dots\circ F_1$ with $F_j=\sigma\circ W_j$ for affine maps $W_j$, $\sigma$ acting componentwise; see B\"uhler et al.\ \cite[Definition~2]{buehler}. We fix an increasing exhaustion $\NNet_{M,d_0,d_1}\subseteq\NNet_{M+1,d_0,d_1}$ with $\bigcup_M\NNet_{M,d_0,d_1}=\NNet_{\infty,d_0,d_1}$, each family parametrized by finitely many weights and containing the zero network, with the zero-weight embedding property of \cite[Section~4.1]{buehler}. The activation $\sigma$ is measurable, bounded and non-constant. Hornik's theorem \cite[Theorems~1 and~2]{hornik} then yields density of $\NNet_{\infty,d_0,1}$ in $L^p(\R^{d_0},\mu)$ for every finite measure $\mu$ and $1\le p<\infty$.
+
+The network strategy classes, in the reduced form of \cite[proof of Proposition~4.3]{buehler}, are
+\[
+    \HH_M:=\bigl\{\delta\in\Hu:\delta_k=F_k(I_0,\dots,I_k)\text{ with }F_k\in\NNet_{M,r(k+1),d}\bigr\},
+\]
+and
+\begin{equation}\label{eq:piM-A}
+    \pi_M(X):=\inf_{\delta\in\HH_M}\rho\bigl(X+W(H\circ\delta)\bigr).
+\end{equation}
+
+\begin{lemma}\label{lem:monotone-A}
+    For every $X$ and every $M\in\N$, one has $\pi_M(X)\ge\pi_{M+1}(X)\ge\pi(X)$. In particular $\lim_{M\to\infty}\pi_M(X)$ exists in $[-\infty,\infty]$ and dominates $\pi(X)$.
+\end{lemma}
+
+\begin{proof}
+    Networks are Borel, so $\HH_M\subseteq\HH_{M+1}\subseteq\Hu$. The infima in \eqref{eq:pi-A} and \eqref{eq:piM-A} are taken over increasing sets.
+\end{proof}
+
+\subsection*{Optimized certainty equivalents}
+
+Throughout this chapter, $\rho=\rho_\ell$ is an OCE risk measure
+\[
+    \rho_\ell(Y)=\inf_{w\in\R}\bigl(w+\E[\ell(-Y-w)]\bigr),
+\]
+where the loss function $\ell\colon\R\to\R$ is convex and non-decreasing (hence continuous). The two benchmark examples are the entropic loss $\ell_\lambda(x)=(e^{\lambda x}-1)/\lambda$ and the CVaR loss $\ell_\alpha(x)=\max(x,0)/(1-\alpha)$. We do not impose the Ben-Tal--Teboulle normalization $\ell(0)=0$, $1\in\partial\ell(0)$ as a standing hypothesis; whenever it is used, it is stated explicitly. The scope of the thesis excludes general convex risk measures beyond the OCE class.
+
+\subsection*{The attainment hypotheses of Chapter~3}
+
+Recall the gain set $\HH_W:=\{W(\delta):\delta\in\HH\}$ and the dominated gain cone $\CC:=\HH_W-L^0_+$.
+
+\begin{assumption}\label{ass:A}
+    The hypotheses of Chapter~3 are:
+    \begin{enumerate}[leftmargin=*,label=\textup{(A\arabic*)}]
+        \item $Z\in L^\infty(\Omega,\F_T,\PP)$;
+        \item $\HH$ is convex;
+        \item $\rho$ has the half-bounded Fatou property: whenever $Y_n\ge-B$ a.s.\ for some $B\ge0$ and $Y_n\to Y$ a.s., one has $\rho(Y)\le\liminf_n\rho(Y_n)$;
+        \item $\HH_W$ is bounded in $L^0$: for every $\varepsilon>0$ there is $K\ge0$ with $\sup_{\delta\in\HH}\PP[|W(\delta)|>K]<\varepsilon$;
+        \item $\CC$ is closed in $L^0$ under convergence in probability;
+        \item $W(\delta)\in L^0_+$ for every $\delta\in\HH$.
+    \end{enumerate}
+\end{assumption}
+
+Under (A1)--(A6), Chapter~3 proves that $\pi(-Z)$ is attained by some $\delta^*\in\HH$. The present chapter asks only whether $\pi_M(-Z)\to\pi(-Z)$. Attainment of each individual $\pi_M$ (existence of a network minimizer) is not claimed: the parameter space of $\HH_M$ is finite-dimensional but not compact, and near-minimizers suffice for all approximation statements below.
+
+\begin{remark}\label{rem:A6-strength}
+    Hypothesis (A6) is strong. Without trading constraints, if both $\delta$ and $-\delta$ lie in $\HH$ and $C_T\equiv0$, then $W(\delta)\ge0$ and $W(-\delta)\ge0$ force $(\delta\cdot S)_T=0$ a.s.\ for every adapted $\delta$, so $S$ is a.s.\ constant. Nontrivial examples therefore rely on genuine constraints (margin requirements, position limits to a cone, etc.) absorbed into the maps $H_k$. Chapter~3 already works under this hypothesis; we inherit it and use it as the analytic substitute for the position-limit package of the companion draft.
+\end{remark}
+
+\section{What (A1)--(A6) contribute to approximation}\label{sec:diagnosis-A}
+
+The companion draft isolated four places where finiteness of $\Omega$ enters the proof of B\"uhler et al.\ \cite[Proposition~4.3]{buehler}, labelled (F1)--(F4). Of these, (F2) (passage from $L^1$ to a.s.\ convergence along a subsequence) is harmless on general $\Omega$, and (F3)/(F4) jointly encode the failure of upper semicontinuity of $\rho$ along almost surely convergent sequences. We ask which of (A1)--(A6) repair these failures.
+
+\paragraph{On (F3)/(F4): the envelope.}
+The upper-semicontinuity lemma for OCEs (Lemma~\ref{lem:usc-A} below) needs a single $\ell$-integrable envelope $D$ with $Y_m\ge-D$ a.s.\ for every approximant. Under (A1) and (A6), every admissible objective of the form $Y=X+W(\eta)$ with $X=-Z$ and $\eta\in\HH$ satisfies
+\[
+    Y=-Z+W(\eta)\ge-\|Z\|_\infty,
+\]
+so the deterministic constant $D:=\|Z\|_\infty$ works, and $\E[\ell(D+c)]=\ell(\|Z\|_\infty+c)<\infty$ is automatic because $\ell$ is finite-valued. Thus (A1) and (A6) together eliminate the need for the random $\ell$-integrability condition (B5) of the companion draft and for the uniform bound on strategies that (B5) couples to.
+
+\paragraph{On (F1): integrability of hedge ratios.}
+Near-optimal strategies need not have integrable hedge ratios on general $\Omega$, so Hornik's theorem cannot be applied directly. Neither (A1)--(A6) forces $L^1$-integrability of $\delta_k$: (A4) only yields $L^0$-tightness of the gains $W(\delta)$. The repair is truncation (Lemma~\ref{lem:truncation-A} below): under (A1) and (A6), bounded strategies are value-dense in $\HH$, so one may always choose a near-optimal target that is bounded (hence integrable) before invoking Hornik. This is precisely the multi-period truncation that the companion draft left open without (A6); the uniform lower bound $W\ge0$ supplies the missing domination.
+
+\paragraph{On (A2)--(A5).}
+Convexity of $\HH$, the half-bounded Fatou property, $L^0$-boundedness of the gain set and closedness of $\CC$ are the ingredients of the attainment theorem of Chapter~3. None of them is used in the value-convergence argument below. They reappear only when one asks for strategy-level conclusions (Section~\ref{sec:strategy-A}).
+
+\paragraph{Comparison with (B1)--(B5).}
+The two packages are complementary, not nested. The companion draft uses compact constraint ranges and an $\ell$-integrability condition coupling $\ell$, $X$ and $S$, and allows unbounded liabilities. The present draft uses bounded liabilities and nonnegative gains, and allows unbounded constraint ranges. Neither package implies the other; each is adapted to a different modelling choice (position limits versus gain-side admissibility).
+
+\section{Upper semicontinuity and truncation}\label{sec:tools-A}
+
+\begin{lemma}[Constant-envelope upper semicontinuity]\label{lem:usc-A}
+    Let $\ell\colon\R\to\R$ be convex and non-decreasing and let $\rho_\ell$ be the associated OCE. Let $(Y_m)_{m\in\N}$ and $Y$ be random variables with
+    \[
+        Y_m\ge-B\as\text{ for all }m,
+    \]
+    for some deterministic $B\ge0$. If $\liminf_{m\to\infty}Y_m\ge Y$ $\PP$-a.s., then
+    \[
+        \limsup_{m\to\infty}\rho_\ell(Y_m)\le\rho_\ell(Y).
+    \]
+\end{lemma}
+
+\begin{proof}
+    This is the special case $D\equiv B$ of the upper-semicontinuity lemma of the companion draft. We include the short argument for completeness. Fix $w\in\R$. Since $-Y_m-w\le B+|w|$ and $\ell$ is non-decreasing,
+    \[
+        \ell(-Y_m-w)\le\ell(B+|w|)=:g_w,
+    \]
+    a deterministic (hence integrable) constant. Extend $\ell$ to $[-\infty,\infty)$ by $\ell(-\infty):=\lim_{t\to-\infty}\ell(t)$; the extension is continuous and non-decreasing. For any real sequence $(a_m)$ with $\sup_m a_m<\infty$ one has $\limsup_m\ell(a_m)\le\ell(\limsup_m a_m)$. Applying this with $a_m=-Y_m-w$ and using $\limsup_m(-Y_m)=-\liminf_m Y_m\le-Y$ a.s.\ yields
+    \[
+        \limsup_{m\to\infty}\ell(-Y_m-w)\le\ell(-Y-w)\as.
+    \]
+    Reverse Fatou applied to the nonnegative sequence $g_w-\ell(-Y_m-w)$ gives
+    \[
+        \limsup_{m\to\infty}\E\bigl[\ell(-Y_m-w)\bigr]\le\E\bigl[\ell(-Y-w)\bigr].
+    \]
+    Since $\rho_\ell(Y_m)\le w+\E[\ell(-Y_m-w)]$, one obtains $\limsup_m\rho_\ell(Y_m)\le w+\E[\ell(-Y-w)]$ for every $w$, and taking the infimum over $w$ completes the proof.
+\end{proof}
+
+\begin{remark}\label{rem:usc-vs-A3}
+    Lemma~\ref{lem:usc-A} is upper semicontinuity; the half-bounded Fatou property (A3) is lower semicontinuity. They are genuinely different. The entropic risk measure satisfies (A3) by dominated convergence under the bound $Y_n\ge-B$, but fails unrestricted upper semicontinuity (the rare-event explosion of the companion draft). Under (A1) and (A6) the constant envelope closes the gap for the approximation direction.
+\end{remark}
+
+\begin{lemma}[Truncation]\label{lem:truncation-A}
+    Assume \textup{(A1)} and \textup{(A6)}, and let $X=-Z$. Then for every $\delta\in\Hu$ and every $\varepsilon>0$ there exists a bounded $\delta'\in\Hu$ with
+    \[
+        \rho_\ell\bigl(X+W(H\circ\delta')\bigr)\le\rho_\ell\bigl(X+W(H\circ\delta)\bigr)+\varepsilon.
+    \]
+    In particular,
+    \[
+        \pi(X)=\inf\bigl\{\rho_\ell\bigl(X+W(H\circ\delta)\bigr):\delta\in\Hu,\ \delta\text{ bounded}\bigr\}.
+    \]
+\end{lemma}
+
+\begin{proof}
+    Fix $\delta\in\Hu$ and write $\eta:=H\circ\delta$, $Y:=X+W(\eta)$. Define the componentwise truncations
+    \[
+        \delta^{(j)}_k:=\min\bigl(j,\max(-j,\delta_k)\bigr),\qquad j\in\N,\quad k=0,\dots,n-1.
+    \]
+    Then each $\delta^{(j)}$ is adapted (hence in $\Hu$) and bounded by $j$. Set $\eta^{(j)}:=H\circ\delta^{(j)}$ and $Y_j:=X+W(\eta^{(j)})$.
+
+    For $\PP$-almost every $\omega$, every coordinate of every $\delta_k(\omega)$ is finite. Since there are finitely many dates, there exists a (random) index $j_0(\omega)<\infty$ such that $\delta^{(j)}_k(\omega)=\delta_k(\omega)$ for all $k$ and all $j\ge j_0(\omega)$. The recursive definition of $H\circ{}$ then yields $\eta^{(j)}(\omega)=\eta(\omega)$ for all such $j$, and therefore $Y_j(\omega)=Y(\omega)$. In particular $Y_j\to Y$ $\PP$-a.s.
+
+    By (A6), $W(\eta^{(j)})\ge0$ a.s., so $Y_j\ge-\|Z\|_\infty$ a.s.\ by (A1). Lemma~\ref{lem:usc-A} with $B=\|Z\|_\infty$ gives
+    \[
+        \limsup_{j\to\infty}\rho_\ell(Y_j)\le\rho_\ell(Y).
+    \]
+    Choose $j$ large enough that $\rho_\ell(Y_j)\le\rho_\ell(Y)+\varepsilon$, and set $\delta':=\delta^{(j)}$.
+\end{proof}
+
+\begin{remark}\label{rem:truncation-vs-companion}
+    The companion draft recorded that multi-period truncation fails without a uniform lower bound on gains, because componentwise truncation destroys exact offsets and no integrable dominator is then available for the OCE objectives. Hypothesis (A6) restores the bound $Y_j\ge-\|Z\|_\infty$ uniformly in $j$, which is exactly the input of Lemma~\ref{lem:usc-A}. The one-period value-density result of the companion draft is thereby upgraded to the multi-period, multi-asset, nonzero-cost setting --- at the modelling price of (A6).
+\end{remark}
+
+\section{The approximation theorem under (A1) and (A6)}\label{sec:main-A}
+
+\begin{theorem}\label{thm:main-A}
+    Assume the standing market and network setting of Section~\ref{sec:setting-A}, let $\rho=\rho_\ell$ be an OCE risk measure, and assume \textup{(A1)} and \textup{(A6)}. Then
+    \[
+        \lim_{M\to\infty}\pi_M(-Z)=\pi(-Z)
+    \]
+    in $[-\infty,\infty]$, the convergence being monotone from above.
+\end{theorem}
+
+\begin{proof}
+    Write $X:=-Z$. By Lemma~\ref{lem:monotone-A} it is enough to show that for every $\varepsilon>0$ there exists $M$ with $\pi_M(X)\le\pi(X)+\varepsilon$. (If $\pi(X)=-\infty$, replace $\pi(X)+\varepsilon$ by an arbitrary real threshold $L$ and run the same argument.)
+
+    \emph{Step 1: a bounded near-optimal target.} Choose $\delta\in\Hu$ with
+    \[
+        \rho_\ell\bigl(X+W(H\circ\delta)\bigr)\le\pi(X)+\frac{\varepsilon}{2}
+    \]
+    (or $\le L-1$ if $\pi(X)=-\infty$). By Lemma~\ref{lem:truncation-A} we may assume that $\delta$ itself is bounded, say $|\delta_k|\le j$ a.s.\ for all $k$. Write $\eta:=H\circ\delta$ and $Y:=X+W(\eta)$.
+
+    \emph{Step 2: Doob--Dynkin and integrability.} Each $\delta_k$ is $\F_k$-measurable, so the Doob--Dynkin lemma yields Borel maps $f_k\colon\R^{r(k+1)}\to\R^d$ with $\delta_k=f_k(I_0,\dots,I_k)$. Replacing $f_k$ by its clamp at level $j$ changes nothing $\PP$-a.s.\ and makes $f_k$ bounded everywhere. In particular every component of $f_k$ lies in $L^1(\mu_k)$, where $\mu_k$ is the law of $(I_0,\dots,I_k)$. This settles (F1).
+
+    \emph{Step 3: network approximation.} By Hornik's theorem applied componentwise, there exist networks $F_{k,m}\in\NNet_{\infty,r(k+1),d}$ with $F_{k,m}\to f_k$ in $L^1(\mu_k)$ as $m\to\infty$. Set
+    \[
+        \delta^m:=\bigl(F_{k,m}(I_0,\dots,I_k)\bigr)_{k=0,\dots,n-1}.
+    \]
+    Then $\delta^m_k\to\delta_k$ in $L^1(\PP)$ for every $k$. Passing to a subsequence (not relabelled) we may assume
+    \[
+        \delta^m_k\longrightarrow\delta_k\as\qquad\text{for all }k=0,\dots,n-1
+    \]
+    simultaneously. By the exhaustion property of the network families there are $M_m\uparrow\infty$ with $\delta^m\in\HH_{M_m}$.
+
+    \emph{Step 4: constrained strategies and objectives.} Set $\eta^m:=H\circ\delta^m$. Continuity of each $H_k(\omega,\cdot)$ and induction over $k$ give $\eta^m_k\to\eta_k$ $\PP$-a.s.\ for every $k$. Gains converge: $(\eta^m\cdot S)_T\to(\eta\cdot S)_T$ a.s. Upper semicontinuity of the $c_k(\omega,\cdot)$ yields
+    \[
+        \limsup_{m\to\infty}C_T(\eta^m)\le C_T(\eta)\as,
+    \]
+    and therefore, writing $Y_m:=X+W(\eta^m)$,
+    \[
+        \liminf_{m\to\infty}Y_m\ge Y\as.
+    \]
+    By (A6) and (A1), $Y_m\ge-\|Z\|_\infty$ a.s.\ for every $m$.
+
+    \emph{Step 5: conclusion.} Lemma~\ref{lem:usc-A} gives $\limsup_m\rho_\ell(Y_m)\le\rho_\ell(Y)\le\pi(X)+\varepsilon/2$. Choose $m_0$ with $\rho_\ell(Y_{m_0})\le\pi(X)+\varepsilon$. Since $\delta^{m_0}\in\HH_{M_{m_0}}$, one has $\pi_M(X)\le\pi(X)+\varepsilon$ for all $M\ge M_{m_0}$.
+\end{proof}
+
+\begin{corollary}[entropic and CVaR]\label{cor:oce-A}
+    Under the standing setting, \textup{(A1)} and \textup{(A6)},
+    \[
+        \lim_{M\to\infty}\pi_M(-Z)=\pi(-Z)
+    \]
+    holds for the entropic risk measure with any $\lambda>0$ and for average value at risk at any level $1-\alpha$, $\alpha\in[0,1)$. No additional moment conditions are required.
+\end{corollary}
+
+\begin{proof}
+    Both are OCEs with finite convex non-decreasing loss functions; apply Theorem~\ref{thm:main-A}. Boundedness of $Z$ makes every constant-envelope integrability automatic.
+\end{proof}
+
+\begin{corollary}[approximation of an attained optimum]\label{cor:attained-A}
+    Assume in addition \textup{(A2)}--\textup{(A5)}, so that the attainment theorem of Chapter~3 applies. Then there exists $\delta^*\in\HH$ with $\rho_\ell(-Z+W(\delta^*))=\pi(-Z)$, and for every $\varepsilon>0$ there exist $M\in\N$ and $\delta^\varepsilon\in\HH_M$ with
+    \[
+        \rho_\ell\bigl(-Z+W(H\circ\delta^\varepsilon)\bigr)\le\rho_\ell\bigl(-Z+W(\delta^*)\bigr)+\varepsilon.
+    \]
+\end{corollary}
+
+\begin{proof}
+    Existence of $\delta^*$ is Chapter~3; the $\varepsilon$-statement is Theorem~\ref{thm:main-A}.
+\end{proof}
+
+\begin{remark}[What is not used]\label{rem:unused}
+    The proof of Theorem~\ref{thm:main-A} uses (A1) and (A6), the standing Carath\'eodory / upper-semicontinuity structure of $H_k$ and $c_k$, the OCE representation of $\rho$, and Hornik's theorem. It does not use convexity of $\HH$, the half-bounded Fatou property, $L^0$-boundedness of $\HH_W$, or closedness of $\CC$. Those hypotheses remain necessary for attainment; they are not necessary for value approximation once (A1) and (A6) are in force.
+\end{remark}
+
+\begin{remark}[Weakening (A1)]\label{rem:A1prime}
+    The same proof works under the weaker envelope condition
+    \begin{enumerate}[leftmargin=*,label=\textup{(A1$'$)}]
+        \item $Z\ge0$ a.s.\ (or more generally $Z$ bounded from below) and $\E[\ell(Z+c)]<\infty$ for every $c\ge0$,
+    \end{enumerate}
+    together with (A6). Indeed, $Y_m=-Z+W(\eta^m)\ge-Z$, so Lemma~\ref{lem:usc-A} is replaced by the random-envelope upper-semicontinuity lemma of the companion draft with $D=Z$. For CVaR this reduces to $Z\in L^1$; for the entropic risk measure, to $\E[e^{\lambda Z}]<\infty$. Boundedness of $Z$ from above --- the full strength of (A1) --- is not needed for value approximation.
+\end{remark}
+
+\begin{remark}[Relation to (B1)--(B5)]\label{rem:vs-B}
+    Theorem~\ref{thm:main-A} does not invoke compact constraint ranges, idempotence of $H\circ{}$, cost envelopes $\overline C$, or the coupling $\E[\ell(-X+a\widehat S+\overline C+c)]<\infty$. Those are the companion draft's substitutes for (A6). Conversely, the companion draft does not need (A6) and allows unbounded $Z$ under exponential-moment control. The two theorems are complementary sufficient conditions for the same conclusion $\pi_M\to\pi$.
+\end{remark}
+
+\section{Sharpness: (A1) cannot be dropped}\label{sec:sharp-A}
+
+Theorem~\ref{thm:main-A} uses (A1) and (A6). The counterexample of the companion draft violates both, so it does not separate them. The next construction keeps (A2)--(A6) and the standing B\"uhler hypotheses, drops only (A1), and exhibits failure of $\pi_M\to\pi$ for every continuous activation. This shows that some control on the liability --- (A1) or at least (A1$'$) --- is essential even when gain-side admissibility is in force.
+
+\begin{proposition}\label{prop:sharp-A1}
+    There exist a one-period market on a general probability space, compact convex trading constraints containing the origin, no transaction costs, an entropic risk measure $\rho_\lambda$ with $\lambda=1$, and an unbounded liability $Z\ge0$ such that \textup{(A2)}--\textup{(A6)} hold, the standing B\"uhler hypotheses on $H_k$ and $c_k$ hold, and
+    \[
+        \pi(-Z)\le0\qquad\text{while}\qquad\pi_M(-Z)=+\infty\quad\text{for every }M\in\N,
+    \]
+    whenever the activation $\sigma$ is continuous (hence every network strategy is continuous as a function of $I_0$). In particular $\pi_M(-Z)\not\to\pi(-Z)$.
+\end{proposition}
+
+\begin{proof}
+    \emph{Market.} Let $\Omega=(0,1)\times[0,\pi/2]\times(0,\infty)$ with
+    \[
+        \PP:=\mathrm{Leb}_{(0,1)}\otimes\nu\otimes\mu,
+    \]
+    where $\nu$ is the normalized Lebesgue measure on $[0,\pi/2]$ and $\mu$ is a probability measure on $(0,\infty)$ with
+    \[
+        \E_\mu\bigl[e^{tV}\bigr]=+\infty\qquad\text{for every }t>0
+    \]
+    (e.g.\ the law of $e^{|N|}$ for $N$ standard normal, or any lognormal). Write $U(\omega)=\omega_1$, $\Theta(\omega)=\omega_2$, $V(\omega)=\omega_3$, so that $U$, $\Theta$ and $V$ are independent. Take one trading period, information $I_0:=U$, $I_1:=(\Theta,V)$, hence $\F_0=\sigma(U)$ and $\F_1=\sigma(U,\Theta,V)$, two assets ($d=2$) with
+    \[
+        S_0:=0,\qquad S_1:=V\,u(\Theta),\qquad u(\theta):=(\cos\theta,\sin\theta)^\top.
+    \]
+    No costs ($c_k\equiv0$). Let
+    \[
+        K:=\bigl\{x\in\R^2:x_1\ge0,\ x_2\ge0,\ |x|\le1\bigr\}
+    \]
+    be the closed quarter-disk, and set $H_0(x_0):=P_K(x_0)$ (metric projection onto $K$). Then $H_0$ is continuous, $H_0(0)=0$, and $\HH$ consists of all $\F_0$-measurable $K$-valued random vectors $\eta_0$.
+
+    \emph{Liability and perfect hedge.} Choose a Borel set $A\subset(0,1)$ such that both $A$ and $A^c$ have positive Lebesgue measure in every nonempty open subinterval of $(0,1)$ (e.g.\ a fat Cantor set of this type, or the set of numbers in $(0,1)$ whose binary expansion has a density of ones in $(1/3,2/3)$ along a suitable subsequence of dyadic intervals). Define $\varphi:(0,1)\to\{\pi/6,\pi/3\}$ by
+    \[
+        \varphi(u):=\begin{cases}
+            \pi/6 & \text{if }u\in A,    \\
+            \pi/3 & \text{if }u\notin A,
+        \end{cases}
+    \]
+    and set $G(u):=u(\varphi(u))\in\partial K$. The random vector $G(U)$ is $\F_0$-measurable and $K$-valued. Define
+    \[
+        Z:=G(U)^\top S_1=V\,G(U)^\top u(\Theta).
+    \]
+    Then $Z\ge0$ and, since $G(U)^\top u(\Theta)\ge\cos(\pi/3)=\tfrac12$ for all $\Theta\in[0,\pi/2]$, one has $Z\ge V/2$, so $Z$ is unbounded and $\E[e^{tZ}]=\infty$ for every $t>0$. In particular (A1) fails, as does (A1$'$). The strategy $\eta_0^*:=G(U)$ satisfies
+    \[
+        -Z+W(\eta_0^*)=-Z+\eta_0^{*\top}S_1=0,
+    \]
+    so $\pi(-Z)\le\rho_1(0)=0$.
+
+    \emph{Verification of (A2)--(A6).}
+    \begin{enumerate}[leftmargin=*,itemsep=0pt,parsep=0pt]
+        \item[\textup{(A2)}] $K$ is convex, so $\HH$ is convex.
+        \item[\textup{(A3)}] The entropic risk measure has the half-bounded Fatou property (dominated convergence under $Y_n\ge-B$).
+        \item[\textup{(A4)}] For every $\eta_0\in\HH$, $0\le W(\eta_0)=\eta_0^\top S_1\le V$, so $\PP[|W(\eta_0)|>K]\le\PP[V>K]$ uniformly in $\eta_0$.
+        \item[\textup{(A5)}] Let $Y_n=\eta_0^n{}^\top S_1-L_n\to Y$ in probability with $\eta_0^n\in\HH$ and $L_n\ge0$. The sequence $(\eta_0^n)$ is $K$-valued and $\F_0$-measurable, hence bounded in $\R^2$. Applying Koml\'os' lemma componentwise yields forward convex combinations $\widetilde\eta_0^n\to\eta_0^\infty$ a.s.\ with $\eta_0^\infty$ still $K$-valued and $\F_0$-measurable. The same weights produce forward convex combinations $\widetilde Y_n$ of $(Y_n)$ with $\widetilde Y_n\to Y$ in probability and $\widetilde Y_n\le(\widetilde\eta_0^n)^\top S_1$. Passing to the limit gives $Y\le(\eta_0^\infty)^\top S_1$ a.s., so $Y\in\CC$.
+        \item[\textup{(A6)}] For every $\eta_0\in\HH$, both $\eta_0$ and $u(\Theta)$ lie in the closed positive orthant, so $W(\eta_0)=\eta_0^\top S_1\ge0$ a.s.
+    \end{enumerate}
+
+    \emph{Every continuous strategy has infinite risk.} Let $\eta_0=F(U)$ with $F\colon(0,1)\to K$ continuous (this covers $P_K\circ F$ for every network $F$ with continuous activation, since $P_K$ is continuous). We claim
+    \[
+        \rho_1\bigl(-Z+\eta_0^\top S_1\bigr)=+\infty.
+    \]
+    Indeed,
+    \begin{align*}
+        \E\bigl[e^{Z-\eta_0^\top S_1}\bigr]
+         & =\E\Bigl[\E\bigl[e^{V(G(U)-\eta_0)^\top u(\Theta)}\bigm|U\bigr]\Bigr]                                             \\
+         & =\int_0^1\Biggl(\frac{2}{\pi}\int_0^{\pi/2}\E_\mu\Bigl[e^{V(G(u)-F(u))^\top u(\theta)}\Bigr]\,d\theta\Biggr)\,du.
+    \end{align*}
+    For fixed $u$, set $a(\theta):=(G(u)-F(u))^\top u(\theta)$. If $\sup_{\theta\in[0,\pi/2]}a(\theta)>0$, then by continuity of $a$ the supremum is attained on a nonempty open set of $\theta$, and on that set $\E_\mu[e^{Va(\theta)}]=\infty$, so the inner integral is infinite. Hence finite risk forces
+    \[
+        \bigl(G(u)-F(u)\bigr)^\top u(\theta)\le0\qquad\text{for all }\theta\in[0,\pi/2],
+    \]
+    for Lebesgue-almost every $u\in(0,1)$. Equivalently, $F(u)-G(u)$ lies in the dual cone
+    \[
+        C^*:=\bigl\{y\in\R^2:y^\top u(\theta)\ge0\text{ for all }\theta\in[0,\pi/2]\bigr\}=\{y:y_1\ge0,\ y_2\ge0\}.
+    \]
+    But $G(u)\in\partial K$ with $|G(u)|=1$ and $G(u)$ in the open positive orthant. For any $y\in C^*\setminus\{0\}$ one has
+    \[
+        |G(u)+y|^2=1+2G(u)^\top y+|y|^2>1,
+    \]
+    so $G(u)+y\notin K$. The only point of $K\cap\bigl(G(u)+C^*\bigr)$ is therefore $G(u)$ itself. Finite risk forces $F(u)=G(u)$ for a.e.\ $u$.
+
+    No continuous $F\colon(0,1)\to K$ can equal $G$ almost everywhere: on every nonempty open subinterval of $(0,1)$, the essential image of $G$ is the two-point set $\{u(\pi/6),u(\pi/3)\}$, while a continuous $K$-valued map has connected image. Hence every continuous strategy --- in particular every network strategy with continuous activation --- has infinite entropic risk, and $\pi_M(-Z)=+\infty$ for every $M$.
+\end{proof}
+
+\begin{remark}\label{rem:sharp-lessons}
+    Three lessons.
+    \begin{enumerate}[leftmargin=*,itemsep=0pt,parsep=0pt]
+        \item[\textup{(i)}] Hypotheses (A2)--(A6) alone do not restore approximation. Some control on $Z$ --- (A1) or the weaker (A1$'$) --- is indispensable.
+        \item[\textup{(ii)}] The obstruction is again the passage to the limit inside $\rho$: the measurable perfect hedge $G(U)$ has finite risk, but every continuous approximant leaves a positive slack on a set of positive measure, and the heavy tails of $V$ turn that slack into infinite risk. Truncation cannot help, because the target is already bounded ($|G|=1$).
+        \item[\textup{(iii)}] The construction uses continuous activations. For merely measurable bounded activations the network class is larger, but the same zero-slack mechanism forces any finite-risk strategy to equal $G$ a.s.; whether some pathological activation can represent $G$ depends on the activation and is left aside. The economically relevant activations (sigmoid, tanh, etc.) are continuous, so the counterexample covers the intended scope.
+    \end{enumerate}
+\end{remark}
+
+\section{Convergence of strategies}\label{sec:strategy-A}
+
+Theorem~\ref{thm:main-A} is a statement about values. We now ask what can be said about the strategies themselves. Throughout this section we assume the full package (A1)--(A6), so that $\pi(-Z)$ is attained, and $\rho=\rho_\ell$ is an OCE.
+
+\subsection*{Negative results}
+
+\begin{example}[Non-uniqueness blocks strategy convergence]\label{ex:nonunique}
+    Let $S\equiv s_0$ be constant, $C_T\equiv0$ and $\HH=\Hu$ (no constraints). Then $W(\delta)=0$ for every $\delta$, so every strategy is optimal for every $Z$ and $\pi(-Z)=\rho_\ell(-Z)$. Network near-minimizers may oscillate indefinitely between distinct elements of $\HH_M$ without converging in any topology. The same phenomenon occurs with two identical assets and zero costs: the maps $(\delta,0)$ and $(0,\delta)$ produce the same gain, and minimizers may alternate between them.
+\end{example}
+
+\begin{example}[CVaR admits multiple optimal P\&Ls]\label{ex:cvar-nonunique}
+    Average value at risk is not strictly convex. On a finite probability space one can construct two distinct terminal P\&Ls with the same CVaR and the same mean above the VaR threshold; both are optimal, and a minimizing sequence of network strategies may oscillate between them. Convergence of strategies (or even of terminal P\&Ls) therefore fails for CVaR without additional selection criteria.
+\end{example}
+
+These examples show that, without strict convexity of $\ell$ and some non-redundancy condition on $S$, one cannot expect $\delta^M\to\delta^*$ in any reasonable sense. What survives in general is a Koml\'os-type recovery of an optimal \emph{payoff}.
+
+\subsection*{Koml\'os recovery of an optimal payoff}
+
+\begin{proposition}\label{prop:komlos-networks}
+    Assume \textup{(A1)}--\textup{(A6)}, that $C_T$ is convex, and let $(\delta^M)_{M\in\N}$ be a sequence with $\delta^M\in\HH_M$ and
+    \[
+        \rho_\ell\bigl(-Z+W(H\circ\delta^M)\bigr)\le\pi_M(-Z)+\frac1M.
+    \]
+    (Such a sequence exists by definition of $\pi_M$.) Then there exist forward convex combinations
+    \[
+        \widetilde W_M\in\operatorname{conv}\bigl\{W(H\circ\delta^M),W(H\circ\delta^{M+1}),\dots\bigr\}
+    \]
+    and some $\delta^*\in\HH$ such that $\widetilde W_M\to\widetilde W_\infty$ $\PP$-a.s., $W(\delta^*)\ge\widetilde W_\infty$ a.s., and
+    \[
+        \rho_\ell\bigl(-Z+W(\delta^*)\bigr)=\pi(-Z).
+    \]
+\end{proposition}
+
+\begin{proof}
+    By Theorem~\ref{thm:main-A}, $\pi_M(-Z)\downarrow\pi(-Z)$, so
+    \[
+        \rho_\ell\bigl(-Z+W(H\circ\delta^M)\bigr)\longrightarrow\pi(-Z).
+    \]
+    The sequence $W_M:=W(H\circ\delta^M)$ is nonnegative by (A6) and $L^0$-bounded by (A4). Koml\'os' lemma yields forward convex combinations $\widetilde W_M\to\widetilde W_\infty$ a.s.\ with $\widetilde W_\infty\ge0$. The same convexity and closedness argument as in the attainment proof of Chapter~3 --- using (A2), convexity of $C_T$ to dominate $\widetilde W_M$ by an admissible gain, and (A5) to recover $\delta^*$ --- produces $\delta^*\in\HH$ with $W(\delta^*)\ge\widetilde W_\infty$ a.s. Convexity of $\rho_\ell$ and the half-bounded Fatou property (A3) then give
+    \[
+        \rho_\ell\bigl(-Z+W(\delta^*)\bigr)\le\rho_\ell(-Z+\widetilde W_\infty)\le\liminf_M\rho_\ell(-Z+\widetilde W_M)\le\pi(-Z),
+    \]
+    so $\delta^*$ is optimal.
+\end{proof}
+
+Thus network near-minimizing sequences are attaining sequences in the sense of Chapter~3: their forward convex combinations of gains recover an optimal payoff. This is payoff-level convergence along convex combinations, not pathwise convergence of the hedge ratios.
+
+\subsection*{Entropic risk: uniqueness of the optimal P\&L}
+
+For the entropic risk measure the optimal terminal P\&L is unique, and near-optimal network P\&Ls converge to it in probability.
+
+\begin{proposition}\label{prop:entropic-PnL}
+    Let $\rho_\lambda$ be the entropic risk measure with parameter $\lambda>0$. Assume \textup{(A1)}--\textup{(A6)}, that $C_T$ is convex, and that $\pi(-Z)\in\R$. Let $\delta^*\in\HH$ be an optimal strategy, and let $(\delta^M)_{M\in\N}$ be as in Proposition~\ref{prop:komlos-networks}. Write
+    \[
+        Y_M:=-Z+W(H\circ\delta^M),\qquad Y^*:=-Z+W(\delta^*).
+    \]
+    Then $Y^*$ is the $\PP$-a.s.\ unique optimal terminal P\&L, and $Y_M\to Y^*$ in probability.
+\end{proposition}
+
+\begin{proof}
+    Write $m:=\E[e^{-\lambda Y^*}]=e^{\lambda\pi(-Z)}\in(0,\infty)$ and $m_M:=\E[e^{-\lambda Y_M}]$, so that $m_M\to m$ by cash-invariance of the logarithm and $\rho_\lambda(Y_M)\to\pi(-Z)$. Set $U_M:=e^{-\lambda Y_M}$ and $U^*:=e^{-\lambda Y^*}$.
+
+    Convexity of $\HH$ (A2) and of $C_T$ imply concavity of $W$ on $\HH$: for $\alpha\in[0,1]$ and $\eta,\eta'\in\HH$,
+    \[
+        W(\alpha\eta+(1-\alpha)\eta')\ge\alpha W(\eta)+(1-\alpha)W(\eta').
+    \]
+    Taking $\eta=H\circ\delta^M$ and $\eta'=\delta^*$, the midpoint $\widehat\delta_M:=\frac12(H\circ\delta^M)+\frac12\delta^*$ lies in $\HH$ and satisfies
+    \[
+        W(\widehat\delta_M)\ge\frac{W(H\circ\delta^M)+W(\delta^*)}{2}.
+    \]
+    Monotonicity of $x\mapsto e^{-\lambda x}$ and optimality of $\delta^*$ therefore give
+    \[
+        m\le\E\Bigl[\exp\Bigl(-\lambda\Bigl(-Z+W(\widehat\delta_M)\Bigr)\Bigr)\Bigr]
+        \le\E\Bigl[\sqrt{U_M\,U^*}\Bigr].
+    \]
+    Cauchy--Schwarz yields $\E[\sqrt{U_M U^*}]\le\sqrt{m_M\,m}$, so
+    \[
+        m\le\E\bigl[\sqrt{U_M\,U^*}\bigr]\le\sqrt{m_M\,m}.
+    \]
+    As $m_M\to m$ one obtains $\E[\sqrt{U_M U^*}]\to m$. The parallelogram identity
+    \[
+        \E\bigl[(\sqrt{U_M}-\sqrt{U^*})^2\bigr]=m_M+m-2\E[\sqrt{U_M U^*}]\longrightarrow0
+    \]
+    yields $\sqrt{U_M}\to\sqrt{U^*}$ in $L^2$, hence $U_M\to U^*$ in probability, and therefore $Y_M\to Y^*$ in probability.
+
+    For uniqueness: if $Y_1$ and $Y_2$ are both optimal, the same argument with the constant sequences $Y_M\equiv Y_1$ gives $\E[(\sqrt{U_1}-\sqrt{U_2})^2]=0$, so $U_1=U_2$ a.s.\ and $Y_1=Y_2$ a.s.
+\end{proof}
+
+\begin{remark}
+    The argument uses the multiplicative structure of the exponential and does not extend verbatim to a general strictly convex loss. For CVaR it fails outright (Example~\ref{ex:cvar-nonunique}). We therefore state uniqueness of the optimal P\&L only for the entropic risk measure.
+\end{remark}
+
+\subsection*{Identification of positions}
+
+Convergence of terminal P\&Ls does not by itself yield convergence of hedge ratios: redundant assets and non-injective constraint maps obstruct identification. Under zero costs and a conditional non-degeneracy assumption, the positions are uniquely determined by the terminal gain, and network strategies converge to the unique optimal strategy in probability.
+
+\begin{assumption}[Conditional non-degeneracy]\label{ass:nondeg}
+    For every $k=0,\dots,n-1$, the regular conditional distribution of $S_{k+1}-S_k$ given $\F_k$ is, $\PP$-a.s., not supported on any affine hyperplane of $\R^d$. Equivalently: for $\PP$-a.e.\ $\omega$,
+    \[
+        \inf\bigl\{\E\bigl[|(a+v\cdot(S_{k+1}-S_k))|\wedge1\bigm|\F_k\bigr](\omega):a^2+|v|^2=1\bigr\}>0.
+    \]
+\end{assumption}
+
+\begin{lemma}[Identification]\label{lem:identify}
+    Assume $C_T\equiv0$ and Assumption~\ref{ass:nondeg}. If $\eta,\eta'\in\HH$ satisfy $(\eta\cdot S)_T=(\eta'\cdot S)_T$ a.s., then $\eta_k=\eta'_k$ a.s.\ for every $k$.
+\end{lemma}
+
+\begin{proof}
+    Write $v_k:=\eta_k-\eta'_k$ and
+    \[
+        T:=\sum_{k=0}^{n-1}v_k\cdot(S_{k+1}-S_k)=0\as.
+    \]
+    We show $v_k=0$ a.s.\ by backward induction. For the last date, set
+    \[
+        A:=T-v_{n-1}\cdot(S_n-S_{n-1})=\sum_{k=0}^{n-2}v_k\cdot(S_{k+1}-S_k),
+    \]
+    so $A$ is $\F_{n-1}$-measurable and $A+v_{n-1}\cdot(S_n-S_{n-1})=0$ a.s. Let $\kappa_\omega$ be a regular conditional distribution of $S_n-S_{n-1}$ given $\F_{n-1}$. The map
+    \[
+        (a,v)\mapsto g(a,v,\omega):=\int\bigl(|a+v\cdot x|\wedge1\bigr)\,\kappa_\omega(dx)
+    \]
+    is continuous in $(a,v)$ and, by Assumption~\ref{ass:nondeg}, strictly positive for $(a,v)\ne0$ for a.e.\ $\omega$. The minimum
+    \[
+        m(\omega):=\inf\bigl\{g(a,v,\omega):a^2+|v|^2=1\bigr\}
+    \]
+    is measurable (infimum over a countable dense subset of the unit sphere) and strictly positive a.s. Writing $r:=(|A|^2+|v_{n-1}|^2)^{1/2}$ and $u:=(A,v_{n-1})/r$ on $\{r>0\}$, one has
+    \[
+        \E\bigl[|A+v_{n-1}\cdot(S_n-S_{n-1})|\wedge1\bigm|\F_{n-1}\bigr]\ge(r\wedge1)\,m\as.
+    \]
+    The left-hand side vanishes a.s., so $(r\wedge1)m=0$ a.s.\ and therefore $r=0$ a.s. Hence $A=0$ and $v_{n-1}=0$ a.s. Proceeding backwards yields $v_k=0$ a.s.\ for every $k$.
+\end{proof}
+
+\begin{proposition}\label{prop:strategy-conv}
+    Let $\rho_\lambda$ be the entropic risk measure. Assume \textup{(A1)}--\textup{(A6)}, $C_T\equiv0$, Assumption~\ref{ass:nondeg}, and $\pi(-Z)\in\R$. Let $\delta^*\in\HH$ be optimal and let $(\delta^M)$ be as in Proposition~\ref{prop:komlos-networks}. Then $\delta^*$ is the unique optimal strategy in $\HH$, and
+    \[
+        H\circ\delta^M\longrightarrow\delta^*\qquad\text{in probability}
+    \]
+    (i.e.\ $(H\circ\delta^M)_k\to\delta^*_k$ in probability for every $k$).
+\end{proposition}
+
+\begin{proof}
+    By Proposition~\ref{prop:entropic-PnL}, $W(H\circ\delta^M)\to W(\delta^*)$ in probability. Uniqueness of the optimal strategy follows from Lemma~\ref{lem:identify}: if $\delta',\delta''\in\HH$ are both optimal, then $W(\delta')=W(\delta'')$ a.s.\ by uniqueness of the optimal P\&L, hence $\delta'=\delta''$ a.s.
+
+    To upgrade gain convergence to position convergence, apply the same backward induction as in Lemma~\ref{lem:identify} to
+    \[
+        T_M:=W(H\circ\delta^M)-W(\delta^*)=\sum_{k=0}^{n-1}v^M_k\cdot(S_{k+1}-S_k),
+    \]
+    with $v^M_k:=(H\circ\delta^M)_k-\delta^*_k$ and $T_M\to0$ in probability. At the last date,
+    \[
+        A_M+v^M_{n-1}\cdot(S_n-S_{n-1})=T_M\to0
+    \]
+    in probability, with $A_M$ $\F_{n-1}$-measurable. The conditional-expectation lower bound of the proof of Lemma~\ref{lem:identify} yields $(r_M\wedge1)m\to0$ in probability with $m>0$ a.s., hence $r_M\to0$ in probability, so $A_M\to0$ and $v^M_{n-1}\to0$ in probability. Proceeding backwards gives $v^M_k\to0$ in probability for every $k$.
+\end{proof}
+
+\begin{remark}\label{rem:strategy-limits}
+    Three limitations.
+    \begin{enumerate}[leftmargin=*,itemsep=0pt,parsep=0pt]
+        \item[\textup{(i)}] Nonzero costs destroy the linear identification $W(\eta)=(\eta\cdot S)_T$. We do not know a clean condition under which positions remain identifiable from $W(\eta)$ when $C_T\not\equiv0$.
+        \item[\textup{(ii)}] The unconstrained network outputs $\delta^M$ need not converge even when $H\circ\delta^M$ does: the maps $H_k$ need not be injective.
+        \item[\textup{(iii)}] Assumption~\ref{ass:nondeg} is incompatible with a fully unconstrained market under (A6) (Remark~\ref{rem:A6-strength}). Nontrivial examples require constraints whose ranges sit in a cone compatible with the support of the increments --- as in the quarter-disk market of Proposition~\ref{prop:sharp-A1}, where $\Delta S$ is supported in the positive orthant and non-degeneracy holds inside that cone for suitable laws of $(\Theta,V)$.
+    \end{enumerate}
+\end{remark}
+
+\section{Summary}\label{sec:summary-A}
+
+We record the conclusions of the chapter in the form of answers to the questions posed in the introduction.
+
+\begin{enumerate}[leftmargin=*,itemsep=1ex,parsep=0pt]
+    \item \emph{Do (A1)--(A6) restore $\pi_M\to\pi$?} Yes. In fact (A1) and (A6) alone suffice, together with the standing B\"uhler market structure and the restriction to OCEs (Theorem~\ref{thm:main-A}). Hypotheses (A2)--(A5) are not used for value convergence.
+    \item \emph{Are additional assumptions on top of (A1)--(A6) needed?} No, not for value convergence. In particular one does not need the compact-position-limit / $\ell$-integrability package (B1)--(B5) of the companion draft. Gain-side admissibility (A6) replaces that package by providing a deterministic lower envelope for every admissible objective.
+    \item \emph{Can one prove $\pi_M\to\pi$ using only (A1)--(A6)?} Yes: Theorem~\ref{thm:main-A} does so, and in fact uses only (A1) and (A6) among them.
+    \item \emph{Is (A1) essential?} Yes. Proposition~\ref{prop:sharp-A1} exhibits a market satisfying (A2)--(A6) and the standing B\"uhler hypotheses in which every continuous-activation network strategy has infinite entropic risk, while $\pi(-Z)\le0$. The weaker envelope condition (A1$'$) of Remark~\ref{rem:A1prime} is the natural substitute when $Z$ is unbounded but $\ell$-integrable.
+    \item \emph{Does the trading strategy converge to an optimum?} Not in general (Examples~\ref{ex:nonunique} and~\ref{ex:cvar-nonunique}). What always holds under the full package (A1)--(A6) is Koml\'os recovery of an optimal payoff from network near-minimizing sequences (Proposition~\ref{prop:komlos-networks}). For the entropic risk measure the optimal terminal P\&L is unique and network P\&Ls converge to it in probability (Proposition~\ref{prop:entropic-PnL}). Under the further assumptions of zero costs and conditional non-degeneracy, the optimal strategy itself is unique and $H\circ\delta^M\to\delta^*$ in probability (Proposition~\ref{prop:strategy-conv}).
+    \item \emph{Is $\pi_M$ attained?} Not claimed. Near-minimizers suffice for all approximation statements; existence of a network minimizer would require compactness or coercivity in the finite-dimensional parameter space of $\HH_M$, which we do not assume.
+\end{enumerate}
+
+\begin{thebibliography}{9}
+
+    \bibitem{buehler}
+    H.~B\"uhler, L.~Gonon, J.~Teichmann, and B.~Wood.
+    Deep hedging.
+    \emph{Quantitative Finance} \textbf{19}(8), 1271--1291, 2019.
+
+    \bibitem{delbaenschachermayer}
+    F.~Delbaen and W.~Schachermayer.
+    A general version of the fundamental theorem of asset pricing.
+    \emph{Mathematische Annalen} \textbf{300}(1), 463--520, 1994.
+
+    \bibitem{foellmerschied}
+    H.~F\"ollmer and A.~Schied.
+    \emph{Stochastic Finance: An Introduction in Discrete Time}.
+    4th edition, De Gruyter, Berlin, 2016.
+
+    \bibitem{hornik}
+    K.~Hornik.
+    Approximation capabilities of multilayer feedforward networks.
+    \emph{Neural Networks} \textbf{4}(2), 251--257, 1991.
+
+\end{thebibliography}
+
+\end{document}
