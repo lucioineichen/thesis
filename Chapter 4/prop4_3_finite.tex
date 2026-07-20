@@ -1,0 +1,64 @@
+% ----------------------------------------------------------------------
+% Proposition: neural-network approximation on a finite probability space
+% This file is an *artifact* cited in §4.2 of the thesis. It reproduces
+% Bühler et al. (2019), Proposition 4.3, and tags *exactly* the three
+% places where finiteness of Ω is used (F1)–(F3).
+% When integrating into the final thesis, strip the standalone preamble
+% and include this under the same numbering as the surrounding document
+% (keep the "% draft: ..." comment to preserve the original label).
+% ----------------------------------------------------------------------
+
+\subsection*{The approximation theorem on a finite probability space}
+
+% draft: Proposition 4.3 (Bühler et al.)
+\begin{proposition}[Bühler et al., Proposition 4.3]\label{prop:finitespace}
+  Suppose the probability space $\Omega=\{\omega_1,\dots,\omega_N\}$ is
+  finite with $\mathbb P[\{\omega_i\}]>0$ for all $i$, and
+  $\rho:\mathbb R^N\to\mathbb R$ is a convex risk measure. Then for every
+  claim $X$ one has $\displaystyle \lim_{M\to\infty}\pi_M(X)=\pi(X)$.
+\end{proposition}
+
+\begin{proof}
+  By monotonicity of $(\pi_M)$ (Lemma~\ref{lem:monotone}) it suffices to
+  show that for every $\varepsilon>0$ some $M$ satisfies
+  $\pi_M(X)\le\pi(X)+\varepsilon$.
+
+  Choose $\delta\in\mathcal H^{\mathrm u}$ with
+  \begin{equation}\label{eq:finitespace:nearopt}
+    \rho\bigl(X+W(H\circ\delta)\bigr)\le\pi(X)+\frac{\varepsilon}{2}.
+  \end{equation}
+  Write $\delta_k=f_k(I_0,\dots,I_k)$ via Doob–Dynkin.
+
+  \paragraph{(F1) Integrability of the hedge ratios.}
+  Because $\Omega$ is finite, each $\delta_k$ takes finitely many values
+  and every component of $f_k$ lies in $L^1(\mu_k)$ (the law of
+  $(I_0,\dots,I_k)$). Hornik’s theorem yields networks
+  $F_{k,m}\to f_k$ in $L^1(\mu_k)$.
+
+  \paragraph{(F2) From $L^1$ to pointwise convergence.}
+  On a finite $\Omega$, $L^1$ convergence implies pointwise convergence:
+  $\delta^m_k:=F_{k,m}(I_0,\dots,I_k)\to\delta_k$ for every
+  $\omega\in\Omega$. Continuity of each $H_k$ gives
+  $(H\circ\delta^m)_k\to(H\circ\delta)_k$ pointwise.
+
+  \paragraph{(F3) Continuity of the risk measure.}
+  Identifying random variables with vectors in $\mathbb R^N$, the convex
+  map $\rho:\mathbb R^N\to\mathbb R$ is continuous. Set
+  $G_m:=((H\circ\delta^m)\cdot S)_T$ and
+  $C_m:=C_T(H\circ\delta^m)$.  The cost functions $c_k$ are upper
+  semicontinuous in their spatial argument and their inputs range over a
+  compact set, hence $(C_m)$ is bounded.  Passing to a subsequence with
+  $C_m\to\overline C$ pointwise and using upper semicontinuity one has
+  $\overline C\le C:=C_T(H\circ\delta)$ pointwise. Continuity and
+  monotonicity of $\rho$ give
+  \[
+    \lim_{m\to\infty}\rho(X+G_m-C_m)=\rho(X+G-\overline C)
+    \le\rho(X+G-C)\le\pi(X)+\frac{\varepsilon}{2}
+  \]
+  by \eqref{eq:finitespace:nearopt}. Pick $m$ large enough so that the
+  left-hand side is $\le\pi(X)+\varepsilon$. Because $\delta^m$ belongs
+  to $\mathcal H_M$ for all $M$ once $m$ is large enough (nested network
+  classes), $\pi_M(X)\le\pi(X)+\varepsilon$ follows.
+\end{proof}
+
+% End of file --------------------------------------------------------------------
