@@ -44,9 +44,9 @@
 
 \chapter{The setting: a discrete-time market with frictions and convex risk measures}
 
-This chapter sets up all objects needed in the rest of the thesis. We first construct the market: trading dates, information, hedging instruments, trading strategies, constraints and transaction costs, culminating in the terminal profit-and-loss equation. Everything that follows in this thesis is an answer to the question: \emph{what makes a P\&L ``good''?} The second half of the chapter develops the answer adopted here, convex risk measures, and in particular the class of optimized certainty equivalents used throughout Chapters~3 and~4.
+This chapter sets up all objects needed in the rest of the thesis. We first construct the market: trading dates, information, hedging instruments, trading strategies, constraints and transaction costs. Then we use these objects to define the terminal profit-and-loss equation. The second half of the chapter develops convex risk measures, and in particular the class of optimized certainty equivalents, to measure the ``goodness'' of the P\&L.
 
-The market model is that of B\"uhler et al.\ \cite[Section~2]{buehler}, with one structural difference that is the standing theme of this thesis: the probability space is \emph{general}, not finite. We flag the consequences of this difference wherever they first appear.
+The market model (Sections~\ref{sec:market}--\ref{sec:pnl}) copies the setup of B\"uhler et al.\ \cite[Section~2]{buehler}, with one structural difference: the probability space is \emph{general}, not finite.
 
 \section{The market}\label{sec:market}
 
@@ -64,7 +64,7 @@ and we set $\F_T:=\F_n$. Without loss of generality we take $\F=\F_T$.
 
 The market contains $d$ hedging instruments whose \emph{mid-prices} are given by an $\R^d$-valued $\mathbb{F}$-adapted process $S=(S_k)_{k=0,\dots,n}$, where $S_k$ is the price vector at date $t_k$. The instruments may be primary assets such as stocks or currencies, but also secondary assets such as liquidly traded options; this flexibility is one of the strengths of the framework, because hedging a complex derivative portfolio in practice relies on liquid vanilla options as much as on the underlying itself. We stress that $S$ is simply an adapted process: no martingale-measure assumption of any kind is made at this point.
 
-The \emph{liability} is an $\F_T$-measurable random variable $Z$, interpreted as the payoff of a portfolio of derivatives that the trader has sold and must service at time $T$. As in B\"uhler et al.\ \cite[Section~2]{buehler}, we adopt three simplifications: interest rates are zero (all quantities are discounted), all payments occur at the terminal date $T$ and there is no American-style optionality. Aggregating all payments at $T$ is a genuine restriction only in the presence of stochastic discounting; with zero rates, intermediate cash flows can be shifted to $T$ without cost.
+The \emph{liability} is an $\F_T$-measurable random variable $Z$, interpreted as the payoff of a portfolio of derivatives that the trader has sold and must service at time $T$. As in B\"uhler et al.\ \cite[Section~2]{buehler}, we adopt the following simplifications. Interest rates are zero, and any cash flow before $T$ is assumed to be invested into the overnight risk-free account. Under zero rates, this is costless, so we can assume all payments are due at the terminal date $T$. We also exclude American-style optionality.
 
 \section{Trading strategies, costs and the P\&L equation}\label{sec:pnl}
 
@@ -74,7 +74,7 @@ A \emph{trading strategy} is an $\R^d$-valued $\mathbb{F}$-adapted process $\del
 \]
 the trader starts with no position and liquidates the entire portfolio at $T$. We write $\Hu$ for the set of all such strategies (the superscript stands for ``unconstrained'').
 
-In real markets, not every position is available: instruments may be tradeable only from certain dates onwards, liquidity limits the position size and risk management imposes bounds or short-selling restrictions. Following B\"uhler et al.\ \cite[Section~2.4]{buehler}, such \emph{trading constraints} are encoded by continuous maps $H_k$ that project an intended position onto the set of admissible ones, in a way that may depend on the information at $t_k$ and on the previously held positions; the constrained version of $\delta\in\Hu$ is denoted by $H\circ\delta$ and defined recursively by
+In real markets, not every position is available: instruments may be tradeable only from certain dates onwards, liquidity limits the position size and risk management imposes bounds or short-selling restrictions. Following B\"uhler et al.\ \cite[Section~2.4]{buehler}, such \emph{trading constraints} are encoded by continuous maps $H_k$ that project an intended position onto the set of admissible ones, in a way that depends on the information available up to $t_k$ and on the previously held position $\delta_{k-1}$. The constrained version of $\delta\in\Hu$ is denoted by $H\circ\delta$ and defined recursively by
 \[
     (H\circ\delta)_k:=H_k\bigl((H\circ\delta)_0,\dots,(H\circ\delta)_{k-1},\delta_k\bigr),\qquad k=0,\dots,n-1,
 \]
@@ -82,7 +82,7 @@ with $H_k(\cdot,0)=0$, so that the zero strategy is always admissible. The set o
 \[
     \HH:=\{H\circ\delta:\delta\in\Hu\}.
 \]
-We keep the constraint structure deliberately lightweight in this chapter; it plays an active role only in Chapter~4, where the recursive form of $H\circ\delta$ matches the recursive structure of the network strategies. A reader willing to ignore constraints may set $H_k(x_0,\dots,x_{k-1},x)=x$ and $\HH=\Hu$ throughout.
+In Chapters~3 and~4 we will restrict admissibility by requiring that strategies cannot trade into a loss.
 
 Trading is costly. For each $k$, the \emph{cost function} $c_k\colon\Omega\times\R^d\to[0,\infty)$ gives the cost $c_k(x)$ of changing the position by $x\in\R^d$ at date $t_k$; it is $\F_k\otimes\mathcal{B}(\R^d)$-measurable, upper semicontinuous in the spatial variable and normalized so that
 \[
@@ -94,101 +94,93 @@ not trading is free and costs are nonnegative. The \emph{total cost} of a strate
 \]
 where the conventions $\delta_{-1}=\delta_n=0$ ensure that the initial build-up and the final liquidation of the position are charged as well.
 
+
 \begin{example}\label{ex:prop-costs}
-    Proportional transaction costs are given by
+    Following B\"uhler et al.\ \cite[Section~2]{buehler}, we give an example of proportional
+    transaction costs that given by
     \[
         c_k(x)=\sum_{i=1}^d\kappa^i S_k^i|x^i|
     \]
     with relative cost parameters $\kappa^i\ge0$: each trade costs a fixed proportion of the transacted volume. These cost functions are continuous, convex and normalized.
 \end{example}
 
-\begin{example}\label{ex:fixed-costs}
-    Fixed transaction costs charge a lump sum per executed trade above a minimal size,
-    \[
-        c_k(x)=\sum_{i=1}^d\kappa^i\mathbf{1}_{\{|x^i|\ge\varepsilon^i\}}
-    \]
-    with $\kappa^i\ge0$ and thresholds $\varepsilon^i>0$. Each summand is the indicator of a closed set and hence upper semicontinuous. Note that the seemingly simpler choice $c_k(x)=\kappa\mathbf{1}_{\{x\ne0\}}$ is \emph{not} upper semicontinuous at $x=0$ and is therefore excluded; the threshold $\varepsilon^i>0$ is what makes the example fit the standing assumptions.
-\end{example}
-
-Upper semicontinuity of the cost functions is exactly what the limit arguments of Chapter~4 require: along a convergent sequence of strategies, costs may drop in the limit but not jump up.
+\noindent Upper semicontinuity of the cost functions is exactly what the limit arguments of Chapter~4 require: along a convergent sequence of strategies, costs may drop in the limit but not jump up.
 
 The trading gains of $\delta$ from price movements are given by the discrete stochastic integral
 \[
     (\delta\cdot S)_T:=\sum_{k=0}^{n-1}\delta_k\cdot(S_{k+1}-S_k).
 \]
-Now suppose the trader sells the liability $Z$ for an initial cash amount $p_0$ and trades according to $\delta\in\HH$. Collecting all cash flows at $T$ yields the \emph{terminal profit-and-loss}
+Now suppose the trader sells the liability $Z$ for an initial cash amount $p_0$ and trades according to $\delta\in\HH$. Collecting all cash flows at $T$ yields the \emph{terminal profit-and-loss} of B\"uhler et al.\ \cite[Equation~(1)]{buehler},
 \begin{equation}\label{eq:PL}
     \mathrm{PL}_T(Z,p_0,\delta):=-Z+p_0+(\delta\cdot S)_T-C_T(\delta).
 \end{equation}
-Equation \eqref{eq:PL} is the central object of this thesis. Its four terms are the payment of the liability, the premium received, the trading gains and the frictional losses. In a complete market without frictions one can choose $p_0$ and $\delta$ such that $\mathrm{PL}_T(Z,p_0,\delta)=0$; under incompleteness and frictions this is impossible in general, and the P\&L remains genuinely random. The remainder of the thesis is organized around the question of what makes the random variable \eqref{eq:PL} acceptable, and how to choose $\delta$ (Chapter~3) and to compute such a $\delta$ (Chapter~4) so as to make it as acceptable as possible.
+Equation \eqref{eq:PL} is the central object of this thesis. Its four terms are the payment of the liability, the premium received, the trading gains and the frictional losses. The remainder of the thesis is organized around the question of how to determine the riskiness of the random variable \eqref{eq:PL}, how to choose $\delta$ (Chapter~3) and to compute such a $\delta$ (Chapter~4) so as to minimize its risk as much as possible.
 
-\section{Feasibility, arbitrage and irrelevant markets}\label{sec:arbitrage}
+\section{Relevant markets and feasibility}\label{sec:arbitrage}
 
 It is convenient to isolate the part of the P\&L that is generated by pure trading. For $\delta\in\HH$, define the \emph{gain} of $\delta$ net of costs by
 \[
-    W(\delta):=(\delta\cdot S)_T-C_T(\delta)=\mathrm{PL}_T(0,0,\delta).
+    W(\delta):=(\delta\cdot S)_T-C_T(\delta).
 \]
 
 A first natural question is whether the market allows arbitrage: a strategy $\delta\in\HH$ with
 \[
     W(\delta)\ge0\as\qquad\text{and}\qquad\PP[W(\delta)>0]>0.
 \]
-Classical pricing theory begins by excluding such strategies. The deep hedging framework does not: no no-arbitrage assumption is imposed a priori. This is a deliberate modelling choice. The framework is designed to operate on market data or on scenarios from a simulator, and neither is guaranteed to be arbitrage-free; the optimisation problem of Chapter~3 remains meaningful regardless, because the risk measure quantifies how attractive the market is rather than requiring it to be neutral. What must be avoided is not arbitrage itself but a market that is \emph{too} attractive, in the following sense.
+Classical pricing theory begins by excluding such strategies. The deep hedging framework does not: no no-arbitrage assumption is imposed a priori. This is a deliberate modelling choice. The framework is designed to operate on market data or on scenarios from a simulator, and neither is guaranteed to be arbitrage-free. What must be avoided is not arbitrage itself but a market that is \emph{too} attractive, in the following sense.
 
 Once a risk functional $\rho$ is fixed (Sections~\ref{sec:naive}--\ref{sec:oce} below construct it), the quantity
 \[
     \pi(0):=\inf_{\delta\in\HH}\rho\bigl(W(\delta)\bigr)
 \]
-measures the risk of the position of a trader with no liability who is free to trade; the systematic study of this functional is the subject of Chapter~3. Following B\"uhler et al.\ \cite[Section~3.1]{buehler}, the market is called \emph{irrelevant} for the trader if $\pi(0)=-\infty$: by pure trading, the risk can be driven below every bound, and the hedging and pricing problem degenerates (every liability would have indifference price $-\infty$). Irrelevance is a joint property of the market \emph{and} the risk measure, and it can occur without classical arbitrage.
+measures the risk of the position of a trader with no liability who is free to trade. A proper definition and the systematic study of this optimization problem is the subject of Chapter~3. Following B\"uhler et al.\ \cite[Section~3.1]{buehler}, the market is called \emph{irrelevant} for the trader if $\pi(0)=-\infty$: by pure trading, the risk can be driven below every bound, and the hedging and pricing problem degenerates (every liability would have indifference price $-\infty$). Irrelevance is a joint property of the market \emph{and} the risk measure, and it can occur without classical arbitrage.
 
 \begin{example}\label{ex:stat-arb}
-    Consider a single period, one asset, no costs and no constraints, and the risk measure $\rho(X)=-\E[X]$ of Section~\ref{sec:naive} below. Let the price increment be
+    The following is a simplified version of the statistical-arbitrage
+    illustration of B\"uhler et al.\ \cite[Section~3.1]{buehler}. We will show, that a market without arbitrage can still be irrelevant. Consider a
+    single period, one asset, no costs and no constraints, and the risk
+    measure $\rho(X)=-\E[X]$ of Section~\ref{sec:naive} below. Let the
+    price increment be
     \[
-        S_1-S_0=\mu+\varepsilon,
+        S_1-S_0=1/2+\varepsilon,
     \]
-    where $\mu>0$ is a constant and $\varepsilon$ takes the values $\pm1$ with probability $1/2$ each. There is no arbitrage: every nonzero position loses money with probability $1/2$ (assuming $\mu<1$). But the strategy $\delta_0=m$ has
+    where $\varepsilon$ takes the values $\pm1$ with probability $1/2$ each. There is no arbitrage: every nonzero position loses money with probability $1/2$. But the strategy $\delta_0=m$ has
     \[
-        \rho\bigl(W(\delta)\bigr)=-\E[m(\mu+\varepsilon)]=-m\mu\longrightarrow-\infty\qquad(m\to\infty),
+        \rho\bigl(W(\delta)\bigr)=-\E[m(1/2+\varepsilon)]=-m/2\longrightarrow-\infty\qquad(m\to\infty),
     \]
-    so $\pi(0)=-\infty$. The market offers a \emph{statistical arbitrage}: a trade that is profitable on average though not surely, and a risk measure that only sees averages finds it infinitely attractive. A more risk-averse $\rho$, such as the entropic risk measure of Section~\ref{sec:oce}, penalizes the growing losses on $\{\varepsilon=-1\}$ and keeps $\pi(0)$ finite for this market.
+    so $\pi(0)=-\infty$ leading to a irrelevent market. With a more risk averse $p$, the market could be relevant.
 \end{example}
 
-Relevance of the market is a condition on the position $X=0$ only. It is natural to ask whether it already guarantees feasibility, meaning $\pi(X)>-\infty$, for all other positions. On a finite probability space, B\"uhler et al.\ \cite[Section~3.1]{buehler} answer this affirmatively: since $\pi$ is monotone and cash-invariant (this is proved in Chapter~3), one has for every $X$
+Relevance of the market is a condition on the position $X=0$ only. It is natural to ask whether it already guarantees feasibility, meaning $\pi(X)>-\infty$, for all other positions. On a finite probability space, B\"uhler et al.\ \cite[Corollary~3.3]{buehler} answer this affirmatively: since $\pi$ is monotone and cash-invariant (this is proved in Chapter~3), one has for every $X$
 \[
     \pi(X)\ge\pi\bigl(\sup X\bigr)=\pi(0)-\sup X>-\infty,
 \]
-because on a finite $\Omega$ every random variable satisfies $\sup X<\infty$. On a general probability space this argument survives only for bounded $X$: if $X$ is unbounded above, $\sup X=\infty$ and the estimate is empty. This is the first appearance of the finite-versus-general theme of this thesis, and an early hint of why bounded liabilities, hypothesis (A1) of Chapter~3, play a distinguished role.
-
-We close this section with a worked example of a strategy set whose gains are uniformly bounded from below. It prepares and motivates the gain-side hypothesis (A6) of Chapter~3, which requires $W(\delta)\ge0$ for every admissible $\delta$.
-
-\begin{example}\label{ex:nonneg-gains}
-    Suppose risk management imposes a position limit: the constraint maps force $|(H\circ\delta)_k^i|\le K$ for every instrument $i$ and date $k$, for a constant $K>0$. Suppose moreover that price moves per period are bounded, $|S_{k+1}^i-S_k^i|\le b$ for all $i$ and $k$, as is the case for instruments subject to daily price limits or as an approximation over short trading periods, and that costs are proportional as in Example~\ref{ex:prop-costs} with bounded mid-prices $S_k^i\le s$. Then for every $\delta\in\HH$,
-    \[
-        (\delta\cdot S)_T\ge-ndKb,\qquad C_T(\delta)\le(n+1)d\max_i\kappa^i s\cdot2K,
-    \]
-    so there is a constant $m\ge0$, depending only on the market parameters, with
-    \[
-        W(\delta)\ge-m\qquad\text{for every }\delta\in\HH.
-    \]
-    The margin capital $m$ is the worst loss that the position limits allow; doubling strategies, which require unbounded positions, are excluded by construction. By cash-invariance of the risk measures introduced below, a uniform bound $W(\delta)\ge-m$ can be normalized to $W(\delta)\ge0$ by absorbing the constant $m$ into the liability. In this normalized form the example satisfies hypothesis (A6) of Chapter~3 exactly.
-\end{example}
+because on a finite $\Omega$ every random variable satisfies $\sup X<\infty$. On a general probability space this argument does not survive for unbounded $X$. This is the first appearance of the finite-versus-general theme of this thesis, and an early hint of why bounded liabilities, hypothesis (A1) of Chapter~3, play a distinguished role.
 
 \section{Measuring risk: two na\"ive attempts}\label{sec:naive}
 
-We now turn to the second half of the question: given the random P\&L \eqref{eq:PL}, how should one quantify its riskiness? We look for a functional $\rho$ that maps a random position $X$ to a number $\rho(X)$, interpreted as \emph{the amount of cash that must be added to the position to make it acceptable}. A positive $\rho(X)$ is a capital requirement; a negative $\rho(X)$ means cash can be withdrawn without making the position unacceptable. Before giving the axioms, we examine two natural first candidates and record why they fail. Their failures are instructive because each one points directly at one of the axioms below.
+We now turn to the second half of the question: given the random P\&L \eqref{eq:PL}, how should one quantify its riskiness? We look for a functional $\rho$ that maps a random position $X$ to a number $\rho(X)$, interpreted as \emph{the amount of cash that must be added to the position to make it acceptable}. A positive $\rho(X)$ is a capital requirement; a negative $\rho(X)$ means cash can be withdrawn without making the position unacceptable. Before giving the axioms, we examine two natural first candidates and discuss why they fail to be good risk measures. Their failures are instructive because each one points directly at one of the axioms below.
 
-\emph{The negative expectation} $\rho(X)=-\E[X]$ respects the cash interpretation and is even linear. Its defect is that it ignores the distribution of $X$ entirely: a sure gain of $1$ and a coin flip paying $+1000$ or $-998$ with probability $1/2$ each have the same expectation, hence the same risk number, though no risk-averse trader is indifferent between them. Example~\ref{ex:stat-arb} showed the same defect in action: under the negative expectation, any statistical arbitrage makes the market irrelevant. Whatever $\rho$ we choose, it must be able to distinguish positions by more than their mean.
+\begin{example}\label{ex:neg-exp}
+    \textbf{Negative expectation.}
+    The map $\rho(X)=-\E[X]$ seems very natural in the cash interpretation: The exact amount of cash, that must be added to $X$ so that the expected P\&L becomes nonnegative, is also the amount that makes the position acceptable. Its defect is that it ignores the distribution of $X$ entirely: a sure gain of $1$ and a coin flip paying $+1000$ or $-998$ with probability $1/2$ each have the same expectation, hence the same risk number, though no risk-averse trader is indifferent between them. Example~\ref{ex:stat-arb} showed that under the negative expectation the market gets irrelevant at the slightest presence of statistical arbitrage. Whatever $\rho$ we choose, it must be able to distinguish positions by more than their mean.
+\end{example}
 
-\emph{The variance} $\rho(X)=\mathrm{Var}(X)$, the classical criterion of Markowitz portfolio theory, sees the distribution but fails the cash interpretation twice. First, it penalizes gains and losses symmetrically: a position paying $+1000$ or $+998$ with probability $1/2$ has the same variance as one paying $-1000$ or $-998$, yet only the latter is risky in any economic sense. In particular the variance is not monotone: improving a position in every scenario can increase its risk number. Second, $\mathrm{Var}(X+c)=\mathrm{Var}(X)$ for every cash amount $c$, so adding cash does not reduce the risk number at all --- the number cannot be a capital requirement, since no amount of capital ever makes the position acceptable. Both failures make economic nonsense of the reading of $\rho(X)$ as required capital.
+\begin{example}\label{ex:variance}
+    \textbf{Variance.}
+    The map $\rho(X)=\mathrm{Var}(X)$ directly tackels the missing ingredient of the negative expectation: It punishes uncertainty. Furthermore, it is the canonical measure of risk in Markowitz portfolio theory \cite{markowitz1952}. Unfortunately, it still fails the cash interpretation twice. First, it penalizes gains and losses symmetrically: a position paying $+1000$ or $+998$ with probability $1/2$ has the same variance as one paying $-1000$ or $-998$, yet only the latter is risky in any economic sense. In particular the variance is not monotone: improving a position in every scenario can increase its risk number. Second, $\mathrm{Var}(X+c)=\mathrm{Var}(X)$ for every cash amount $c$, so adding cash does not reduce the risk number at all; the number cannot be a capital requirement, since no amount of capital ever makes the position acceptable. Both failures make economic nonsense of the reading of $\rho(X)$ as required capital.
+\end{example}
 
 These two failures motivate the axioms of the next section: monotonicity (better positions need less capital) and cash-invariance (added cash reduces the requirement one for one), together with convexity (diversification does not increase risk).
 
 \section{Convex risk measures}\label{sec:crm}
 
-Let $\mathcal{X}$ be a vector space of random variables on $(\Omega,\F,\PP)$ containing the constants; the choice of $\mathcal{X}$ is discussed in Remark~\ref{rem:domain} below. The following definition goes back to F\"ollmer and Schied; see \cite[Chapter~4]{foellmerschied}.
+Let $\mathcal{X}=\{X:\Omega\to\R\}$ be a vector space of random variables on $(\Omega,\F,\PP)$. Before defining the convex risk measure $\rho$, we need to discuss the choice of the domain space of random variables $\mathcal{X}$.
+On a finite probability space, the space question is redundant. Every random variable $X\in\mathcal{X}$ is finite-dimensional and $\rho$ is a convex function on $\R^N$. Therefore, it is automatically bounded and continuous. On a general $\Omega$ one must choose $\mathcal{X}$, and the choice matters. E.g. taking $\mathcal{X}=L^\infty$ keeps $\rho$ finite but is a very restrictive choice. The choice adopted in this thesis, following the needs of Chapter~3, is the largest one: $\rho$ is defined on $L^0$, the space of all real-valued random variables.
+The following definition is that of F\"ollmer and Schied \cite[Definition~4.1]{foellmerschied}; it is also the notion used by B\"uhler et al.\ \cite[Definition~1]{buehler}.
 
 \begin{definition}\label{def:crm}
-    A map $\rho\colon\mathcal{X}\to\R$ is a \emph{convex risk measure} if for all $X,Y\in\mathcal{X}$:
+    A map $\rho\colon L^0\to [-\infty,\infty]$ is a \emph{convex risk measure} if for all $X,Y\in L^0$:
     \begin{enumerate}[leftmargin=*,label=\textup{(\roman*)}]
         \item \emph{monotonicity:} $X\le Y$ $\PP$-a.s.\ implies $\rho(X)\ge\rho(Y)$;
         \item \emph{cash-invariance:} $\rho(X+c)=\rho(X)-c$ for every $c\in\R$;
@@ -196,19 +188,15 @@ Let $\mathcal{X}$ be a vector space of random variables on $(\Omega,\F,\PP)$ con
     \end{enumerate}
 \end{definition}
 
-Each axiom has a direct economic reading. Monotonicity says that a position that pays more in every scenario needs less capital. Cash-invariance says that capital already in the position counts toward the requirement one for one; it makes the unit of $\rho(X)$ the same as the unit of $X$, namely cash at time $T$. In particular,
+Each axiom has a direct economic reading, with the usual conventions of extended-real arithmetic when $\rho$ takes the values $\pm\infty$. Monotonicity says that a position that pays more in every scenario needs no more capital. Cash-invariance says that capital already in the position counts toward the requirement one for one; it makes the unit of $\rho(X)$ the same as the unit of $X$, namely cash at time $T$. Whenever $\rho(X)\in\R$ is finite, cash-invariance gives
 \[
     \rho\bigl(X+\rho(X)\bigr)=\rho(X)-\rho(X)=0,
 \]
-so $\rho(X)$ is exactly the minimal cash injection that makes the position acceptable in the sense of having nonpositive risk. Convexity encodes the diversification principle: the risk of a mixture is at most the mixture of the risks, so splitting capital between two positions is never penalized. The negative expectation satisfies all three axioms (its failure in Section~\ref{sec:naive} is one of risk sensitivity, not of the axioms; it will be excluded later by the continuity hypothesis (A3) of Chapter~3), while the variance violates (i) and (ii).
-
-\begin{remark}\label{rem:domain}
-    On a finite probability space, the domain question is invisible: every random variable is bounded, $\mathcal{X}=\{X:\Omega\to\R\}$ is finite-dimensional and $\rho$ is a convex function on $\R^N$, automatically finite and continuous. On a general $(\Omega,\F,\PP)$ one must choose $\mathcal{X}$, and the choice matters throughout the thesis. Taking $\mathcal{X}=L^\infty$ keeps $\rho$ finite but excludes unbounded P\&Ls, which arise as soon as gains or liabilities are unbounded. Taking $\mathcal{X}=L^p$ requires moment bounds that trading gains need not satisfy. The choice adopted in this thesis, following the needs of Chapter~3, is the largest one: $\rho$ is defined on $L^0$, the space of all ($\PP$-equivalence classes of) random variables, at the price of allowing the extended real values $\pm\infty$; Definition~\ref{def:crm} is then understood with the usual conventions of extended-real arithmetic. This choice has two consequences that shape Chapters~3 and~4. First, finiteness of $\rho$ at a given position becomes a genuine question, answered for optimized certainty equivalents in Remark~\ref{rem:oce-welldef} below. Second, and more importantly, an extended-real convex function on an infinite-dimensional space has no automatic continuity properties: the continuity of $\rho$ along the limits appearing in the proofs must be assumed (hypothesis (A3) of Chapter~3) or derived from structure (the envelope lemma of Chapter~4). The loss of automatic continuity is precisely the failure point (F3) identified in Chapter~4.
-\end{remark}
+so $\rho(X)$ is exactly the minimal cash injection that makes the position acceptable in the sense of having nonpositive risk. If $\rho(X)=+\infty$, no finite cash amount renders the position acceptable; if $\rho(X)=-\infty$, the position is infinitely attractive and any finite cash amount can be withdrawn while keeping risk nonpositive. Convexity encodes the diversification principle: the risk of a mixture is at most the mixture of the risks, so splitting capital between two positions is never penalized. The negative expectation satisfies all three axioms (its failure in Section~\ref{sec:naive} is one of risk sensitivity, not of the axioms; it will be excluded later by the continuity hypothesis (A3) of Chapter~3), while the variance violates (i) and (ii).
 
 \section{Optimized certainty equivalents}\label{sec:oce}
 
-The convex risk measures used in this thesis all arise from a single construction, the \emph{optimized certainty equivalent} (OCE) of Ben-Tal and Teboulle \cite{bentalteboulle}. The construction turns a one-dimensional loss function into a risk measure, and its variational form is what makes both the theory (Chapters~3 and~4) and the numerics (the training algorithm of Chapter~4) tractable.
+The convex risk measures used in this thesis all arise from a single construction, the \emph{optimized certainty equivalent} (OCE) of Ben-Tal and Teboulle \cite{bentalteboulle}, which B\"uhler et al.\ \cite[Section~3.3]{buehler} also take as their working class. The construction turns a one-dimensional loss function into a risk measure, and its variational form is what makes both the theory (Chapters~3 and~4) and the numerics (the training algorithm of Chapter~4) tractable.
 
 Throughout this section, $\ell\colon\R\to\R$ is a \emph{loss function}: convex, non-decreasing and finite on all of $\R$ (hence continuous). The value $\ell(x)$ is read as the disutility of a loss of size $x$; monotonicity says larger losses hurt more, convexity says they hurt disproportionately more.
 
@@ -246,7 +234,7 @@ so the infimum in \eqref{eq:OCE} would equal $-\infty$ for \emph{every} position
     so $\rho_\ell(X)\ge-\E[X]>-\infty$ for every $X\in L^1$: the OCE never takes the value $-\infty$ on $L^1$. On positions outside $L^1$ we use \eqref{eq:OCE} with the conventions of extended-real arithmetic, consistently with the domain choice of Remark~\ref{rem:domain}.
 \end{remark}
 
-The next lemma is the general-$\Omega$ version of B\"uhler et al.\ \cite[Lemma~3.5]{buehler}.
+The next lemma is the general-$\Omega$ version of B\"uhler et al.\ \cite[Lemma~3.5]{buehler}; the proof is essentially theirs, rewritten for extended-real expectations on $L^1$.
 
 \begin{lemma}\label{lem:oce-crm}
     Under Assumption~\ref{ass:normalization}, the map $\rho_\ell$ defined by \eqref{eq:OCE} is a convex risk measure on $L^1$, with values in $(-\infty,\infty]$.
@@ -263,7 +251,7 @@ The next lemma is the general-$\Omega$ version of B\"uhler et al.\ \cite[Lemma~3
 
     \emph{Cash-invariance.} For $c\in\R$, the substitution $w'=w+c$ gives
     \begin{align*}
-        \rho_\ell(X+c) & =\inf_{w\in\R}\Bigl(w+\E\bigl[\ell(-X-c-w)\bigr]\Bigr)                       \\
+        \rho_\ell(X+c) & =\inf_{w\in\R}\Bigl(w+\E\bigl[\ell(-X-c-w)\bigr]\Bigr)                    \\
                        & =\inf_{w'\in\R}\Bigl(w'-c+\E\bigl[\ell(-X-w')\bigr]\Bigr)=\rho_\ell(X)-c.
     \end{align*}
 
@@ -334,6 +322,11 @@ With the market of Sections~\ref{sec:market}--\ref{sec:arbitrage} and the risk m
     H.~F\"ollmer and A.~Schied.
     \emph{Stochastic Finance: An Introduction in Discrete Time}.
     4th edition, De Gruyter, Berlin, 2016.
+
+    \bibitem{markowitz1952}
+    H.~Markowitz.
+    Portfolio selection.
+    \emph{The Journal of Finance} \textbf{7}(1), 77--91, 1952.
 
 \end{thebibliography}
 

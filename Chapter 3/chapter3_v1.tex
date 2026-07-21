@@ -80,7 +80,7 @@ The \emph{indifference price} after B\"uhler et al.\ \cite{buehler} of a liabili
 \[
     p(Z):=\pi(-Z)-\pi(0).
 \]
-Cash-invariance of $\pi$, established in Proposition~\ref{prop:convex}, gives $\pi(-Z+p(Z))=\pi(0)$, so $p(Z)$ is the unique cash amount that makes the trader indifferent (in the $\rho$-sense) between selling $Z$ and not doing business at all. The next result is the basic consistency property of $p$; it is the discrete-time analogue of the martingale-case statement of B\"uhler et al.\ \cite{buehler}. It operates under the assumption of an efficient market, but under otherwise lighter hypotheses than those required for attainment.
+Cash-invariance of $\pi$, established in Proposition~\ref{prop:convex}, gives $\pi(-Z+p(Z))=\pi(0)$, so $p(Z)$ is the unique cash amount that makes the trader indifferent (in the $\rho$-sense) between selling $Z$ and not doing business at all. The next result is the basic consistency property of $p$; it is a reiteration of the martingale-case statement of B\"uhler et al.\ \cite[Proposition~3.6]{buehler} but with a careful handling of the martingale transform in a general probability space.
 
 \begin{proposition}\label{prop:martingale}
     Suppose $S$ is a $\PP$-martingale with respect to the filtration $\mathbb{F}=(\F_k)_{k=0,\dots,n}$, $\rho=\rho_\ell$ is an OCE risk measure with loss function $\ell$ and $C_T(\delta)\ge0$ for every $\delta\in\HH$. Assume in addition that every $\delta\in\HH$ is admissible in the sense that the gain process $(\delta\cdot S)_k$, $k=0,\dots,n$, is uniformly bounded from below. Then
@@ -107,7 +107,18 @@ The uniform lower bound on the gain process is a mild admissibility requirement 
     \[
         \E\bigl[(\delta\cdot S)_T\bigr]=0\qquad\text{for every }\delta\in\HH.
     \]
-    One cannot argue this a priori via the tower property, because the increments $\delta_k\cdot(S_{k+1}-S_k)$ need not be known to lie in $L^1$. Therefore, we use the admissibility assumption. In discrete time, the martingale transform of a martingale by a process $(\delta_k)$ such that $\delta_k$ is $\F_k$-measurable for every $k$ is itself a martingale whenever it is uniformly bounded from below; see F\"ollmer and Schied \cite{foellmerschied}. The admissibility assumption supplies precisely this lower bound---it excludes doubling-type strategies---so $\delta\cdot S$ is a martingale. In particular each increment is integrable, and therefore we can apply the tower property:
+    One cannot argue this a priori via the tower property, because the
+    increments $\delta_k\cdot(S_{k+1}-S_k)$ need not be known to lie in
+    $L^1$. Therefore, we use the admissibility assumption. F\"ollmer and
+    Schied \cite[Proposition~9.6]{foellmerschied} show that, in discrete
+    time, the martingale transform of a martingale by an adapted process
+    $(\delta_k)_{k=0,\dots,n-1}$ is again a martingale as soon as its
+    negative part is integrable. Uniform boundedness from below and the finiteness of $\PP$ supply
+    exactly this.
+    The admissibility assumption therefore excludes doubling-type
+    strategies and yields that $\delta\cdot S$ is a martingale. In
+    particular each increment is integrable, and we can apply the tower
+    property:
     \[
         \E\bigl[\delta_k\cdot(S_{k+1}-S_k)\bigr]
         =\E\Bigl[\E\bigl[\delta_k\cdot(S_{k+1}-S_k)\bigm|\F_k\bigr]\Bigr]

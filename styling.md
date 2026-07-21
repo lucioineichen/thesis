@@ -68,3 +68,5 @@ Other additions:
 23) Sequences indexed by natural numbers: Always write sequences with the index ranging over \(\mathbb{N}\) (or \(\N\)) explicitly. Write \((\pi_M(X))_{M\in\N}\), \((a_n)_{n\in\N}\), \((\delta^m)_{m\in\N}\), not \((\pi_M(X))_M\), \((a_n)_n\) or \((\delta^m)_m\). The same applies to subsequences and double-indexed families when the free index runs over \(\N\).
 
 24) Closed compounds with "non": Write prefixes of the form "non-..." as a single word, without a hyphen. Examples: nonincreasing, nondecreasing, nonconstant, nonnegative, nonredundant, nonuniqueness; not non-increasing, non-decreasing, non-constant, etc.
+
+25) Capitalization after a colon: Prefer lowercase for the first character after a colon, including when what follows is a full sentence. Capitalize only if the colon introduces a quotation or a clearly marked new block that must start with a capital. Examples: write "Its defect is that it ignores the distribution entirely: a sure gain of 1 and a coin flip ...", not "... entirely: A sure gain ..."; write "the cash interpretation: the amount of cash that must be added ...", not "... interpretation: The amount ...".
