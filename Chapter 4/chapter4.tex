@@ -89,14 +89,15 @@ $\pi_M\to\pi$ on general $\Omega$.
 
 \subsection*{Neural networks}
 
-A feed forward neural network with activation function
-$\sigma\colon\R\to\R$ is a map
-$F=W_L\circ F_{L-1}\circ\dots\circ F_1\colon\R^{d_0}\to\R^{d_1}$ with
-$F_j=\sigma\circ W_j$ for affine maps $W_j$, where $\sigma$ acts
-componentwise; see B\"uhler et al.\ \cite[Definition~2]{buehler}. We
-denote by $\NNet_{\infty,d_0,d_1}$ the set of all such networks and
-fix, as in \cite[Section~4.1]{buehler}, an increasing exhaustion
-$\NNet_{M,d_0,d_1}\subseteq\NNet_{M+1,d_0,d_1}$ with
+B\"uhler et al.\ \cite[Definition~2]{buehler} define a feed-forward
+neural network with activation function $\sigma\colon\R\to\R$ as a map
+\[
+  F=W_L\circ F_{L-1}\circ\dots\circ F_1\colon\R^{d_0}\to\R^{d_1}
+\]
+with $F_j=\sigma\circ W_j$ for affine maps $W_j$, where $\sigma$ acts
+componentwise. We denote by $\NNet_{\infty,d_0,d_1}$ the set of all
+such networks and fix, as in \cite[Section~4.1]{buehler}, an increasing
+exhaustion $\NNet_{M,d_0,d_1}\subseteq\NNet_{M+1,d_0,d_1}$ with
 $\bigcup_{M\in\N}\NNet_{M,d_0,d_1}=\NNet_{\infty,d_0,d_1}$, each
 $\NNet_{M,d_0,d_1}$ parametrized by finitely many weights and
 containing the zero network, and such that networks with fewer inputs
@@ -174,13 +175,13 @@ It remains to decide whether the limit equals $\pi(X)$.
 \section{The finite-space theorem and what breaks}
 \label{sec:finite}
 
-B\"uhler et al., Proposition~4.3, prove the following on a finite
-probability space. In the proof we flag each use of finiteness of
-$\Omega$ as (F1) to (F3); these are exactly the points that need
-attention on a general probability space.
-
 % draft: Proposition 4.3 (Buehler et al.);
 % reproduced from the artifact prop4_3_finite.tex.
+\noindent
+B\"uhler et al.\ prove the following on a finite probability space \cite[Proposition~4.3]{buehler}. In
+the following proposition, we restate it and flag each use of finiteness of $\Omega$ as (F1) to (F3);
+these are exactly the points that need attention on a general
+probability space.
 \begin{proposition}\label{prop:finitespace}
   Suppose the probability space $\Omega=\{\omega_1,\dots,\omega_N\}$ is
   finite with $\PP[\{\omega_i\}]>0$ for all $i$, and $\rho$ is a
@@ -662,10 +663,11 @@ $F_{\theta_k}$, the approximate problem \eqref{eq:piM} becomes
 This is a finite-dimensional minimization over the pair $(w,\theta)$,
 jointly and without any inner optimization. In practice the expectation
 is estimated by minibatches of simulated (or historically calibrated)
-sample paths of the information process $I$, the gradient in
+sample paths of the information process $I$. The gradient in
 $(w,\theta)$ is computed by backpropagation through the semi-recurrent
 parametrization $\delta_k=F_{\theta_k}(I_0,\dots,I_k,\delta_{k-1})$,
-and the minimization is carried out by stochastic gradient descent. For
+and the resulting finite-dimensional problem is minimized by the Adam
+algorithm, as in B\"uhler et al.\ \cite[Section~5]{buehler}. For
 the entropic risk measure the inner minimizer is explicit,
 \[
   w^*=\frac{1}{\lambda}\log\E\bigl[e^{\lambda(Z-W(H\circ\delta^\theta))}\bigr],
@@ -690,34 +692,34 @@ performance is not indicative of future results.
 
 Theorem~\ref{thm:approximation} and Corollary~\ref{cor:attained} are
 statements about \emph{values}: the network values converge to
-$\pi(-Z)$, and near-minimizers are $\varepsilon$-optimal. We close the
-chapter by observing that nothing of this kind holds for the strategies
-themselves.
+$\pi(-Z)$, and near-minimizers are $\varepsilon$-optimal. Nothing of
+this kind holds for the strategies themselves. Absence of strict
+convexity of $\rho$ (so optimal terminal P\&Ls need not be unique),
+redundancy in the market (so distinct strategies may share the same
+gain) and lack of compactness in the strategy space (so
+near-minimizing sequences can wander even when the optimizer is unique)
+can each prevent a sequence of network near-minimizers
+$\delta^M\in\HH_M$ from converging in any reasonable topology.
 
-% draft: Example (nonuniqueness blocks strategy convergence);
-% same as ex:nonunique in extension_with_A1_to_A6.tex.
-\begin{example}\label{ex:nonunique}
-  Let $S\equiv s_0$ be constant, $C_T\equiv0$ and $\HH=\Hu$ (no
-  constraints). Then $W(\delta)=0$ for every $\delta$, so every
-  strategy is optimal for every $Z$ and $\pi(-Z)=\rho_\ell(-Z)$.
-  Network near-minimizers may oscillate indefinitely between distinct
-  elements of $\HH_M$ without converging in any topology. The same
-  phenomenon occurs with two identical assets and zero costs: the
-  strategies $(\delta,0)$ and $(0,\delta)$ produce the same gain, and
-  minimizers may alternate between them.
+% draft: Example (CVaR admits multiple optimal P&Ls);
+% same as ex:cvar-nonunique in extension_with_A1_to_A6.tex.
+\begin{example}\label{ex:cvar-nonunique}
+  Average value at risk is a popular not strictly convex risk measure. Any P\&Ls with the same mean above the VaR threshold give the same risk; allowing for infinitely many optimal terminal P\&Ls.
 \end{example}
 
-\begin{remark}\label{rem:values-not-strategies}
-  Theorem~\ref{thm:approximation} and Corollary~\ref{cor:attained}
-  should therefore be read as value statements only. Without strict
-  convexity of the loss function $\ell$ and a nonredundancy condition
-  on $S$, optimal strategies need not be unique, and a sequence of
-  network near-minimizers $\delta^M\in\HH_M$ need not converge to an
-  optimal strategy $\delta^*$ in any reasonable topology. What the
-  theory guarantees is that the \emph{risk} of $\delta^M$ approaches
-  the optimal risk; which minimizer the training procedure selects is
-  not determined by the value convergence.
-\end{remark}
+% FAKE REF: the (A5) illustration in Chapter 3 (digital option via
+%   call-call butterfly with positions exploding).
+\begin{example}\label{ex:digital-explosion}
+  Even convergence of wealth does not force strategy convergence. The
+  remark on (A5) in Chapter~3 already shows this. Assume zero costs,
+  tradability in options $A=(S_T-K)^+$ and $B_n=(S_T-(K+1/n))^+$, and feasability of the trading strategy
+  \[
+    \delta_n:=nA-nB_n.
+  \]
+  Then, the terminal P\&L of $\delta_n$ converges pointwise to the digital
+  payoff $\mathbf{1}_{\{S_T>K\}}$. On the other hand, the position of holding the digital option is finite while the dynamic strategy explodes:
+  $\|\delta_n\|_{L^p}\to\infty$.
+\end{example}
 
 \begin{thebibliography}{9}
 
