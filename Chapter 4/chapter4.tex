@@ -394,7 +394,15 @@ The finite-space approximation fails on general $\Omega$ at (F1) and
 (F3). We restore it under two hypotheses from Chapter~3: (A1), that the
 liability is essentially bounded ($Z\in L^\infty$), and (A6), that every
 admissible gain is nonnegative ($W(\delta)\ge0$ a.s.\ for all
-$\delta\in\HH$).
+$\delta\in\HH$). From now on we restrict attention to optimal certainty equivalent (OCE) risk measures.
+
+% FAKE REF: OCE definition -> Chapter 2, Section 2.6.
+The first lemma repairs (F3); the failure of the risk measure to be
+upper semicontinuous along almost surely convergent sequences. Recall from Chapter~2 that the OCE risk measure associated with a convex nondecreasing loss
+function $\ell:\R\to\R$ is
+\[
+  \rho_\ell(Y):=\inf_{w\in\R}\bigl\{w+\E[\ell(-Y-w)]\bigr\}.
+\]
 
 % draft: Lemma 4.4 (constant-envelope upper semicontinuity of OCEs);
 % same statement as lem:usc-A in extension_with_A1_to_A6.tex and in the
@@ -502,14 +510,17 @@ infimum of the objective over bounded strategies alone.
   recursive definition of $H\circ{}$ then yields $\eta^{(j)}\to\eta$
   pointwise, and therefore $Y_j\to Y$ pointwise.
 
-  By (A6), $W(\eta^{(j)})\ge0$ a.s., so $Y_j\ge-\|Z\|_\infty$ a.s.\ by
-  (A1). Lemma~\ref{lem:usc} with $B=\|Z\|_\infty$ gives
+  By (A1) and (A6),
+  \[
+    Y_j=-Z+W(\eta^{(j)})\ge-\|Z\|_\infty\as
+  \]
+  for every $j$. Lemma~\ref{lem:usc} with $B=\|Z\|_\infty$ gives
   \[
     \limsup_{j\to\infty}\rho_\ell(Y_j)\le\rho_\ell(Y).
   \]
-  Choose $j$ large enough that
-  $\rho_\ell(Y_j)\le\rho_\ell(Y)+\varepsilon$, and set
-  $\delta':=\delta^{(j)}$.
+  Choose $j_\varepsilon\in\N$ large enough that
+  $\rho_\ell(Y_{j_\varepsilon})\le\rho_\ell(Y)+\varepsilon$, and set
+  $\delta':=\delta^{(j_\varepsilon)}$.
 \end{proof}
 
 The following theorem combines the two repairs with the monotone
