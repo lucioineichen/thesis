@@ -11,11 +11,11 @@
 
 | Reference | Used for | PDF in this folder |
 |---|---|---|
-| Bühler, Gonon, Teichmann, Wood (2019), *Deep hedging*, Quantitative Finance 19(8) | framework (all chapters); §5 backtesting cited in §4.4 | to find |
-| Föllmer, Schied, *Stochastic Finance* (4th ed., 2016) | convex risk measures; martingale-transform theorem | to find |
-| Delbaen, Schachermayer (1994), *A general version of the fundamental theorem of asset pricing* | Komlós lemma (§3.5, Appendix) | to find |
-| Hornik (1991), *Approximation capabilities of multilayer feedforward networks* | universal approximation (§4.1) | to find |
-| Ben-Tal, Teboulle (2007), *An old-new concept of convex risk measures: the optimized certainty equivalent* | OCE (§2.6) | to find |
-| Soner, Shreve, Cvitanić (1995), superhedging under proportional transaction costs | Ch1 motivation (superhedging too expensive) | to find |
+| Bühler, Gonon, Teichmann, Wood (2019), *Deep hedging*, Quantitative Finance 19(8) | framework (all chapters); §5 backtesting cited in §4.4 | to find (see `Sources/`) |
+| Föllmer, Schied, *Stochastic Finance* (2nd revised and extended ed., 2004) | convex risk measures (Defs.\ 4.1, 4.4); martingale-transform / local supermartingale (Prop.\ 9.6); complete markets (Ch.\ 5) | to find (see `Sources/descrete_time_finance_math.pdf`) |
+| Delbaen, Schachermayer (1994), *A general version of the fundamental theorem of asset pricing* | Komlós lemma (§3.5, Appendix) | to find (see `Sources/`) |
+| Hornik (1991), *Approximation capabilities of multilayer feedforward networks* | universal approximation (§4.1) | to find (see `Sources/`) |
+| Ben-Tal, Teboulle (2007), *An old-new concept of convex risk measures: the optimized certainty equivalent* | OCE (§2.6) | to find (see `Sources/`) |
+| Markowitz (1952), *Portfolio Selection*, Journal of Finance 7(1) | variance as classical risk criterion (§2.4) | see `Sources/markowitz_source.md` |
 
 Add new rows as sources appear in the per-folder `bib.md` files.

@@ -1,6 +1,6 @@
-PWD c:\Users\lucio\OneDrive\0) Studium\Deep Hedging\Thesis Workspace\Chapter 3
+PWD C:\Users\lucio\OneDrive\0) Studium\Deep Hedging\Thesis Workspace\Chapter 3
 INPUT C:\Users\lucio\AppData\Local\MiKTeX\miktex\data\le\pdftex\pdflatex.fmt
-INPUT c:\Users\lucio\OneDrive\0) Studium\Deep Hedging\Thesis Workspace\Chapter 3\chapter3_v1.tex
+INPUT chapter3_v1.tex
 OUTPUT chapter3_v1.log
 INPUT C:\Users\lucio\AppData\Local\Programs\MiKTeX\tex\latex\base\report.cls
 INPUT C:\Users\lucio\AppData\Local\Programs\MiKTeX\tex\latex\base\report.cls

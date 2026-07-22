@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1784661199.33309 "c:/Users/lucio/OneDrive/0) Studium/Deep Hedging/Thesis Workspace/Chapter 3/chapter3_v1.tex" "chapter3_v1.pdf" "chapter3_v1" 1784661199.98382 0
+["pdflatex"] 1784735423.18011 "chapter3_v1.tex" "chapter3_v1.pdf" "chapter3_v1" 1784735424.55562 0
   "C:/Users/lucio/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1783888729 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
   "C:/Users/lucio/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/ecbx1095.pk" 1783888467 28976 aa36871e96b9548bf60c7414cdf689e9 ""
   "C:/Users/lucio/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/ecbx1440.pk" 1783888469 40136 86006d9a9f0ad04b37698b76faa62676 ""
@@ -68,9 +68,8 @@
   "C:/Users/lucio/AppData/Local/Programs/MiKTeX/tex/latex/base/size11.clo" 1761900684 8464 f339f4d5391fbe0425b2d94c90e6819e ""
   "C:/Users/lucio/AppData/Local/Programs/MiKTeX/tex/latex/enumitem/enumitem.sty" 1738917170 52272 63d293bc0d496619edb57585740861a2 ""
   "C:/Users/lucio/AppData/Local/Programs/MiKTeX/tex/latex/l3backend/l3backend-pdftex.def" 1761202581 30662 bfd6e864f4ffc5018b0e2b6260c3181c ""
-  "c:/Users/lucio/OneDrive/0) Studium/Deep Hedging/Thesis Workspace/Chapter 3/chapter3_v1.tex" 1784661198 30208 fcdb4acd573989897536d0c69fade687 ""
-  "chapter3_v1.aux" 1784661199 3132 f0465425f223600dd7432c3c16acf236 "pdflatex"
-  "chapter3_v1.tex" 1784661198 30208 fcdb4acd573989897536d0c69fade687 ""
+  "chapter3_v1.aux" 1784735424 3099 d267c4b726caa3184c9c0d078b65fc86 "pdflatex"
+  "chapter3_v1.tex" 1784735332 31244 0e99585b928c40991fc51ba85be79342 ""
   (generated)
   "chapter3_v1.aux"
   "chapter3_v1.log"

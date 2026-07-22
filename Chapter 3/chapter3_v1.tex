@@ -32,7 +32,7 @@
 
 \chapter{The hedging optimisation problem}
 
-In this chapter, we assemble the ingredients of Chapter~1 (the market) and Chapter~2 (the convex risk measure) into the hedging functional $\pi$. After deriving its basic properties, we turn to the central mathematical contribution of the thesis: an attainment theorem for the infimum defining $\pi$ on a general probability space.
+In this chapter, we assemble the ingredients of Chapter~2 (the market and the convex risk measure) into the hedging functional $\pi$. After deriving its basic properties, we turn to the central mathematical contribution of the thesis: an attainment theorem for the infimum defining $\pi$ on a general probability space.
 
 \section{Definition of the hedging functional}
 
@@ -40,7 +40,7 @@ Let $\rho\colon L^0(\Omega,\F_T,\PP)\to\overline{\R}$ be an extended-real-valued
 \begin{equation}\label{eq:def-pi}
     \pi(X):=\inf_{\delta\in\HH}\rho\bigl(X+(\delta\cdot S)_T-C_T(\delta)\bigr).
 \end{equation}
-A minimiser $\delta^*$ of \eqref{eq:def-pi}, if one exists, is called an \emph{optimal hedging strategy} for $X$. The interpretation is the standard one from Chapter~1: the trader holds the position $X$ (typically $X=-Z+p_0$, where $Z$ is the liability and $p_0$ is a premium), trades according to $\delta$ and pays the transaction costs $C_T(\delta)$.
+A minimiser $\delta^*$ of \eqref{eq:def-pi}, if one exists, is called an \emph{optimal hedging strategy} for $X$. The interpretation is the standard one from Chapter~2: the trader holds the position $X$ (typically $X=-Z+p_0$, where $Z$ is the liability and $p_0$ is a premium), trades according to $\delta$ and pays the transaction costs $C_T(\delta)$.
 
 \section{Basic properties of $\pi$}
 
@@ -101,7 +101,8 @@ The uniform lower bound on the gain process is a mild admissibility requirement 
     \[
         \rho_\ell(X)=\inf_{w\in\R}\Big(w+\E\bigl[\ell(-X-w)\bigr]\Big)
     \]
-    (cf.\ Chapter~2, Definition~??) and apply Jensen's inequality to the inner expectation. Starting from the definition and using Jensen's inequality for the convex function $\ell$,
+    % FAKE REF: "Definition~2.6" -> replace by \ref{def:oce} (Chapter 2, Section 2.6)
+    (cf.\ Chapter~2, Definition~2.6) and apply Jensen's inequality to the inner expectation. Starting from the definition and using Jensen's inequality for the convex function $\ell$,
     \begin{align*}
         \pi(-Z) & =\inf_{\delta\in\HH}\inf_{w\in\R}\Big(w+\E\bigl[\ell\bigl(Z-(\delta\cdot S)_T+C_T(\delta)-w\bigr)\bigr]\Big) \\
                 & \ge\inf_{\delta\in\HH}\inf_{w\in\R}\Big(w+\ell\bigl(\E[Z-(\delta\cdot S)_T+C_T(\delta)-w]\bigr)\Big).
@@ -188,7 +189,7 @@ where $L^0_+=\{L\in L^0:L\ge0\ \PP\text{-a.s.}\}$. The set $\CC$ is the downward
 We comment on each hypothesis in turn before stating the main theorem.
 
 \paragraph{On (A1)-(A2).}
-These are structural hypotheses. The boundedness of $Z$ keeps the liability side controlled in the main theorem, while convexity of $\HH$ ensures that convex combinations of admissible strategies remain admissible; recall from Chapter~1 that $\HH$ denotes the set of admissible trading strategies, so that admissibility simply means membership in $\HH$. In Section~\ref{sec:call} we will discuss consequences of $Z$ being an unbounded call option.
+These are structural hypotheses. The boundedness of $Z$ keeps the liability side controlled in the main theorem, while convexity of $\HH$ ensures that convex combinations of admissible strategies remain admissible; recall from Chapter~2 that $\HH$ denotes the set of admissible trading strategies, so that admissibility simply means membership in $\HH$. In Section~\ref{sec:call} we will discuss consequences of $Z$ being an unbounded call option.
 
 \paragraph{On (A3): why a Fatou-type assumption is needed.}
 In the attainment proof below, we construct convex-combination gains $\widetilde W_n$ which converge almost surely to a limiting gain $\widetilde W_\infty$. To conclude attainment, the essential analytical step is to show
@@ -506,7 +507,7 @@ Three natural conditions restore attainment, but each is too restrictive.
     \bibitem{foellmerschied}
     H.~F\"ollmer and A.~Schied.
     \emph{Stochastic Finance: An Introduction in Discrete Time}.
-    4th edition, De Gruyter, Berlin, 2016.
+    2nd revised and extended edition, De Gruyter, Berlin, 2004.
 
 \end{thebibliography}
 
