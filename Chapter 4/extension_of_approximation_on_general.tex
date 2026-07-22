@@ -36,7 +36,7 @@
 \newtheorem{assumption}[proposition]{Assumption}
 \newtheorem{definition}[proposition]{Definition}
 \newtheorem{example}[proposition]{Example}
-\theoremstyle{remark}
+% Upright body, bold head (not the italic amsthm "remark" style).
 \newtheorem{remark}[proposition]{Remark}
 
 \newcommand{\E}{\mathbb{E}}
@@ -55,7 +55,7 @@
 
 \chapter{Approximating hedging strategies by neural networks}
 
-The previous chapter established that, under the hypotheses (A1)--(A6), the hedging functional $\pi$ admits an optimal strategy on a general probability space. This chapter turns to the second question raised by the passage from finite to general $\Omega$: can the optimal hedge still be approximated by neural network strategies? On a finite probability space, B\"uhler et al.\ \cite[Proposition~4.3]{buehler} prove that the neural network values $\pi_M(X)$ decrease to $\pi(X)$ as the network capacity $M$ grows. We first reproduce their proof and flag every step in which finiteness of $\Omega$ is used. We then show that the proposition is \emph{false} verbatim on a general probability space: we construct a one-period market with an integrable perfect hedge in which every neural network strategy carries infinite entropic risk. The failure is located precisely in the passage to the limit inside the risk measure, and we repair it by an upper-semicontinuity lemma for optimized certainty equivalents along dominated sequences. The domination this lemma requires is supplied by two ingredients: compact trading constraints (position limits), which are part of the framework of B\"uhler et al.\ anyway, and an integrability condition coupling the loss function, the liability and the price process. Under these hypotheses we prove the approximation theorem on general $\Omega$. The chapter closes with partial results beyond position limits and a list of open problems.
+The previous chapter established that, under the hypotheses (A1)-(A6), the hedging functional $\pi$ admits an optimal strategy on a general probability space. This chapter turns to the second question raised by the passage from finite to general $\Omega$: can the optimal hedge still be approximated by neural network strategies? On a finite probability space, B\"uhler et al.\ \cite[Proposition~4.3]{buehler} prove that the neural network values $\pi_M(X)$ decrease to $\pi(X)$ as the network capacity $M$ grows. We first reproduce their proof and flag every step in which finiteness of $\Omega$ is used. We then show that the proposition is \emph{false} verbatim on a general probability space: we construct a one-period market with an integrable perfect hedge in which every neural network strategy carries infinite entropic risk. The failure is located precisely in the passage to the limit inside the risk measure, and we repair it by an upper-semicontinuity lemma for optimized certainty equivalents along dominated sequences. The domination this lemma requires is supplied by two ingredients: compact trading constraints (position limits), which are part of the framework of B\"uhler et al.\ anyway, and an integrability condition coupling the loss function, the liability and the price process. Under these hypotheses we prove the approximation theorem on general $\Omega$. The chapter closes with partial results beyond position limits and a list of open problems.
 
 \section{Setting, network strategies and the finite-space result}\label{sec:finite}
 
@@ -114,13 +114,13 @@ The question of this chapter is whether the limit equals $\pi(X)$.
 \end{proposition}
 
 \begin{proof}
-    We reproduce the proof of \cite[Proposition~4.3]{buehler}, flagging each use of finiteness as (F1)--(F4). By Lemma~\ref{lem:monotone} it suffices to show that for every $\varepsilon>0$ there is $M$ with $\pi_M(X)\le\pi(X)+\varepsilon$.
+    We reproduce the proof of \cite[Proposition~4.3]{buehler}, flagging each use of finiteness as (F1)-(F4). By Lemma~\ref{lem:monotone} it suffices to show that for every $\varepsilon>0$ there is $M$ with $\pi_M(X)\le\pi(X)+\varepsilon$.
 
     Choose $\delta\in\Hu$ with
     \begin{equation}\label{eq:finite-near-opt}
         \rho\bigl(X+W(H\circ\delta)\bigr)\le\pi(X)+\frac{\varepsilon}{2}.
     \end{equation}
-    Since $\delta_k$ is $\F_k$-measurable and $\F_k=\sigma(I_0,\dots,I_k)$, the Doob--Dynkin lemma (see Kallenberg \cite[Lemma~1.13]{kallenberg}) yields Borel maps $f_k\colon\R^{r(k+1)}\to\R^d$ with $\delta_k=f_k(I_0,\dots,I_k)$.
+    Since $\delta_k$ is $\F_k$-measurable and $\F_k=\sigma(I_0,\dots,I_k)$, the Doob-Dynkin lemma (see Kallenberg \cite[Lemma~1.13]{kallenberg}) yields Borel maps $f_k\colon\R^{r(k+1)}\to\R^d$ with $\delta_k=f_k(I_0,\dots,I_k)$.
 
     \emph{(F1) Integrability of the hedge ratios.} Since $\Omega$ is finite, $\delta_k$ takes finitely many values, so each component $f_k^i$ lies in $L^1(\mu_k)$, where $\mu_k$ is the law of $(I_0,\dots,I_k)$. Applying Hornik's theorem componentwise and assembling the components into $\R^d$-valued networks yields $F_{k,m}\in\NNet_{\infty,r(k+1),d}$ with $F_{k,m}(I_0,\dots,I_k)\to f_k(I_0,\dots,I_k)$ in $L^1(\PP)$ as $m\to\infty$.
 
@@ -144,12 +144,12 @@ The four flags are the complete list of places where finiteness enters. We now e
 On general $\Omega$, the representing functions $f_k$ need not lie in $L^1(\mu_k)$, and then Hornik's theorem cannot even be invoked: $f_k$ is not an element of the space in which networks are dense.
 
 \begin{example}\label{ex:integrability}
-    Let $I_0$ have a standard Cauchy law $\mu_0$ and $\F_0=\sigma(I_0)$. The strategy $\delta_0=f(I_0)$ with $f(x)=|x|$ is perfectly admissible as a measurable adapted process, but $f\notin L^1(\mu_0)$, so no sequence of $\mu_0$-integrable functions --- in particular no sequence of networks with bounded activation, which are bounded functions --- converges to $f$ in $L^1(\mu_0)$.
+    Let $I_0$ have a standard Cauchy law $\mu_0$ and $\F_0=\sigma(I_0)$. The strategy $\delta_0=f(I_0)$ with $f(x)=|x|$ is perfectly admissible as a measurable adapted process, but $f\notin L^1(\mu_0)$, so no sequence of $\mu_0$-integrable functions, in particular no sequence of networks with bounded activation, which are bounded functions, converges to $f$ in $L^1(\mu_0)$.
 \end{example}
 
 One might hope to bypass (F1) by choosing a \emph{different} near-optimal strategy that is integrable. Proposition~\ref{prop:counterexample} below shows that this cannot be the way out: there the optimal strategy \emph{is} integrable and the approximation still fails. The real obstruction lies deeper.
 
-\subsection*{(F2): only subsequential almost sure convergence --- harmless}
+\subsection*{(F2): only subsequential almost sure convergence, harmless}
 
 On general $\Omega$, $L^1(\PP)$-convergence yields almost sure convergence only along a subsequence. This is harmless for the argument: the proof of Proposition~\ref{prop:finite} only requires \emph{one} good approximating strategy, so we may freely pass to subsequences. We record this once and for all and do not mention it again.
 
@@ -279,10 +279,10 @@ Lemma~\ref{lem:usc} tells us exactly what the approximation proof needs: a \emph
 uniformly in $m$. Two ingredients are required.
 
 \begin{enumerate}[leftmargin=*,itemsep=1ex,parsep=0pt]
-    \item \emph{Uniformly bounded strategies.} The approximating strategies must satisfy a bound $|(H\circ\delta^m)_k|\le a$ with $a$ independent of $m$. This cannot be obtained from Hornik's theorem: $L^1(\mu_k)$-density gives no control on suprema, and a network close to a bounded target in $L^1$ may take arbitrarily large values on a set of small measure --- by Example~\ref{ex:explosion}, exactly such overshoots can carry infinite risk. Two mechanisms enforce the bound:
+    \item \emph{Uniformly bounded strategies.} The approximating strategies must satisfy a bound $|(H\circ\delta^m)_k|\le a$ with $a$ independent of $m$. This cannot be obtained from Hornik's theorem: $L^1(\mu_k)$-density gives no control on suprema, and a network close to a bounded target in $L^1$ may take arbitrarily large values on a set of small measure, by Example~\ref{ex:explosion}, exactly such overshoots can carry infinite risk. Two mechanisms enforce the bound:
           \begin{enumerate}[leftmargin=2em,itemsep=0pt,parsep=0pt]
               \item[\textup{(a)}] \emph{Clamping inside the network.} For ReLU activation, the clamp $x\mapsto\min(m,\max(-m,x))=\sigma(x+m)-\sigma(x-m)-m$ with $\sigma(t)=\max(t,0)$ is itself a two-neuron network, so bounded network classes can be built directly; density results for such unbounded activations are available, see Leshno et al.\ \cite{leshno}. We do not pursue this route because our standing setting fixes a bounded activation.
-              \item[\textup{(b)}] \emph{Clamping through the trading constraints.} The framework of B\"uhler et al.\ already contains the projection maps $H_k$. If their ranges are contained in a fixed ball --- economically: \emph{position limits} --- then $H\circ\delta^m$ is automatically uniformly bounded, whatever the networks do. This is the route we take; it requires no change to the network classes and has a clear economic meaning, in the same spirit as the risk and margin limits behind (A4) and (A6) in Chapter~3.
+              \item[\textup{(b)}] \emph{Clamping through the trading constraints.} The framework of B\"uhler et al.\ already contains the projection maps $H_k$. If their ranges are contained in a fixed ball, economically: \emph{position limits}, then $H\circ\delta^m$ is automatically uniformly bounded, whatever the networks do. This is the route we take; it requires no change to the network classes and has a clear economic meaning, in the same spirit as the risk and margin limits behind (A4) and (A6) in Chapter~3.
           \end{enumerate}
     \item \emph{$\ell$-integrable market data.} Even bounded strategies produce the gain envelope $a\widehat S$ with
           \[
@@ -334,10 +334,10 @@ respectively. In general, measurability of a supremum of an upper semicontinuous
 The conditions $\ell(0)=0$ and $1\in\partial\ell(0)$ are the standard normalization of Ben-Tal and Teboulle \cite{bentalteboulle}; they imply $\ell(t)\ge t$ for all $t$ and $\rho_\ell(0)=0$. They entail no loss of generality for our purposes: replacing $\ell$ by $t\mapsto\ell(t+c)-\ell(c)$ shifts $\rho_\ell$, $\pi$ and $\pi_M$ by the same constants and leaves the approximation statement unchanged. Both benchmark examples are normalized: the entropic loss $\ell_\lambda(x)=(e^{\lambda x}-1)/\lambda$, whose OCE is the entropic risk measure, and the CVaR loss $\ell_\alpha(x)=\max(x,0)/(1-\alpha)$ with $\alpha\in[0,1)$.
 
 \paragraph{On (B5): the integrability condition.}
-This is the condition Proposition~\ref{prop:counterexample} shows to be unavoidable in some form. It couples $\ell$, $X$ and $S$: for CVaR it reduces to plain first moments, for the entropic risk measure to exponential moments; see the corollaries below. It is an assumption on the model primitives only --- not on strategies, which is what makes the theorem usable.
+This is the condition Proposition~\ref{prop:counterexample} shows to be unavoidable in some form. It couples $\ell$, $X$ and $S$: for CVaR it reduces to plain first moments, for the entropic risk measure to exponential moments; see the corollaries below. It is an assumption on the model primitives only, not on strategies, which is what makes the theorem usable.
 
 \begin{theorem}\label{thm:main}
-    Under Assumption~\textup{(B1)--(B5)}, $\pi(X)$ is finite and
+    Under Assumption~\textup{(B1)-(B5)}, $\pi(X)$ is finite and
     \[
         \lim_{M\to\infty}\pi_M(X)=\pi(X),
     \]
@@ -345,7 +345,7 @@ This is the condition Proposition~\ref{prop:counterexample} shows to be unavoida
 \end{theorem}
 
 \begin{proof}
-    \emph{Step 1: finiteness.} For every $\delta\in\Hu$, write $\eta:=H\circ\delta$ and $Y:=X+W(\eta)$. By (B2) and the Cauchy--Schwarz inequality per summand, $|(\eta\cdot S)_T|\le a\widehat S$, and by (B3), $0\le C_T(\eta)\le\overline C$, since $|\eta_k-\eta_{k-1}|\le2a$ for all $k$ (with the conventions $\eta_{-1}=\eta_n=0$). Hence
+    \emph{Step 1: finiteness.} For every $\delta\in\Hu$, write $\eta:=H\circ\delta$ and $Y:=X+W(\eta)$. By (B2) and the Cauchy-Schwarz inequality per summand, $|(\eta\cdot S)_T|\le a\widehat S$, and by (B3), $0\le C_T(\eta)\le\overline C$, since $|\eta_k-\eta_{k-1}|\le2a$ for all $k$ (with the conventions $\eta_{-1}=\eta_n=0$). Hence
     \begin{equation}\label{eq:sandwich}
         -D\le Y\le X+a\widehat S,\qquad|Y|\le|X|+a\widehat S+\overline C\in L^1.
     \end{equation}
@@ -363,7 +363,7 @@ This is the condition Proposition~\ref{prop:counterexample} shows to be unavoida
     \begin{equation}\label{eq:near-opt}
         \rho_\ell\bigl(X+W(\eta)\bigr)\le\pi(X)+\frac{\varepsilon}{2},\qquad\eta:=H\circ\delta.
     \end{equation}
-    Each $\eta_k$ is $\F_k$-measurable, so by the Doob--Dynkin lemma \cite[Lemma~1.13]{kallenberg} there are Borel maps $g_k\colon\R^{r(k+1)}\to\R^d$ with $\eta_k=g_k(I_0,\dots,I_k)$. By (B2), $|\eta_k|\le a$ $\PP$-a.s., i.e.\ $\mu_k(|g_k|\le a)=1$ for the law $\mu_k$ of $(I_0,\dots,I_k)$; replacing $g_k$ by $g_k\mathbf{1}_{\{|g_k|\le a\}}$ changes nothing $\PP$-a.s.\ and makes $g_k$ bounded everywhere. In particular $g_k^i\in L^1(\mu_k)$ for all $i$, because $\mu_k$ is a probability measure. This settles (F1): position limits make the target automatically integrable.
+    Each $\eta_k$ is $\F_k$-measurable, so by the Doob-Dynkin lemma \cite[Lemma~1.13]{kallenberg} there are Borel maps $g_k\colon\R^{r(k+1)}\to\R^d$ with $\eta_k=g_k(I_0,\dots,I_k)$. By (B2), $|\eta_k|\le a$ $\PP$-a.s., i.e.\ $\mu_k(|g_k|\le a)=1$ for the law $\mu_k$ of $(I_0,\dots,I_k)$; replacing $g_k$ by $g_k\mathbf{1}_{\{|g_k|\le a\}}$ changes nothing $\PP$-a.s.\ and makes $g_k$ bounded everywhere. In particular $g_k^i\in L^1(\mu_k)$ for all $i$, because $\mu_k$ is a probability measure. This settles (F1): position limits make the target automatically integrable.
 
     \emph{Step 3: network approximation.} By Hornik's theorem \cite[Theorem~1]{hornik} applied componentwise, there are networks $F_{k,m}\in\NNet_{\infty,r(k+1),d}$ with $F_{k,m}\to g_k$ in $L^1(\mu_k)$ as $m\to\infty$, for each $k=0,\dots,n-1$. Define
     \[
@@ -400,7 +400,7 @@ This is the condition Proposition~\ref{prop:counterexample} shows to be unavoida
 \end{proof}
 
 \begin{corollary}[entropic risk measure]\label{cor:entropic}
-    Let $\rho$ be the entropic risk measure with parameter $\lambda>0$, i.e.\ the OCE with loss function $\ell_\lambda(x)=(e^{\lambda x}-1)/\lambda$. Suppose \textup{(B1)--(B3)} hold, $X\in L^1$, $\overline C\in L^1$, $\widehat S\in L^1$ and
+    Let $\rho$ be the entropic risk measure with parameter $\lambda>0$, i.e.\ the OCE with loss function $\ell_\lambda(x)=(e^{\lambda x}-1)/\lambda$. Suppose \textup{(B1)-(B3)} hold, $X\in L^1$, $\overline C\in L^1$, $\widehat S\in L^1$ and
     \[
         \E\Bigl[\exp\Bigl(\lambda\bigl(X^-+a\widehat S+\overline C\bigr)\Bigr)\Bigr]<\infty.
     \]
@@ -412,7 +412,7 @@ This is the condition Proposition~\ref{prop:counterexample} shows to be unavoida
 \end{proof}
 
 \begin{corollary}[CVaR]\label{cor:cvar}
-    Let $\rho$ be the average value at risk at level $1-\alpha$, $\alpha\in[0,1)$, i.e.\ the OCE with loss function $\ell_\alpha(x)=\max(x,0)/(1-\alpha)$. Suppose \textup{(B1)--(B3)} hold and $X$, $\widehat S$, $\overline C\in L^1$. Then $\lim_{M\to\infty}\pi_M(X)=\pi(X)\in\R$.
+    Let $\rho$ be the average value at risk at level $1-\alpha$, $\alpha\in[0,1)$, i.e.\ the OCE with loss function $\ell_\alpha(x)=\max(x,0)/(1-\alpha)$. Suppose \textup{(B1)-(B3)} hold and $X$, $\widehat S$, $\overline C\in L^1$. Then $\lim_{M\to\infty}\pi_M(X)=\pi(X)\in\R$.
 \end{corollary}
 
 \begin{proof}
@@ -420,7 +420,7 @@ This is the condition Proposition~\ref{prop:counterexample} shows to be unavoida
 \end{proof}
 
 \begin{corollary}[approximation of an attained optimum]\label{cor:attainment}
-    Suppose, in addition to Assumption~\textup{(B1)--(B5)} with $X=-Z$, that the constrained strategy set $\HH$ and the risk measure $\rho_\ell$ satisfy the hypotheses \textup{(A1)--(A6)} of the attainment theorem of Chapter~3. Then there exists an optimal strategy $\delta^*\in\HH$ with $\rho_\ell(-Z+W(\delta^*))=\pi(-Z)$, and for every $\varepsilon>0$ there are $M\in\N$ and a network strategy $\delta^\varepsilon\in\HH_M$ with
+    Suppose, in addition to Assumption~\textup{(B1)-(B5)} with $X=-Z$, that the constrained strategy set $\HH$ and the risk measure $\rho_\ell$ satisfy the hypotheses \textup{(A1)-(A6)} of the attainment theorem of Chapter~3. Then there exists an optimal strategy $\delta^*\in\HH$ with $\rho_\ell(-Z+W(\delta^*))=\pi(-Z)$, and for every $\varepsilon>0$ there are $M\in\N$ and a network strategy $\delta^\varepsilon\in\HH_M$ with
     \[
         \rho_\ell\bigl(-Z+W(H\circ\delta^\varepsilon)\bigr)\le\rho_\ell\bigl(-Z+W(\delta^*)\bigr)+\varepsilon.
     \]
@@ -431,7 +431,7 @@ This is the condition Proposition~\ref{prop:counterexample} shows to be unavoida
 \end{proof}
 
 \begin{remark}\label{rem:comparison-finite}
-    Theorem~\ref{thm:main} is not a strict generalization of Proposition~\ref{prop:finite}: on a finite $\Omega$, B\"uhler et al.\ allow constraint maps with unbounded ranges, whereas we require compact ranges. On a finite space, (B5) and the measurability part of (B3) hold automatically, and the compactness in (B2) is genuinely superfluous there because bounded ness of all random variables is free. Proposition~\ref{prop:counterexample} shows that on general $\Omega$ some restriction of this kind is necessary; whether compactness of the constraint ranges can be weakened (say, to an integrable random envelope $|H_k(\omega,x)|\le a(\omega)$ with $\ell$-integrability of the resulting gain envelope) is a natural refinement --- the proof of Theorem~\ref{thm:main} goes through verbatim with $a\widehat S$ replaced by $\sum_k a_k|S_{k+1}-S_k|$ in (B5), where $a_k$ is the envelope of $H_k$, since none of the steps used that $a$ is deterministic.
+    Theorem~\ref{thm:main} is not a strict generalization of Proposition~\ref{prop:finite}: on a finite $\Omega$, B\"uhler et al.\ allow constraint maps with unbounded ranges, whereas we require compact ranges. On a finite space, (B5) and the measurability part of (B3) hold automatically, and the compactness in (B2) is genuinely superfluous there because bounded ness of all random variables is free. Proposition~\ref{prop:counterexample} shows that on general $\Omega$ some restriction of this kind is necessary; whether compactness of the constraint ranges can be weakened (say, to an integrable random envelope $|H_k(\omega,x)|\le a(\omega)$ with $\ell$-integrability of the resulting gain envelope) is a natural refinement, the proof of Theorem~\ref{thm:main} goes through verbatim with $a\widehat S$ replaced by $\sum_k a_k|S_{k+1}-S_k|$ in (B5), where $a_k$ is the envelope of $H_k$, since none of the steps used that $a$ is deterministic.
 \end{remark}
 
 \section{Beyond compact position limits: partial results and open problems}\label{sec:beyond}
@@ -463,7 +463,7 @@ Can the position limits be dropped? The proof of Theorem~\ref{thm:main} used the
     Three comments on the scope of Proposition~\ref{prop:oneperiod}.
     \begin{enumerate}[leftmargin=*,itemsep=0pt,parsep=0pt]
         \item[\textup{(i)}] The hypothesis $\E[e^{-\lambda X}]<\infty$ is essential and consistent with Proposition~\ref{prop:counterexample}: in the counterexample, $\E[e^{-\lambda X}]=\E[\cosh(\lambda h(U)/2)]=\infty$, and indeed there \emph{every} bounded strategy has infinite risk while an unbounded perfect hedge exists, so value-density of bounded strategies fails.
-        \item[\textup{(ii)}] The proof breaks in several periods and for several assets, for the same reason in both cases: componentwise truncation destroys exact offsets. If large positions at different dates (or in different assets) cancel in the total gain --- the doubling-type profile familiar from Section~3.4 --- then the truncated gain is no longer a pathwise contraction of the original gain, and no integrable dominating function is available. Ruling this out requires joint conditions on the gain process, in the spirit of the gain-side admissibility (A6) of Chapter~3. We have not found a clean condition under which the multi-period truncation argument goes through, and we leave it open.
+        \item[\textup{(ii)}] The proof breaks in several periods and for several assets, for the same reason in both cases: componentwise truncation destroys exact offsets. If large positions at different dates (or in different assets) cancel in the total gain, the doubling-type profile familiar from Section~3.4, then the truncated gain is no longer a pathwise contraction of the original gain, and no integrable dominating function is available. Ruling this out requires joint conditions on the gain process, in the spirit of the gain-side admissibility (A6) of Chapter~3. We have not found a clean condition under which the multi-period truncation argument goes through, and we leave it open.
         \item[\textup{(iii)}] Even where it applies, the proposition only reduces $\pi$ to bounded strategies; it does not yield network approximation, because the networks approximating a bounded target in $L^1$ need not be uniformly bounded (Section~\ref{sec:repair}). Without constraints, an additional clamping mechanism inside the strategy class is needed.
     \end{enumerate}
 \end{remark}

@@ -1,0 +1,149 @@
+% ----------------------------------------------------------------------
+% Appendix: proof of the Komlós lemma
+% Standalone compilable artifact (own preamble); when assembling the
+% thesis, strip the preamble and merge the body only.
+% Scope (fixed): only the Delbaen--Schachermayer form of Komlós; other
+% standard tools are cited, not proved. Statement matches Chapter 3
+% (§3.5); the proof lives here so that chapter stays focused on
+% attainment.
+% ----------------------------------------------------------------------
+\documentclass[11pt,a4paper]{report}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+
+\numberwithin{equation}{chapter}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{lemma}[proposition]{Lemma}
+\newtheorem{theorem}[proposition]{Theorem}
+\theoremstyle{definition}
+\newtheorem{remark}[proposition]{Remark}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\HH}{\mathcal{H}}
+
+\begin{document}
+
+\appendix
+
+\chapter{The Koml\'os lemma}
+
+This appendix proves the form of the Koml\'os lemma used in Chapter~3, following Delbaen and Schachermayer \cite[Lemma~A1.1]{delbaenschachermayer}. The argument is elementary: one maximises the expected value of a bounded concave utility along forward convex combinations and exploits the modulus of concavity to obtain a Cauchy sequence in probability.
+
+\begin{lemma}\label{lem:komlos}
+    Let $(Y_n)_{n\in\N}$ be a sequence of nonnegative random variables on a probability space $(\Omega,\F,\PP)$. Then there exist forward convex combinations
+    \[
+        \widetilde Y_n\in\operatorname{conv}\{Y_n,Y_{n+1},\dots\},\qquad n\in\N,
+    \]
+    and a measurable function $\widetilde Y\colon\Omega\to[0,\infty]$ such that $\widetilde Y_n\to\widetilde Y$ $\PP$-a.s.\ as $n\to\infty$. If moreover the set
+    \[
+        \operatorname{conv}\{Y_n:n\in\N\}
+    \]
+    is bounded in $L^0$, then $\widetilde Y\in L^0$, i.e.\ $\widetilde Y<\infty$ $\PP$-a.s.
+\end{lemma}
+
+\begin{remark}
+    Boundedness in $L^0$ of a family $\mathcal{A}\subseteq L^0$ means: for every $\varepsilon>0$ there exists $K\ge0$ such that
+    \[
+        \sup_{X\in\mathcal{A}}\PP[|X|>K]<\varepsilon.
+    \]
+    In Chapter~3 the relevant sequence is $(W(\delta_n))_{n\in\N}$ with $\delta_n\in\HH$. Hypothesis (A4) bounds the whole gain set $\HH_W$ in $L^0$, and convexity of $\HH$ together with convexity of the cost functional yields
+    \[
+        \sum_{m\ge n}\lambda_{n,m}W(\delta_m)\le W\bigg(\sum_{m\ge n}\lambda_{n,m}\delta_m\bigg)
+    \]
+    almost surely for every forward convex combination. The right-hand side belongs to $\HH_W$, so the forward convex combinations of $(W(\delta_n))_{n\in\N}$ are themselves $L^0$-bounded and the finiteness conclusion of Lemma~\ref{lem:komlos} applies.
+\end{remark}
+
+\begin{proof}
+    Define $u\colon[0,\infty]\to[0,1]$ by $u(x)=1-e^{-x}$, with the convention $e^{-\infty}=0$, so that $u(\infty)=1$. The function $u$ is continuous, strictly increasing and concave on $[0,\infty]$, and $u(0)=0$. For each $n\in\N$ set
+    \[
+        s_n:=\sup\big\{\E[u(g)]:g\in\operatorname{conv}\{Y_n,Y_{n+1},\dots\}\big\}\in[0,1]
+    \]
+    and choose $g_n\in\operatorname{conv}\{Y_n,Y_{n+1},\dots\}$ such that
+    \begin{equation}\label{eq:almost-max}
+        \E[u(g_n)]\ge s_n-\frac1n.
+    \end{equation}
+    The sequence $(s_n)_{n\in\N}$ is nonincreasing, hence $s_n\downarrow s_\infty$ for some $s_\infty\in[0,1]$. Combined with \eqref{eq:almost-max} this yields
+    \[
+        \lim_{n\to\infty}\E[u(g_n)]=s_\infty.
+    \]
+
+    We work with the compact metrizable space $[0,\infty]$. A sequence $(x_k)_{k\in\N}$ in $[0,\infty]$ is Cauchy in this topology if and only if for every $\varepsilon>0$ there exists $k_0$ such that for all $k,\ell\ge k_0$,
+    \[
+        |x_k-x_\ell|<\varepsilon\qquad\text{or}\qquad\min(x_k,x_\ell)>\varepsilon^{-1}.
+    \]
+    (Here $|x-y|$ is interpreted in the usual way on $[0,\infty)$, with the conventions $|\infty-\infty|=0$ and $|x-\infty|=\infty$ for $x<\infty$.) The next claim records the modulus of concavity of $u$ on the region where this alternative can fail.
+
+    \emph{Claim.} For every $\varepsilon>0$ there exists $\beta>0$ such that, whenever $x,y\in[0,\infty]$ satisfy $|x-y|\ge\varepsilon$ and $\min(x,y)\le\varepsilon^{-1}$,
+    \[
+        u\Big(\frac{x+y}2\Big)\ge\frac{u(x)+u(y)}2+\beta.
+    \]
+
+    To see this, assume without loss of generality that $x\le y$. Then $y\ge x+\varepsilon$ and $x\le\varepsilon^{-1}$. On $[0,\infty)$ one has the elementary identity
+    \[
+        u\Big(\frac{x+y}2\Big)-\frac{u(x)+u(y)}2=\frac12\big(e^{-x/2}-e^{-y/2}\big)^2.
+    \]
+    Hence
+    \begin{align*}
+        u\Big(\frac{x+y}2\Big)-\frac{u(x)+u(y)}2
+         & =\frac12\big(e^{-x/2}-e^{-y/2}\big)^2                                                      \\
+         & \ge\frac12\big(e^{-x/2}-e^{-(x+\varepsilon)/2}\big)^2                                        \\
+         & =\frac12\,e^{-x}\big(1-e^{-\varepsilon/2}\big)^2                                              \\
+         & \ge\frac12\,e^{-1/\varepsilon}\big(1-e^{-\varepsilon/2}\big)^2.
+    \end{align*}
+    The right-hand side is a positive constant depending only on $\varepsilon$; call it $\beta$. If one of $x,y$ equals $\infty$, the same lower bound continues to hold by continuity of $u$ at infinity. This proves the claim.
+
+    We now show that $(g_n)_{n\in\N}$ is Cauchy in probability with respect to the topology of $[0,\infty]$. Fix $\varepsilon>0$ and take $\beta>0$ as in the claim. For $n,m\in\N$, the random variable $(g_n+g_m)/2$ belongs to $\operatorname{conv}\{Y_{n\wedge m},Y_{n\wedge m+1},\dots\}$, so
+    \[
+        \E\Big[u\Big(\frac{g_n+g_m}2\Big)\Big]\le s_{n\wedge m}.
+    \]
+    On the other hand, the claim yields
+    \[
+        u\Big(\frac{g_n+g_m}2\Big)\ge\frac{u(g_n)+u(g_m)}2+\beta\,1_{\{|g_n-g_m|\ge\varepsilon,\,\min(g_n,g_m)\le\varepsilon^{-1}\}},
+    \]
+    and taking expectations gives
+    \begin{align*}
+        \beta\,\PP\big[|g_n-g_m|\ge\varepsilon,\ \min(g_n,g_m)\le\varepsilon^{-1}\big]
+         & \le\E\Big[u\Big(\frac{g_n+g_m}2\Big)\Big]-\frac12\big(\E[u(g_n)]+\E[u(g_m)]\big) \\
+         & \le s_{n\wedge m}-\frac12\big(\E[u(g_n)]+\E[u(g_m)]\big).
+    \end{align*}
+    Using \eqref{eq:almost-max} and writing $n\le m$ without loss of generality, the right-hand side is at most
+    \[
+        s_n-\frac12\Big(s_n-\frac1n+s_m-\frac1m\Big)=\frac12(s_n-s_m)+\frac1{2n}+\frac1{2m}.
+    \]
+    Since $s_k\downarrow s_\infty$, the right-hand side tends to $0$ as $n,m\to\infty$. Therefore
+    \[
+        \lim_{n,m\to\infty}\PP\big[|g_n-g_m|\ge\varepsilon,\ \min(g_n,g_m)\le\varepsilon^{-1}\big]=0.
+    \]
+    By the characterisation of the Cauchy property on $[0,\infty]$, the sequence $(g_n)_{n\in\N}$ is Cauchy in probability and thus converges in probability to some measurable $g\colon\Omega\to[0,\infty]$.
+
+    Passing to a subsequence $(g_{n_k})_{k\in\N}$ that converges $\PP$-a.s.\ to $g$, and observing that $n_k\ge k$ for every $k$ (after discarding finitely many terms if necessary), we obtain
+    \[
+        g_{n_k}\in\operatorname{conv}\{Y_{n_k},Y_{n_k+1},\dots\}\subseteq\operatorname{conv}\{Y_k,Y_{k+1},\dots\}.
+    \]
+    Setting $\widetilde Y_k:=g_{n_k}$ and $\widetilde Y:=g$ yields the first assertion of the lemma.
+
+    Finally, suppose $\operatorname{conv}\{Y_n:n\in\N\}$ is bounded in $L^0$. Then for every $\varepsilon>0$ there exists $N\ge0$ such that $\PP[h>N]<\varepsilon$ for every $h\in\operatorname{conv}\{Y_n:n\in\N\}$. In particular $\PP[\widetilde Y_k>N]<\varepsilon$ for every $k$. On the event $\{\widetilde Y>N\}$ one has $\widetilde Y_k>N$ for all large $k$, so
+    \[
+        1_{\{\widetilde Y>N\}}\le\liminf_{k\to\infty}1_{\{\widetilde Y_k>N\}}.
+    \]
+    Taking expectations and applying Fatou's lemma yields $\PP[\widetilde Y>N]\le\varepsilon$. Since $\varepsilon>0$ was arbitrary, $\widetilde Y<\infty$ $\PP$-a.s., i.e.\ $\widetilde Y\in L^0$.
+\end{proof}
+
+\begin{thebibliography}{9}
+
+    \bibitem{delbaenschachermayer}
+    F.~Delbaen and W.~Schachermayer.
+    A general version of the fundamental theorem of asset pricing.
+    \emph{Mathematische Annalen} \textbf{300}(1), 463--520, 1994.
+
+\end{thebibliography}
+
+\end{document}

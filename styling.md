@@ -70,3 +70,5 @@ Other additions:
 24) Closed compounds with "non": Write prefixes of the form "non-..." as a single word, without a hyphen. Examples: nonincreasing, nondecreasing, nonconstant, nonnegative, nonredundant, nonuniqueness; not non-increasing, non-decreasing, non-constant, etc.
 
 25) Capitalization after a colon: Prefer lowercase for the first character after a colon, including when what follows is a full sentence. Capitalize only if the colon introduces a quotation or a clearly marked new block that must start with a capital. Examples: write "Its defect is that it ignores the distribution entirely: a sure gain of 1 and a coin flip ...", not "... entirely: A sure gain ..."; write "the cash interpretation: the amount of cash that must be added ...", not "... interpretation: The amount ...".
+
+26) Remark style: Do not use amsthm `\theoremstyle{remark}` (italic head and italic body). Declare remarks with `\theoremstyle{definition}` so they match Definitions, Examples and Assumptions: bold head, upright body. In the preamble, place `\newtheorem{remark}[proposition]{Remark}` immediately after the other definition-style environments (not under `\theoremstyle{remark}`).

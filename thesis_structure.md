@@ -117,7 +117,6 @@ Assembles the market of Chapter 2 and the risk measure into the hedging function
 Not to be forgotten; details collected in `Front Matter/to_figure_out.md`:
 
 - Title page, abstract (check whether the university wants German and English), table of contents, mandatory declaration of originality / Eigenständigkeitserklärung.
-- **Notation table** (one page, after the ToC): the thesis carries heavy notation — 𝓗, 𝓗^u, W(δ), C_T, π, π_M, ρ_ℓ, (A1)–(A6), (F1)–(F3), etc. Working version in `Front Matter/notation_table.md`.
 - Appendix: contains only the proof of the Komlós lemma (see `Appendix/`); everything else standard is cited, not proved.
 
 ---

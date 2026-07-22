@@ -2,22 +2,19 @@
 % Chapter 1: Introduction
 % Standalone compilable artifact (own preamble); when assembling the
 % thesis, strip the preamble and merge the body only.
-% Short and non-technical, per thesis_structure.md.
+% Short and non-technical, per thesis_structure.md; max one page,
+% structured like the example theses (no \section's, motivation ->
+% approach -> contribution -> outline paragraph).
 % Cross-references to other chapters are written as plain text
-% ("Chapter 2", "Section 3.7", ...); FAKE REF comments mark the places
+% ("Chapter 2", "Chapter 3", ...); FAKE REF comments mark the places
 % to be replaced by real \ref's on final merge.
 % ----------------------------------------------------------------------
 \documentclass[11pt,a4paper]{report}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath,amssymb,amsthm}
-\usepackage{enumitem}
 
-\numberwithin{equation}{chapter}
-
-\newcommand{\E}{\mathbb{E}}
 \newcommand{\PP}{\mathbb{P}}
-\newcommand{\R}{\mathbb{R}}
 \newcommand{\F}{\mathcal{F}}
 
 \begin{document}
@@ -26,36 +23,16 @@
 
 \chapter{Introduction}
 
-\section{Motivation}
+At least since the risk management efforts to assess credit default swaps by banks leading up to the 2008 financial crisis the interest of hedging derivatives has arised. Especially, tail risks and rare events, not following a normal distribution, have become a topic in finance. The aim of this thesis is to provide a framework for hedging these risks in a model-free way.
 
-Banks and other financial institutions routinely sell derivative contracts: options, structured notes and entire portfolios of such claims. Having sold a claim, the seller is exposed to its payoff and must manage this exposure by trading in the market. The classical theory of derivative pricing resolves this problem completely, but only under the idealization of a complete market without frictions. There, every contingent claim can be replicated perfectly by dynamic trading in the underlying assets; the initial capital of the replicating strategy is the unique arbitrage-free price of the claim and the replicating strategy itself is the hedge. This is the paradigm behind the Black--Scholes formula and delta hedging, and it has an exact discrete-time counterpart; see F\"ollmer and Schied \cite[Chapter~5]{foellmerschied} for a textbook account.
+In a frictionless complete market every claim can be replicated perfectly and the replication cost is its unique arbitrage-free price; see F\"ollmer and Schied \cite[Chapter~5]{foellmerschied}. Real markets have transaction costs and trading constraints making perfect replication impossible. The hedger thus retains residual risk. This thesis ranks profit-and-loss outcomes by convex risk measures \cite[Chapter~4]{foellmerschied} and views hedging as a trading strategy that minimizes the risk measure.
 
-Real markets do not conform to this idealization. Trades incur transaction costs, liquidity is finite, positions are subject to limits imposed by risk management and by regulation, short sales may be restricted and some instruments are simply not available at all times. Moreover, even in the absence of such frictions, realistic models are incomplete: there are more sources of risk than there are liquidly traded instruments. Under frictions, perfect replication is in general impossible, and the natural fallback of superhedging---trading so that the terminal wealth dominates the payoff in every scenario---is prohibitively expensive. A striking result of Soner, Shreve and Cvitani\'c \cite{sonershrevecvitanic} shows that under proportional transaction costs the cheapest superhedge of a European call is the trivial buy-and-hold strategy, so that the superhedging price of the call is the price of the underlying itself. A realistic hedger therefore retains residual risk, and faces two intertwined questions: how should one trade so that the remaining risk is acceptable, and what should one charge for the claim?
+For this, B\"uhler, Gonon, Teichmann and Wood \cite{buehler} proposed \emph{deep hedging}. On a \emph{finite} probability space their Proposition~4.3 shows that the minimal risk $\pi_M$ of deep neural network strategies of size $M$ decreases to the true minimal risk $\pi$.
 
-Any answer requires a way of ranking random profit-and-loss outcomes. The framework adopted in this thesis is that of convex risk measures: a functional $\rho$ that assigns to a random terminal position $X$ the amount of capital $\rho(X)$ that must be added to make the position acceptable. The defining axioms---monotonicity, cash-invariance and convexity---give $\rho$ a direct capital interpretation and reward diversification; see F\"ollmer and Schied \cite[Chapter~4]{foellmerschied}. Once such a criterion is fixed, hedging becomes an optimisation problem (minimise the risk of the hedged position) and pricing becomes an indifference problem (charge the cash amount that makes the trader indifferent between dealing and not dealing).
+This thesis develops the framework rigorously on a general probability space, which turns two questions that are trivial on finite $\Omega$ into genuine analytical problems. The first is attainment: is the infimum defining the hedging functional attained by an optimal strategy? The second is approximation: do Neural Networks approximate the optimal hedge? We show that the two questions fail on general $\Omega$, and then prove that for the optimized certainty equivalents of Ben-Tal and Teboulle \cite{bentalteboulle} the results are restored under further imposed economically sensible assumptions.
 
-\section{The deep hedging approach}
-
-B\"uhler, Gonon, Teichmann and Wood \cite{buehler} proposed, under the name \emph{deep hedging}, a framework that takes market frictions seriously from the outset and remains computationally tractable in high dimensions. The market is a discrete-time market: trading takes place at finitely many dates, the hedging instruments are modelled by their mid-prices, and transaction costs and trading constraints enter the profit-and-loss directly. A convex risk measure $\rho$ serves as the optimality criterion: the optimal hedge of a liability minimises the risk of the terminal profit-and-loss over all admissible trading strategies, and the price of the liability is defined as an indifference price relative to this optimally hedged position.
-
-The computational step is to parametrize hedging strategies by neural networks: at each trading date, the position is the output of a network that reads the information available up to that date. Optimising over the network weights turns an infinite-dimensional problem over all adapted strategies into a finite-dimensional one, which can be solved by stochastic gradient descent on simulated scenarios. Three features explain the appeal of the method. First, it is model-free in the sense that it only requires sample paths of the market---from historical resampling or from any scenario generator---rather than a specific model structure. Second, frictions require no special treatment: transaction costs and constraints are simply part of the profit-and-loss being optimised. Third, the method scales in the number of hedging instruments and trading dates, where grid-based methods fail. The theoretical justification given by B\"uhler et al.\ rests on the universal approximation theorem of Hornik \cite{hornik}: on a finite probability space, their Proposition~4.3 shows that the minimal risk $\pi_M$ attainable by network strategies of growing size $M$ converges, monotonically from above, to the true minimal risk $\pi$.
-
-\section{Contributions and scope of this thesis}
-
-This thesis gives a rigorous, self-contained development of the deep hedging framework in finite discrete time. Its setting differs from that of the original paper in one structural respect: the entire theory is formulated on a general probability space $(\Omega,\F,\PP)$, whereas B\"uhler et al.\ \cite{buehler} work on a finite one. The thesis thus builds directly on their work and extends the setting from finite to general $\Omega$; this is one point among its contributions, not its whole content. The passage to general $\Omega$ turns two questions that are trivial on a finite space into genuine analytical problems, and these two questions organise the mathematical core of the thesis.
-
-\begin{enumerate}[leftmargin=*,itemsep=1ex,parsep=0pt]
-    \item[(i)] \emph{Framework (Chapter~2).} A self-contained development of the discrete-time market with transaction costs and trading constraints, of the terminal profit-and-loss as the central object, and of convex risk measures. The risk measures used throughout are the optimized certainty equivalents of Ben-Tal and Teboulle \cite{bentalteboulle}, for which we settle the domain and integrability questions that only arise on general $\Omega$.
-    \item[(ii)] \emph{Attainment (Chapter~3).} Is the infimum defining the hedging functional attained by an optimal strategy? On a finite $\Omega$ this is immediate from the theorem of Weierstrass. On general $\Omega$ we prove an attainment theorem under six hypotheses (A1)--(A6)---a bounded liability, a convex strategy set, a Fatou-type continuity property of the risk measure, boundedness and closedness properties of the set of attainable gains and nonnegativity of the gains. The proof combines a Koml\'os-type compactness argument in $L^0$, in the form of Delbaen and Schachermayer \cite{delbaenschachermayer}, with a Fatou-type passage to the limit in the risk measure.
-    \item[(iii)] \emph{Approximation (Chapter~4).} Does the neural network approximation result of B\"uhler et al.\ survive the passage from finite to general $\Omega$? We identify precisely the three points (F1)--(F3) at which finiteness of $\Omega$ enters their proof, give a counterexample of a market on a general probability space in which a perfect hedge exists but every network strategy has infinite risk, and then prove the positive result: for optimized certainty equivalents, the hypotheses (A1) and (A6) alone already restore the value convergence $\pi_M\to\pi$. Combined with the attainment theorem of Chapter~3, this yields the punchline of the thesis: under (A1)--(A6), neural network strategies are $\varepsilon$-optimal for an \emph{attained} optimum.
-\end{enumerate}
-All results announced above are stated and proved in full in this thesis; they are presented as established theorems, not as an open-ended analysis.
-
-Two scope decisions apply throughout. First, the risk measures are optimized certainty equivalents; the extension to general convex risk measures via their robust representations, indicated in Section~4.5 of B\"uhler et al.\ \cite{buehler}, is only mentioned as an outlook. Second, the thesis contains no numerical experiments of its own; for empirical evidence we refer to the backtesting results reported by B\"uhler et al., with the caveats discussed in Chapter~4.
-
-\section{Outline of the thesis}
-
-Chapter~2 constructs the discrete-time market with frictions on a general probability space---trading dates, information, hedging instruments, trading constraints and transaction costs---culminating in the terminal profit-and-loss equation, and then answers the question of what makes a profit-and-loss acceptable by developing convex risk measures and, in particular, optimized certainty equivalents. Chapter~3 assembles these ingredients into the hedging functional $\pi$, derives its basic properties and the indifference price, formulates the gain-side hypotheses (A1)--(A6) and proves the attainment theorem; a final section explains why unbounded liabilities such as the European call remain delicate. Chapter~4 introduces neural network strategy classes and the approximate problem $\pi_M$, proves the finite-space approximation theorem of B\"uhler et al.\ and diagnoses where finiteness is used, shows by counterexample that the result fails on general $\Omega$ without further assumptions, and proves the approximation theorem under (A1) and (A6) together with its corollary on $\varepsilon$-optimality; it closes with a brief account of the training algorithm and of why strategies themselves need not converge. Chapter~5 summarises the thesis and gives a short outlook. The appendix contains the proof of the Koml\'os lemma; all other standard results are cited.
+Chapter~2 constructs the market and the risk measures, Chapter~3 proves the attainment theorem, Chapter~4 the approximation results and Chapter~5 concludes; the appendix proves the Koml\'os lemma; for backtests see \cite{buehler}.
+% FAKE REF: "Chapter~2" ... "Chapter~5" -> replace by \ref{ch:...} on final merge.
 
 \begin{thebibliography}{9}
 
@@ -78,16 +55,6 @@ Chapter~2 constructs the discrete-time market with frictions on a general probab
     H.~F\"ollmer and A.~Schied.
     \emph{Stochastic Finance: An Introduction in Discrete Time}.
     4th edition, De Gruyter, Berlin, 2016.
-
-    \bibitem{hornik}
-    K.~Hornik.
-    Approximation capabilities of multilayer feedforward networks.
-    \emph{Neural Networks} \textbf{4}(2), 251--257, 1991.
-
-    \bibitem{sonershrevecvitanic}
-    H.~M.~Soner, S.~E.~Shreve, and J.~Cvitani\'c.
-    There is no nontrivial hedging portfolio for option pricing with transaction costs.
-    \emph{Annals of Applied Probability} \textbf{5}(2), 327--355, 1995.
 
 \end{thebibliography}
 

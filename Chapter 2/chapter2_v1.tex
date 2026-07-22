@@ -26,7 +26,7 @@
 \newtheorem{assumption}[proposition]{Assumption}
 \newtheorem{definition}[proposition]{Definition}
 \newtheorem{example}[proposition]{Example}
-\theoremstyle{remark}
+% Upright body, bold head (not the italic amsthm "remark" style).
 \newtheorem{remark}[proposition]{Remark}
 
 \newcommand{\E}{\mathbb{E}}
@@ -46,7 +46,7 @@
 
 This chapter sets up all objects needed in the rest of the thesis. We first construct the market: trading dates, information, hedging instruments, trading strategies, constraints and transaction costs. Then we use these objects to define the terminal profit-and-loss equation. The second half of the chapter develops convex risk measures, and in particular the class of optimized certainty equivalents, to measure the ``goodness'' of the P\&L.
 
-The market model (Sections~\ref{sec:market}--\ref{sec:pnl}) copies the setup of B\"uhler et al.\ \cite[Section~2]{buehler}, with one structural difference: the probability space is \emph{general}, not finite.
+The market model (Sections~\ref{sec:market} to~\ref{sec:pnl}) copies the setup of B\"uhler et al.\ \cite[Section~2]{buehler}, with one structural difference: the probability space is \emph{general}, not finite.
 
 \section{The market}\label{sec:market}
 
@@ -129,7 +129,7 @@ A first natural question is whether the market allows arbitrage: a strategy $\de
 \]
 Classical pricing theory begins by excluding such strategies. The deep hedging framework does not: no no-arbitrage assumption is imposed a priori. This is a deliberate modelling choice. The framework is designed to operate on market data or on scenarios from a simulator, and neither is guaranteed to be arbitrage-free. What must be avoided is not arbitrage itself but a market that is \emph{too} attractive, in the following sense.
 
-Once a risk functional $\rho$ is fixed (Sections~\ref{sec:naive}--\ref{sec:oce} below construct it), the quantity
+Once a risk functional $\rho$ is fixed (Sections~\ref{sec:naive} to~\ref{sec:oce} below construct it), the quantity
 \[
     \pi(0):=\inf_{\delta\in\HH}\rho\bigl(W(\delta)\bigr)
 \]
@@ -175,9 +175,7 @@ These two failures motivate the axioms of the next section: monotonicity (better
 
 \section{Convex risk measures}\label{sec:crm}
 
-Let $\mathcal{X}=\{X:\Omega\to\R\}$ be a vector space of random variables on $(\Omega,\F,\PP)$. Before defining the convex risk measure $\rho$, we need to discuss the choice of the domain space of random variables $\mathcal{X}$.
-On a finite probability space, the space question is redundant. Every random variable $X\in\mathcal{X}$ is finite-dimensional and $\rho$ is a convex function on $\R^N$. Therefore, it is automatically bounded and continuous. On a general $\Omega$ one must choose $\mathcal{X}$, and the choice matters. E.g. taking $\mathcal{X}=L^\infty$ keeps $\rho$ finite but is a very restrictive choice. The choice adopted in this thesis, following the needs of Chapter~3, is the largest one: $\rho$ is defined on $L^0$, the space of all real-valued random variables.
-The following definition is that of F\"ollmer and Schied \cite[Definition~4.1]{foellmerschied}; it is also the notion used by B\"uhler et al.\ \cite[Definition~1]{buehler}.
+A convex risk measure is a map on a vector space $\mathcal{X}$ of real-valued random variables on $(\Omega,\F,\PP)$. Before stating the axioms, we fix the domain. On a finite probability space with $N$ atoms, every real-valued random variable may be identified with a vector in $\R^N$, so the choice of $\mathcal{X}$ is redundant: one may take $\mathcal{X}=\R^N$, and any real-valued convex map $\rho\colon\R^N\to\R$ is automatically continuous. On a general probability space the choice matters. Taking $\mathcal{X}=L^\infty$ keeps $\rho$ real-valued under mild conditions, but excludes many positions that appear later (unbounded gains, unbounded liabilities). Following the needs of Chapter~3, we take the largest natural domain: $\mathcal{X}=L^0$, the space of all real-valued measurable random variables. On this space a useful risk measure may take the values $\pm\infty$, so we work with extended-real maps $\rho\colon L^0\to[-\infty,\infty]$. The axioms below are those of F\"ollmer and Schied \cite[Definition~4.1]{foellmerschied}, extended from a real-valued setting on a subspace of $L^\infty$ to this $L^0$-valued range; the same axioms are used by B\"uhler et al.\ \cite[Definition~1]{buehler}.
 
 \begin{definition}\label{def:crm}
     A map $\rho\colon L^0\to [-\infty,\infty]$ is a \emph{convex risk measure} if for all $X,Y\in L^0$:
@@ -188,15 +186,15 @@ The following definition is that of F\"ollmer and Schied \cite[Definition~4.1]{f
     \end{enumerate}
 \end{definition}
 
-Each axiom has a direct economic reading, with the usual conventions of extended-real arithmetic when $\rho$ takes the values $\pm\infty$. Monotonicity says that a position that pays more in every scenario needs no more capital. Cash-invariance says that capital already in the position counts toward the requirement one for one; it makes the unit of $\rho(X)$ the same as the unit of $X$, namely cash at time $T$. Whenever $\rho(X)\in\R$ is finite, cash-invariance gives
+Each axiom has a direct economic reading, with the usual conventions of extended-real arithmetic when $\rho$ takes the values $\pm\infty$. Monotonicity says that a position that pays more in every scenario needs no more capital. Cash-invariance says that capital already in the position counts toward the requirement one for one. Also, it makes the unit of $\rho(X)$ the exact cash amount to render $X$ acceptable whenever $\rho(X)\in\R$
 \[
-    \rho\bigl(X+\rho(X)\bigr)=\rho(X)-\rho(X)=0,
+    \rho\bigl(X+\rho(X)\bigr)=\rho(X)-\rho(X)=0.
 \]
-so $\rho(X)$ is exactly the minimal cash injection that makes the position acceptable in the sense of having nonpositive risk. If $\rho(X)=+\infty$, no finite cash amount renders the position acceptable; if $\rho(X)=-\infty$, the position is infinitely attractive and any finite cash amount can be withdrawn while keeping risk nonpositive. Convexity encodes the diversification principle: the risk of a mixture is at most the mixture of the risks, so splitting capital between two positions is never penalized. The negative expectation satisfies all three axioms (its failure in Section~\ref{sec:naive} is one of risk sensitivity, not of the axioms; it will be excluded later by the continuity hypothesis (A3) of Chapter~3), while the variance violates (i) and (ii).
+If $\rho(X)=+\infty$, no finite cash amount can push the position to be acceptable. Conversely, if $\rho(X)=-\infty$, the position is infinitely attractive and any finite cash amount can be withdrawn while keeping risk nonpositive. Convexity encodes the diversification principle: the risk of a mixture is at most the mixture of the risks, so splitting capital between two positions is never penalized. The negative expectation satisfies all three axioms (its failure in Section~\ref{sec:naive} is one of risk sensitivity, not of the axioms; it will be excluded later by the continuity hypothesis (A3) of Chapter~3), while the variance violates (i) and (ii). On $L^0$, convexity alone yields no automatic continuity: continuity of $\rho$ along the limits appearing in the proofs must be assumed (hypothesis (A3) of Chapter~3) or derived from structure (Lemma~4.4 of Chapter~4). % FAKE REF: lem:usc
 
 \section{Optimized certainty equivalents}\label{sec:oce}
 
-The convex risk measures used in this thesis all arise from a single construction, the \emph{optimized certainty equivalent} (OCE) of Ben-Tal and Teboulle \cite{bentalteboulle}, which B\"uhler et al.\ \cite[Section~3.3]{buehler} also take as their working class. The construction turns a one-dimensional loss function into a risk measure, and its variational form is what makes both the theory (Chapters~3 and~4) and the numerics (the training algorithm of Chapter~4) tractable.
+The convex risk measures used in this thesis all arise from a single construction, the \emph{optimized certainty equivalent} (OCE) of Ben-Tal and Teboulle \cite{bentalteboulle}, which B\"uhler et al.\ \cite[Section~3.3]{buehler} also take as their working class. The construction turns a one-dimensional loss function into a risk measure.
 
 Throughout this section, $\ell\colon\R\to\R$ is a \emph{loss function}: convex, non-decreasing and finite on all of $\R$ (hence continuous). The value $\ell(x)$ is read as the disutility of a loss of size $x$; monotonicity says larger losses hurt more, convexity says they hurt disproportionately more.
 
@@ -208,67 +206,85 @@ Throughout this section, $\ell\colon\R\to\R$ is a \emph{loss function}: convex, 
     for all $X$ for which the expectation is well defined in $(-\infty,\infty]$ for every $w\in\R$.
 \end{definition}
 
-The interpretation of \eqref{eq:OCE} is a capital allocation: the trader sets aside the cash reserve $w$ today and suffers the disutility $\ell(-X-w)$ of the shortfall of the reserved position; optimizing over $w$ gives the best such allocation. The infimum over a single real parameter is what later turns the hedging problem into a finite-dimensional training problem.
+The interpretation of \eqref{eq:OCE} is a capital allocation: the trader sets aside the cash reserve $w$ today and suffers the disutility $\ell(-X-w)$ of the shortfall of the reserved position; optimizing over $w$ gives the best such allocation.
 
-For \eqref{eq:OCE} to define a sensible risk measure, the loss function must be normalized. We adopt the normalization of Ben-Tal and Teboulle \cite{bentalteboulle} as a standing assumption.
+For \eqref{eq:OCE} to define a sensible risk measure, the loss function must be normalized. We adopt the normalization assumptions of Ben-Tal and Teboulle \cite[Definition~2.1, Equation~(2.1)]{bentalteboulle} by translating their utility function into our loss function via $u(x)=-\ell(-x)$.
+
+\begin{definition}\label{def:subdifferential}
+    The \emph{subdifferential} of the convex function $\ell$ at $0$ is the set
+    \[
+        \partial\ell(0):=\bigl\{s\in\R:\ell(x)\ge\ell(0)+sx\text{ for all }x\in\R\bigr\}.
+    \]
+    Elements of $\partial\ell(0)$ are called \emph{subgradients} of $\ell$ at $0$.
+\end{definition}
 
 \begin{assumption}\label{ass:normalization}
-    The loss function $\ell$ satisfies $\ell(0)=0$ and $1\in\partial\ell(0)$, where $\partial\ell(0)$ denotes the subdifferential of $\ell$ at $0$.
+    The loss function $\ell$ satisfies $\ell(0)=0$ and $1\in\partial\ell(0)$.
 \end{assumption}
+If $\ell$ is differentiable at $0$, then $\partial\ell(0)=\{\ell'(0)\}$, so the condition $1\in\partial\ell(0)$ is equivalent to $\ell'(0)=1$.
 
-The normalization $\ell(0)=0$ is a mere calibration of the zero level of disutility. The slope condition $1\in\partial\ell(0)$ is essential, for the following reason. If every subgradient of $\ell$ were strictly below $1$, say $\ell'\le\gamma<1$ everywhere, then for every fixed $x$,
+The normalization $\ell(0)=0$ is a mere calibration of the zero level of disutility. Combined with $1\in\partial\ell(0)$
+\[
+    \ell(x)\ge \ell(0) + 1\cdot x=x\qquad\text{for all }x\in\R.
+\]
+Beyond this, the slope condition is essential for the following reason. If every subgradient of $\ell$ were strictly below $1$, say $\ell'\le\gamma<1$ everywhere, then for every fixed $x$,
 \[
     w+\ell(-x-w)\le w+\ell(-x)+\gamma|w|\longrightarrow-\infty\qquad(w\to-\infty),
 \]
-so the infimum in \eqref{eq:OCE} would equal $-\infty$ for \emph{every} position $X$: reserving ever more negative amounts would be rewarded faster by the cash term than punished by the loss term, and the OCE would degenerate to $\rho_\ell\equiv-\infty$. Some slope of size at least $1$ is therefore necessary; placing it at $0$, together with $\ell(0)=0$, is the convenient normalization. Stating Assumption~\ref{ass:normalization} once and for all keeps every finiteness discussion in Chapters~3 and~4 clean; both examples at the end of this section satisfy it.
+so the infimum in \eqref{eq:OCE} would equal $-\infty$ for \emph{every} position $X$: the OCE would degenerate to $\rho_\ell\equiv-\infty$. Some slope of size at least $1$ is therefore necessary; placing it at $0$, together with $\ell(0)=0$, is the convenient normalization.
 
 \begin{remark}\label{rem:oce-welldef}
-    On a finite probability space, the expectation in \eqref{eq:OCE} is a finite sum and the definition needs no discussion. On a general $\Omega$, well-definedness must be checked --- this is the second appearance of the finite-versus-general theme. Let $X\in L^1$. Decompose $\ell(-X-w)$ into positive and negative parts. The negative part is controlled by the affine minorant supplied by Assumption~\ref{ass:normalization}: convexity gives
-    \[
-        \ell(x)\ge\ell(0)+1\cdot x=x\qquad\text{for all }x\in\R,
-    \]
-    so $\ell(-X-w)\ge-X-w$ and hence $\ell(-X-w)^-\le|X|+|w|\in L^1$. The expectation $\E[\ell(-X-w)]$ is therefore well defined in $(-\infty,\infty]$ for every $w$, and \eqref{eq:OCE} makes sense, with $\rho_\ell(X)=+\infty$ possible when the positive part fails to be integrable for every $w$. Moreover, the same minorant yields
+    On a finite probability space, the expectation in \eqref{eq:OCE} is a finite sum and the definition needs no discussion. On a general $\Omega$, well-definedness must be checked. Let $X\in L^1$. Decompose $\ell(-X-w)$ into positive and negative parts. The negative part is controlled. By Assumption~\ref{ass:normalization} we have $\ell(x)\ge x$ which yields $\ell(-X-w)\ge-X-w$ and hence $\ell(-X-w)^-\le|X|+|w|\in L^1$. The expectation $\E[\ell(-X-w)]$ is therefore well defined in $(-\infty,\infty]$ for every $w$, and \eqref{eq:OCE} makes sense, with $\rho_\ell(X)=+\infty$ possible when the positive part fails to be integrable for every $w$. Moreover, the same inequality yields
     \[
         w+\E\bigl[\ell(-X-w)\bigr]\ge w+\E[-X-w]=-\E[X],
     \]
-    so $\rho_\ell(X)\ge-\E[X]>-\infty$ for every $X\in L^1$: the OCE never takes the value $-\infty$ on $L^1$. On positions outside $L^1$ we use \eqref{eq:OCE} with the conventions of extended-real arithmetic, consistently with the domain choice of Remark~\ref{rem:domain}.
+    so $\rho_\ell(X)\ge-\E[X]>-\infty$ for every $X\in L^1$: the OCE never takes the value $-\infty$ on $L^1$. On positions outside $L^1$ we use \eqref{eq:OCE} with the conventions of extended-real arithmetic, consistently with the domain choice in Section~\ref{sec:crm}.
 \end{remark}
 
-The next lemma is the general-$\Omega$ version of B\"uhler et al.\ \cite[Lemma~3.5]{buehler}; the proof is essentially theirs, rewritten for extended-real expectations on $L^1$.
+The next lemma is the general-$\Omega$ version of B\"uhler et al.\ \cite[Lemma~3.5]{buehler}; the proof of the three axioms follows theirs, rewritten on $L^0$ with extended-real expectations. Throughout, for a random variable $Y$ we write
+\[
+    \E[Y]:=\E[Y^+]-\E[Y^-]\in[-\infty,\infty],
+\]
+with the convention $(+\infty)-(+\infty):=+\infty$, so that \eqref{eq:OCE} defines a map $\rho_\ell\colon L^0\to[-\infty,\infty]$.
 
 \begin{lemma}\label{lem:oce-crm}
-    Under Assumption~\ref{ass:normalization}, the map $\rho_\ell$ defined by \eqref{eq:OCE} is a convex risk measure on $L^1$, with values in $(-\infty,\infty]$.
+    Under Assumption~\ref{ass:normalization}, the map $\rho_\ell$ defined by \eqref{eq:OCE} is a convex risk measure on $L^0$.
 \end{lemma}
 
 \begin{proof}
-    Finiteness from below was shown in Remark~\ref{rem:oce-welldef}. We verify the three axioms of Definition~\ref{def:crm}.
+    We verify the three axioms of Definition~\ref{def:crm}, allowing the values $\pm\infty$ with the usual arithmetic $(\pm\infty)-c=\pm\infty$ for $c\in\R$ and $\alpha(\pm\infty)=(\pm\infty)$ for $\alpha\in(0,1]$.
 
-    \emph{Monotonicity.} If $X_1\le X_2$ $\PP$-a.s., then $-X_1-w\ge-X_2-w$ $\PP$-a.s.\ for every $w$, so monotonicity of $\ell$ and of the expectation give
-    \[
-        w+\E\bigl[\ell(-X_1-w)\bigr]\ge w+\E\bigl[\ell(-X_2-w)\bigr].
-    \]
-    Taking the infimum over $w$ on both sides yields $\rho_\ell(X_1)\ge\rho_\ell(X_2)$.
+    \emph{Monotonicity.} If $X_1\le X_2$ $\PP$-a.s., then $-X_1-w\ge-X_2-w$ $\PP$-a.s.\ for every $w$, so monotonicity of $\ell$ gives $\ell(-X_1-w)\ge\ell(-X_2-w)$ a.s. Taking extended-real expectations preserves the inequality, and taking the infimum over $w$ yields $\rho_\ell(X_1)\ge\rho_\ell(X_2)$.
 
     \emph{Cash-invariance.} For $c\in\R$, the substitution $w'=w+c$ gives
     \begin{align*}
         \rho_\ell(X+c) & =\inf_{w\in\R}\Bigl(w+\E\bigl[\ell(-X-c-w)\bigr]\Bigr)                    \\
-                       & =\inf_{w'\in\R}\Bigl(w'-c+\E\bigl[\ell(-X-w')\bigr]\Bigr)=\rho_\ell(X)-c.
+                       & =\inf_{w'\in\R}\Bigl(w'-c+\E\bigl[\ell(-X-w')\bigr]\Bigr)=\rho_\ell(X)-c,
     \end{align*}
+    including when $\rho_\ell(X)=\pm\infty$.
 
-    \emph{Convexity.} Fix $\alpha\in[0,1]$, positions $X_1,X_2$ and reserves $w_1,w_2\in\R$, and set $w_\alpha:=\alpha w_1+(1-\alpha)w_2$. Convexity of $\ell$ applied $\omega$-wise gives
+    \emph{Convexity.} Fix $\alpha\in[0,1]$, positions $X_1,X_2\in L^0$ and reserves $w_1,w_2\in\R$, and set $w_\alpha:=\alpha w_1+(1-\alpha)w_2$. Convexity of $\ell$ applied $\omega$-wise gives
     \[
         \ell\bigl(-\alpha X_1-(1-\alpha)X_2-w_\alpha\bigr)\le\alpha\ell(-X_1-w_1)+(1-\alpha)\ell(-X_2-w_2)\as
     \]
-    Adding $w_\alpha$, taking expectations and estimating the left-hand side from below by the infimum over $w$,
+    Adding $w_\alpha$ and taking extended-real expectations,
+    \begin{align*}
+        w_\alpha+\E\bigl[\ell(-\alpha X_1-(1-\alpha)X_2-w_\alpha)\bigr]
+         & \le\alpha\Bigl(w_1+\E\bigl[\ell(-X_1-w_1)\bigr]\Bigr)          \\
+         & \qquad+(1-\alpha)\Bigl(w_2+\E\bigl[\ell(-X_2-w_2)\bigr]\Bigr),
+    \end{align*}
+    where the right-hand side is read in $[-\infty,\infty]$ (if it equals $+\infty$, the inequality is automatic; if it equals $-\infty$, both summands are $-\infty$ for $\alpha\in(0,1)$). The left-hand side is at least $\rho_\ell(\alpha X_1+(1-\alpha)X_2)$, so
     \begin{align*}
         \rho_\ell\bigl(\alpha X_1+(1-\alpha)X_2\bigr)
          & \le\alpha\Bigl(w_1+\E\bigl[\ell(-X_1-w_1)\bigr]\Bigr)          \\
          & \qquad+(1-\alpha)\Bigl(w_2+\E\bigl[\ell(-X_2-w_2)\bigr]\Bigr).
     \end{align*}
-    Taking the infimum over $w_1$ and $w_2$ separately yields convexity. All expectations used are well defined by Remark~\ref{rem:oce-welldef}, and the extended-real conventions cause no harm since only the value $+\infty$ can occur.
+    Taking the infimum over $w_1$ and $w_2$ separately yields convexity.
 \end{proof}
 
-In the language of Ben-Tal and Teboulle \cite{bentalteboulle}, the quantity $-\rho_\ell(X)$ is the optimized certainty equivalent of the position $X$ under the utility function $u(x)=-\ell(-x)$: the sure amount the trader considers equivalent to holding $X$, after optimally splitting off a cash reserve. The two normalizations correspond under this translation.
+\begin{remark}\label{rem:oce-on-L1}
+    Combining Remark~\ref{rem:oce-welldef} with Lemma~\ref{lem:oce-crm} recovers the $L^1$-statement that corresponds to B\"uhler et al.\ \cite[Lemma~3.5]{buehler}: the restriction of $\rho_\ell$ to $L^1$ is a convex risk measure with values in $(-\infty,\infty]$.
+\end{remark}
 
 We close the chapter with the two families of OCEs that serve as running examples in the rest of the thesis. They sit at opposite ends of a risk-aversion dial and demonstrate the flexibility of the class.
 
@@ -289,7 +305,7 @@ We close the chapter with the two families of OCEs that serve as running example
     \[
         \rho_{\ell_\lambda}(X)=\frac{1}{\lambda}\log\E\bigl[e^{-\lambda X}\bigr],
     \]
-    the \emph{entropic risk measure} with parameter $\lambda$; if $\E[e^{-\lambda X}]=\infty$, then $f\equiv\infty$ and $\rho_{\ell_\lambda}(X)=\infty$, consistently with the extended-real convention. B\"uhler et al.\ \cite[Example~3.5]{buehler} use the shifted loss function $x\mapsto e^{\lambda x}-(1+\log\lambda)/\lambda$, which produces the same risk measure. The explicit minimizer $w^*$ is a computational asset: in the training algorithm of Chapter~4, the reserve variable can be eliminated in closed form for the entropic case. The entropic risk measure is also the link to classical utility theory: by B\"uhler et al.\ \cite[Lemma~3.4]{buehler}, hedging under $\rho_{\ell_\lambda}$ is equivalent to maximizing exponential utility with risk aversion $\lambda$, and the associated indifference prices coincide.
+    the \emph{entropic risk measure} with parameter $\lambda$; if $\E[e^{-\lambda X}]=\infty$, then $f\equiv\infty$ and $\rho_{\ell_\lambda}(X)=\infty$, consistently with the extended-real convention.
 \end{example}
 
 \begin{example}\label{ex:cvar}
@@ -297,14 +313,25 @@ We close the chapter with the two families of OCEs that serve as running example
     \[
         \ell_\alpha(x):=\frac{\max(x,0)}{1-\alpha},
     \]
-    which is convex and non-decreasing with $\ell_\alpha(0)=0$ and $\partial\ell_\alpha(0)=[0,1/(1-\alpha)]\ni1$, so Assumption~\ref{ass:normalization} holds. The resulting OCE is the \emph{average value at risk} (also called conditional value at risk or expected shortfall) at level $1-\alpha$,
+    which is convex and non-decreasing with $\ell_\alpha(0)=0$ and $\partial\ell_\alpha(0)=[0,1/(1-\alpha)]\ni1$, so Assumption~\ref{ass:normalization} holds. The resulting OCE is the \emph{average value at risk} (also called conditional value at risk or expected shortfall) at level $1-\alpha$
     \[
-        \rho_{\ell_\alpha}(X)=\inf_{w\in\R}\Bigl(w+\frac{1}{1-\alpha}\E\bigl[(-X-w)^+\bigr]\Bigr)=\mathrm{AV@R}_{1-\alpha}(X),
+        \rho_{\ell_\alpha}(X)=\inf_{w\in\R}\Bigl(w+\frac{1}{1-\alpha}\E\bigl[(-X-w)^+\bigr]\Bigr)=\mathrm{CVaR}_{1-\alpha}(X).
     \]
-    the average of the value at risk of $X$ over all levels below $1-\alpha$; see F\"ollmer and Schied \cite[Section~4.4]{foellmerschied} and Ben-Tal and Teboulle \cite[Example~2.3]{bentalteboulle}. The level $\alpha$ acts as a risk-aversion dial. For $\alpha=0$, the function $w\mapsto w+\E[(-X-w)^+]$ equals $-\E[X]$ for all $w\le\operatorname{ess\,inf}(-X)$ and is non-decreasing beyond, so $\rho_{\ell_0}(X)=-\E[X]$: the risk-neutral criterion of Section~\ref{sec:naive}. As $\alpha\to1$, the penalty $1/(1-\alpha)$ forces the reserve to cover the loss in almost every scenario, and $\rho_{\ell_\alpha}(X)\to-\operatorname{ess\,inf}X$: the worst-case criterion. In between, the trader interpolates between pricing by expectation and superhedging.
+    It is the average of the losses that happen in the extreme tail with probability smaller than $1-\alpha$. Indeed: let $X\in L^1$ continuously distributed and write $L:=-X$ for the loss. The map $g(w):=w+\frac{1}{1-\alpha}\E[(L-w)^+]$ is convex in $w$ and, since $\PP[L=w]=0$ for every $w$, differentiable with
+    \[
+        g'(w)=1-\frac{1}{1-\alpha}\PP[L>w].
+    \]
+    The map $w\mapsto\PP[L>w]$ decreases continuously from $1$ to $0$, so the first-order condition $g'(w^*)=0$ has a solution $w^*$ with
+    \[
+        \PP[L>w^*]=1-\alpha,
+    \]
+    that is, $w^*$ is an $\alpha$-quantile of $L$, the value at risk of the position. Then
+    \begin{align*}
+        \rho_{\ell_\alpha}(X)=g(w^*) & =w^*+\frac{1}{1-\alpha}\E\bigl[(L-w^*)\mathbf{1}_{\{L>w^*\}}\bigr] \\
+                                     & =w^*+\E\bigl[L-w^*\bigm|L>w^*\bigr]=\E\bigl[L\bigm|L>w^*\bigr]:
+    \end{align*}
+    the OCE equals the expected loss conditional on the tail event $\{L>w^*\}$ beyond the value at risk, an event of probability $1-\alpha$.
 \end{example}
-
-With the market of Sections~\ref{sec:market}--\ref{sec:arbitrage} and the risk measures of Sections~\ref{sec:crm}--\ref{sec:oce} in place, Chapter~3 assembles them into the hedging functional $\pi$ and studies the existence of optimal hedging strategies.
 
 \begin{thebibliography}{9}
 

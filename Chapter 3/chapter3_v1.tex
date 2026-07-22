@@ -12,6 +12,10 @@
 \newtheorem{theorem}[proposition]{Theorem}
 \theoremstyle{definition}
 \newtheorem{assumption}[proposition]{Assumption}
+\newtheorem{definition}[proposition]{Definition}
+\newtheorem{example}[proposition]{Example}
+% Upright body, bold head (not the italic amsthm "remark" style).
+\newtheorem{remark}[proposition]{Remark}
 
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\PP}{\mathbb{P}}
@@ -183,7 +187,7 @@ where $L^0_+=\{L\in L^0:L\ge0\ \PP\text{-a.s.}\}$. The set $\CC$ is the downward
 
 We comment on each hypothesis in turn before stating the main theorem.
 
-\paragraph{On (A1)--(A2).}
+\paragraph{On (A1)-(A2).}
 These are structural hypotheses. The boundedness of $Z$ keeps the liability side controlled in the main theorem, while convexity of $\HH$ ensures that convex combinations of admissible strategies remain admissible; recall from Chapter~1 that $\HH$ denotes the set of admissible trading strategies, so that admissibility simply means membership in $\HH$. In Section~\ref{sec:call} we will discuss consequences of $Z$ being an unbounded call option.
 
 \paragraph{On (A3): why a Fatou-type assumption is needed.}
@@ -250,24 +254,24 @@ The hypothesis $W(\delta)\in L^0_+$ encodes admissibility on the gain side: the 
 
 \section{The Koml\'os lemma}
 
-The proof of attainment rests on the classical lemma of Koml\'os, recalled in the form used by Delbaen and Schachermayer \cite[Lemma~A1.1]{delbaenschachermayer}.
+The proof of attainment rests on the classical lemma of Koml\'os, recalled in the form used by Delbaen and Schachermayer \cite[Lemma~A1.1]{delbaenschachermayer}; the proof is given in the appendix.
 
 \begin{lemma}\label{lem:komlos}
-    Let $(Y_n)_{n\in\N}$ be a sequence of nonnegative random variables on $(\Omega,\F,\PP)$, bounded in $L^0$. Then there exist forward convex combinations
+    Let $(Y_n)_{n\in\N}$ be a sequence of nonnegative random variables on $(\Omega,\F,\PP)$. Then there exist forward convex combinations
     \[
         \widetilde Y_n\in\operatorname{conv}\{Y_n,Y_{n+1},\dots\},\qquad n\in\N,
     \]
-    and a nonnegative random variable $\widetilde Y\in L^0$ such that $\widetilde Y_n\to\widetilde Y$ $\PP$-a.s.\ as $n\to\infty$.
+    and a measurable function $\widetilde Y\colon\Omega\to[0,\infty]$ such that $\widetilde Y_n\to\widetilde Y$ $\PP$-a.s.\ as $n\to\infty$. If moreover $\operatorname{conv}\{Y_n:n\in\N\}$ is bounded in $L^0$, then $\widetilde Y\in L^0$, i.e.\ $\widetilde Y<\infty$ $\PP$-a.s.
 \end{lemma}
 
-The version above is the one stated and proved in \cite[Lemma~A1.1]{delbaenschachermayer}; the original formulation imposes the $L^0$-boundedness condition on the forward convex combinations $(\widetilde Y_n)$ rather than on the original sequence $(Y_n)$, but the two formulations are equivalent because convex combinations of an $L^0$-bounded family are themselves $L^0$-bounded, and conversely.
+In the attainment argument below, the relevant sequence is $(W(\delta_n))_{n\in\N}$. Hypothesis (A4) bounds $\HH_W$ in $L^0$, and convexity of $\HH$ and of $C_T$ imply that every forward convex combination of $(W(\delta_n))_{n\in\N}$ is dominated by an element of $\HH_W$, hence the convex combinations themselves are $L^0$-bounded and the finiteness conclusion applies.
 
 \section{Attainment of the optimal hedging strategy}\label{sec:attainment}
 
 We now state and prove the central theorem of this chapter, the attainment theorem.
 
 \begin{theorem}\label{thm:attainment}
-    Assume \textup{(A1)}--\textup{(A6)}. Then there exists $\delta^*\in\HH$ with
+    Assume \textup{(A1)}-\textup{(A6)}. Then there exists $\delta^*\in\HH$ with
     \[
         \rho\bigl(-Z+(\delta^*\cdot S)_T-C_T(\delta^*)\bigr)=\pi(-Z).
     \]
@@ -307,7 +311,7 @@ We now state and prove the central theorem of this chapter, the attainment theor
     \[
         W_n:=W(\delta_n).
     \]
-    By (A6), $W_n\in L^0_+$ for every $n$. By (A4), the sequence $(W_n)_{n\in\N}$ is bounded in $L^0$. Hence Lemma~\ref{lem:komlos} yields forward convex combinations
+    By (A6), $W_n\in L^0_+$ for every $n$. By (A4), and the domination argument recorded after Lemma~\ref{lem:komlos}, the set of forward convex combinations of $(W_n)_{n\in\N}$ is bounded in $L^0$. Hence Lemma~\ref{lem:komlos} yields forward convex combinations
     \[
         \widetilde W_n:=\sum_{m\ge n}\lambda_{n,m}W_m,\qquad\lambda_{n,m}\ge0 \quad\text{and}\quad\sum_{m\ge n}\lambda_{n,m}=1,
     \]
@@ -444,7 +448,7 @@ Three natural conditions restore attainment, but each is too restrictive.
           \[
               -Z+W(\eta+\theta)=-\widehat Z+\widehat W(\theta)\ge-\|\widehat Z\|_\infty-B,
           \]
-          and the Koml\'os--Fatou argument applies (by shifting of a constant amount and cash-invariance of $\rho$). This is merely the desired Fatou bound imposed by hand, and it has unrealistic consequences. Indeed, if $0\in\HH$, then
+          and the Koml\'os-Fatou argument applies (by shifting of a constant amount and cash-invariance of $\rho$). This is merely the desired Fatou bound imposed by hand, and it has unrealistic consequences. Indeed, if $0\in\HH$, then
           \[
               -\eta=0-\eta\in\widehat\HH.
           \]
@@ -472,7 +476,7 @@ Three natural conditions restore attainment, but each is too restrictive.
           \begin{equation}\label{eq:stock-invariance}
               \rho\bigl(cS_T^1+X\bigr)=-cS_0^1+\rho(X)\qquad\text{for all }c\in\R,\ X\in L^0.
           \end{equation}
-          With this additional assumption, the Koml\'os--Fatou argument extends to the call. Writing
+          With this additional assumption, the Koml\'os-Fatou argument extends to the call. Writing
           \[
               -Z=-(S_T^1-K)^+=\min(S_T^1,K)-S_T^1
           \]
@@ -484,7 +488,7 @@ Three natural conditions restore attainment, but each is too restrictive.
           \[
               \pi(-Z)=S_0^1+\pi(-\widetilde Z).
           \]
-          Since $S_T^1\ge0$, the modified liability satisfies $\widetilde Z\in L^\infty$, so (A1) holds for $\widetilde Z$; the strategy set is unchanged, so (A2)--(A6) are untouched. Theorem~\ref{thm:attainment} therefore yields a $\delta^*\in\HH$ attaining $\pi(-\widetilde Z)$, and the same $\delta^*$ attains $\pi(-Z)$. In contrast to the reduction at the beginning of this section, no shift of $\HH$ is needed: the unbounded part of the call is absorbed by the invariance \eqref{eq:stock-invariance} rather than by an explicit hedge, so gain-side admissibility is preserved. The caveat is that \eqref{eq:stock-invariance} is a strong requirement: it forces $\rho$ to price every position in $S^1$ linearly, and few convex risk measures satisfy it --- essentially linear ones such as $\rho(X)=\E_Q[-X]$ under a measure $Q$ with $\E_Q[S_T^1]=S_0^1$, whereas the entropic risk measure, for instance, does not. We therefore record \eqref{eq:stock-invariance} as a structural condition under which the call problem is attainable, rather than as a general solution.
+          Since $S_T^1\ge0$, the modified liability satisfies $\widetilde Z\in L^\infty$, so (A1) holds for $\widetilde Z$; the strategy set is unchanged, so (A2)-(A6) are untouched. Theorem~\ref{thm:attainment} therefore yields a $\delta^*\in\HH$ attaining $\pi(-\widetilde Z)$, and the same $\delta^*$ attains $\pi(-Z)$. In contrast to the reduction at the beginning of this section, no shift of $\HH$ is needed: the unbounded part of the call is absorbed by the invariance \eqref{eq:stock-invariance} rather than by an explicit hedge, so gain-side admissibility is preserved. The caveat is that \eqref{eq:stock-invariance} is a strong requirement: it forces $\rho$ to price every position in $S^1$ linearly, and few convex risk measures satisfy it (essentially linear ones such as $\rho(X)=\E_Q[-X]$ under a measure $Q$ with $\E_Q[S_T^1]=S_0^1$, whereas the entropic risk measure, for instance, does not). We therefore record \eqref{eq:stock-invariance} as a structural condition under which the call problem is attainable, rather than as a general solution.
 \end{enumerate}
 
 \begin{thebibliography}{9}
